@@ -1,56 +1,17 @@
 import { ClassicListenersCollector } from "@empirica/core/admin/classic";
 export const Empirica = new ClassicListenersCollector();
+ 
+
 
 Empirica.onGameStart(({ game }) => {
-
-  const round0 = game.addRound({
-    name: "Advertise",
-    task: "advertise",
-  });
-  round0.addStage({ name: "advertiseProduct", duration: 240 });
-
-  const round1 = game.addRound({
-    name: "Results",
-    task: "results",
-  });
-  round1.addStage({ name: "Result", duration: 140 });
-
-  const round2 = game.addRound({
-    name: "Advertise",
-    task: "advertise2",
-  });
-  round2.addStage({ name: "advertiseProduct", duration: 240 });
-  
-  const round3 = game.addRound({
-    name: "Results",
-    task: "results2",
-  });
-  round3.addStage({ name: "Result", duration: 140 });
-
-  const round4 = game.addRound({
-    name: "Advertise",
-    task: "advertise3",
-  });
-  round4.addStage({ name: "advertiseProduct", duration: 240 });
-  
-  const round5 = game.addRound({
-    name: "Results",
-    task: "results3",
-  });
-  round5.addStage({ name: "Result", duration: 140 });
-
-  const round6 = game.addRound({
-    name: "Advertise",
-    task: "advertise4",
-  });
-  round6.addStage({ name: "advertiseProduct", duration: 240 });
-  
-  const round7 = game.addRound({
-    name: "Game Results",
-    task: "results4",
-  });
-  round7.addStage({ name: "Result", duration: 140 });
-
+  const round = game.addRound({
+    name: `Round`,
+   });
+   round.addStage({ name: "selectRoleStage", duration: 24000 });
+   round.addStage({ name: "claimsStage", duration: 24000 });
+   round.addStage({ name: "deliberateStage", duration: 24000 });
+   round.addStage({ name: "choiceStage", duration: 24000 });
+   round.addStage({ name: "feedbackStage", duration: 24000 });
 });
 
 Empirica.onRoundStart(({ round }) => {});

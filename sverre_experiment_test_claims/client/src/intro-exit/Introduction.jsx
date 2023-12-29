@@ -4,27 +4,40 @@ import { Button } from "../components/Button";
 export function Introduction({ next }) {
   return (
     <div className="mt-1 sm:mt-5 p-10">
-      <h1 className="text-lg leading-6 font-large text-gray-900" style={{'font-size': '30px'}}>
-        Marketplace Instructions
+      <h1 className="text-lg leading-6 font-large text-gray-900" style={{ fontSize: '30px' }}>
+        Marketplace Game Instructions
       </h1>
       <div className="text-lg mt-10 mb-6">
-        {/* <p className="text-sm text-gray-500"> */}
-        <p>
-          In this marketplace, you will have to choose what your priorities are as a producer of toothpaste. You will be shown multiple products.
+        Welcome to the Marketplace Game! In this game, you'll take on the role of either a producer or a consumer in a virtual market.
         <br />
-          In <strong>each round of the game</strong>, you will:
-        </div>
-        <br />
-        <p>
-          (a) choose the quality of the product you produce. Choose how to advertise them. Choose what price you want to sell the product for.
-        </p>
-        <p> 
-          (b) obtain the results, gains and losses, based on the sales from the product you chose to advertise. 
-        </p>
+        <strong>As a Producer:</strong>
       </div>
-      <Button handleClick={next} autoFocus>
-        <p>Next</p>
-      </Button>
+      <p>
+        - Determine the quality of the toothpaste you produce.
+      </p>
+      <p>
+        - Decide how to advertise your products and set their selling prices.
+      </p>
+      <p>
+        Your goal is to maximize profits, and you'll earn points based on the profits from your sales.
+      </p>
+      <div className="mt-10 mb-6">
+        <strong>As a Consumer:</strong>
+      </div>
+      <p>
+        - Assess advertisements to choose the toothpaste you wish to purchase, considering quality and price.
+      </p>
+      <p>
+        Your objective is to ensure value for money – the quality of the product should match the price you pay.
+      </p>
+      <p>
+        You'll earn points for making wise purchasing decisions that align with this principle.
+      </p>
+      <div style={{ marginTop: '30px' }}>
+        <Button handleClick={next} autoFocus>
+          <p>Next</p>
+        </Button>
+      </div>
     </div>
   );
 }
