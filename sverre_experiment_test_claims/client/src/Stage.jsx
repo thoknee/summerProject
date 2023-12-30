@@ -19,11 +19,7 @@ export function Stage() {
   const players = usePlayers();
   const round = useRound();
   const stage = useStage();
-
-
-  console.log(round.get("task"))
-  console.log(round.get("stages"))
-  
+ 
 
 if (player.stage.get("submit")) {
     if (players.length === 1) {

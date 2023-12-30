@@ -1,5 +1,26 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { usePlayer, usePlayers } from "@empirica/core/player/classic/react";
+
+function ConsumerProductCard({ producer, index, handlePurchase, wallet }) {
+  const productQuality = producer.round.get("productQuality");
+  const adStrategy = producer.round.get("adStrategy");
+  const price = producer.round.get("price"); // Replace with actual logic to get price
+  const productImage = productQuality === "high" 
+    ? "graphics/PremiumToothpasteAI.png" // High-quality image path
+    : "graphics/StandardToothpasteAI.png"; // Low-quality image path
+
+  return (
+    <div className="product-card" style={styles.productCard}>
+      <h4>Seller: {producer.id}</h4>
+      <h3>{`Product ${index + 1}`}</h3>
+      <img src={productImage} alt={`Product ${index + 1}`} style={styles.productImage} />
+      <p>Advertised Quality: {productQuality}</p>
+      <p>Advertisement Strategy: {adStrategy}</p>
+      <p>Price: {price}</p>
+      <button onClick={() => handlePurchase(price, `Product ${index + 1}`)} disabled={wallet < price}>Buy</button>
+    </div>
+  );
+}
 
 export function ChoiceStage() {
   const player = usePlayer();
@@ -8,17 +29,14 @@ export function ChoiceStage() {
   const [wallet, setWallet] = useState(player.get("wallet") || 0);
 
   const handleProceed = () => {
-    // Submit the stage for the consumer
     player.stage.set("submit", true);
   };
 
-  // Consumer-specific functions
   const handlePurchase = (cost, productId) => {
     if (wallet >= cost) {
       const newWalletValue = wallet - cost;
       setWallet(newWalletValue);
       player.set("wallet", newWalletValue);
-      // Assuming "purchases" is an array of productIds that the player has bought
       let purchases = player.round.get("purchases") || [];
       purchases.push(productId);
       player.round.set("purchases", purchases);
@@ -27,31 +45,21 @@ export function ChoiceStage() {
     }
   };
 
-  // Render function for consumer to view products and make purchases
   const renderProductFeed = () => {
-    // Filter out the current player and only include producers
     return players
       .filter(p => p.get("role") === "producer")
-      .map((producer, index) => {
-        const productQuality = producer.round.get("productQuality");
-        const adStrategy = producer.round.get("adStrategy");
-        const price = producer.round.get("price"); // Replace with actual logic to get price
-
-        return (
-          <div key={index} className="product-card" style={styles.productCard}>
-            <h4>Seller: {producer.id}</h4>
-            <h3>{`Product ${index + 1}`}</h3>
-            <p>Advertised Quality: {productQuality}</p>
-            <p>Advertisement Strategy: {adStrategy}</p>
-            <p>Price: {price}</p>
-            <button onClick={() => handlePurchase(price, `Product ${index + 1}`)}>Buy</button>
-          </div>
-        );
-      });
+      .map((producer, index) => (
+        <ConsumerProductCard 
+          key={index} 
+          producer={producer} 
+          index={index} 
+          handlePurchase={handlePurchase}
+          wallet={wallet} 
+        />
+      ));
   };
 
   useEffect(() => {
-    // Automatically submit for producers at the start of the stage
     if (role === "producer") {
       player.stage.set("submit", true);
     }
@@ -86,11 +94,37 @@ export function ChoiceStage() {
   return <div>Unknown role</div>;
 }
 
-// Styling for the product feed, cards, wallet display, and proceed button
 const styles = {
-  // ... (include other styles from previous example)
-  proceedButton: {
-    // ... (style your button accordingly)
+  waitingScreen: {
+    // Styles for the waiting screen
   },
-  // ... (include other styles from previous example)
+  walletDisplay: {
+    // Styles for wallet display
+  },
+  productFeed: {
+    // Styles for the product feed
+  },
+  productCard: {
+    // Styles for the product card
+    border: "1px solid #ddd",
+    boxShadow: "0 4px 8px rgba(0,0,0,0.1)",
+    padding: "20px",
+    borderRadius: "8px",
+    width: "300px",
+    textAlign: "center",
+    backgroundColor: "#fff",
+    margin: "0 auto",
+  },
+  productImage: {
+    maxWidth: '100%', // Limits the width, scales down if necessary
+    maxHeight: '20rem', // Adjust this value as needed
+    height: 'auto', // Maintains the aspect ratio
+    display: 'block', // Ensures the image is a block-level element
+    margin: '0 auto', // Centers the image if it's smaller than the container
+    marginBottom: '10px',
+  },
+  proceedButton: {
+    // Styles for the proceed button
+  },
+  // Add other styles as needed
 };
