@@ -26,20 +26,14 @@ function ProductCard({ producer, index }) {
   );
 }
 
-function WalletDisplay({ wallet }) {
-    return (
-      <div style={styles.walletBox}>
-        <span role="img" aria-label="wallet">💰</span>
-        Wallet: ${wallet.toFixed(2)}
-      </div>
-    );
-  }
 
-  
+
+
 export function DeliberateStage() {
   const player = usePlayer();
   const players = usePlayers();
   const role = player.get("role");
+  const [wallet, setWallet] = useState(player.get("wallet") || 0);
 
   useEffect(() => {
     if (role === "producer") {

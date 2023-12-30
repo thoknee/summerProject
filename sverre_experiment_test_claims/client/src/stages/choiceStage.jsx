@@ -22,6 +22,15 @@ function ConsumerProductCard({ producer, index, handlePurchase, wallet }) {
   );
 }
 
+function WalletDisplay({ wallet }) {
+    return (
+      <div style={styles.walletBox}>
+        <span role="img" aria-label="wallet">💰</span>
+        Wallet: ${wallet.toFixed(2)}
+      </div>
+    );
+  }
+
 export function ChoiceStage() {
   const player = usePlayer();
   const players = usePlayers();
@@ -82,9 +91,7 @@ export function ChoiceStage() {
     return (
       <div>
         <h2>Advertisements</h2>
-        <div style={styles.walletDisplay}>
-          <span role="img" aria-label="wallet">💰</span> Wallet: ${wallet.toFixed(2)}
-        </div>
+        <WalletDisplay wallet={wallet} />
         <div style={styles.productFeed}>{renderProductFeed()}</div>
         <button onClick={handleProceed} style={styles.proceedButton}>Proceed to Leaderboard</button>
       </div>
@@ -127,4 +134,14 @@ const styles = {
     // Styles for the proceed button
   },
   // Add other styles as needed
+  walletBox: {
+    position: 'fixed',
+    top: '25%',
+    left: '20px',
+    backgroundColor: 'white',
+    padding: '10px',
+    boxShadow: '0 4px 8px rgba(0,0,0,0.1)',
+    borderRadius: '8px',
+    zIndex: 1000,
+  },
 };
