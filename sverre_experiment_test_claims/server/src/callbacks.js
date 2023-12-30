@@ -1,7 +1,12 @@
 import { ClassicListenersCollector } from "@empirica/core/admin/classic";
 export const Empirica = new ClassicListenersCollector();
  
+// Empirica.gameInit(game =>{
+//   game.players.forEach((player, i) =>{
+//     player.set("score", 0);
 
+//   });
+// })
 
 Empirica.onGameStart(({ game }) => {
   const round = game.addRound({
@@ -13,6 +18,11 @@ Empirica.onGameStart(({ game }) => {
    round.addStage({ name: "choiceStage", duration: 24000 });
    round.addStage({ name: "feedbackStage", duration: 24000 });
    round.addStage({ name: "scoreboardStage", duration: 24000})
+
+   game.players.forEach((player, i) =>{
+    player.set("score", 0);
+
+  });
 });
 
 Empirica.onRoundStart(({ round }) => {});
@@ -22,10 +32,48 @@ Empirica.onStageStart(({ stage }) => {
 });
 
 Empirica.onStageEnded(({ stage }) => {
-  console.log("Stage object at onStageEnded:", stage); // To check the entire stage object
-  console.log(stage.currentGame.players)
- 
+  if (stage.get("name") === "choiceStage") {
+    console.log("choice stage just ended")
+    // Initialize a map to track units sold for each producer
+    const unitsSoldMap = new Map();
+
+    // Iterate over all players
+    for (const player of stage.currentGame.players) {
+      // Check if the player is a consumer
+      console.log("Player: ", player)
+      if (player.get("role") === "consumer") {
+        // Get the basket for the current consumer
+        const basket = player.round.get("basket") || {};
+        console.log("Basket of current consumer is: ", basket)
+
+        // Update the units sold for each producer based on the consumer's basket
+        for (const [productId, quantity] of Object.entries(basket)) {
+          // Extract the producer's ID from the productId
+          const producerId = productId; // If productId itself is the producerId, use it directly
+          const currentUnitsSold = unitsSoldMap.get(producerId) || 0;
+          unitsSoldMap.set(producerId, currentUnitsSold + quantity);
+        }
+      }
+    }
+
+    // Now, update each producer's unitsSold
+    for (const [producerId, unitsSold] of unitsSoldMap.entries()) {
+      // Find the producer by their ID
+      const producer = stage.currentGame.players.find(p => p.id === producerId);
+      console.log("Producer id is", producerId)
+      // Check if we found the producer and that they have the role 'producer'
+      if (producer && producer.get("role") === "producer") {
+        // Get existing unitsSold, if any, and add the new units sold to it
+        const existingUnitsSold = producer.round.get("unitsSold") || 0;
+        producer.round.set("unitsSold", existingUnitsSold + unitsSold);
+      }
+    }
+
+    console.log("Units sold for each producer updated successfully.");
+  }
 });
+
+
 
 
 Empirica.onRoundEnded(({ round }) => {});

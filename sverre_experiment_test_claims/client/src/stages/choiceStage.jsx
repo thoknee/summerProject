@@ -16,7 +16,8 @@ function ConsumerProductCard({ producer, index, handlePurchase, wallet }) {
       <img src={productImage} alt={`Product ${index + 1}`} style={styles.productImage} />
       <p>Quality: {productQuality}</p>
       <p>Price: ${price}</p>
-      <button style = {styles.buyButton} onClick={() => handlePurchase(price, `Product ${index + 1}`)} disabled={wallet < price}>Buy</button>
+      {/* <button style = {styles.buyButton} onClick={() => handlePurchase(price, `Product ${index + 1}`)} disabled={wallet < price}>Buy</button> */}
+      <button style = {styles.buyButton} onClick={() => handlePurchase(price, producer.id)} disabled={wallet < price}>Buy</button>
     </div>
   );
 }
@@ -40,29 +41,20 @@ export function ChoiceStage() {
     player.stage.set("submit", true);
   };
 
-  const handlePurchase = (cost, productId, producerId) => {
+  const handlePurchase = (cost, producerId) => {
     console.log("Consumer attempts to buy")
     if (wallet >= cost) {
       // Update wallet
       const newWalletValue = wallet - cost;
       setWallet(newWalletValue);
       player.set("wallet", newWalletValue);
-  
-      // Increment unitsSold for the producer
-      const producerIndex = players.findIndex(p => p.id === producerId);
-      if (producerIndex !== -1) {
-      // Directly access and update the unitsSold for the producer
-      let unitsSold = players[producerIndex].round.get("unitsSold") || 0;
-      unitsSold += 1; // Assuming each purchase is for one unit
-      players[producerIndex].round.set("unitsSold", unitsSold);
-    }
-  
+    
       // Update basket for the consumer
       let basket = player.round.get("basket") || {};
-      if (basket[productId]) {
-        basket[productId] += 1; // Increment quantity if already bought
+      if (basket[producerId]) {
+        basket[producerId] += 1; // Increment quantity if already bought
       } else {
-        basket[productId] = 1; // Add new product with quantity 1
+        basket[producerId] = 1; // Add new product with quantity 1
       }
       console.log("player basket updates", player.round.get("basket"))
       player.round.set("basket", basket);
@@ -81,7 +73,8 @@ export function ChoiceStage() {
           key={index} 
           producer={producer} 
           index={index} 
-          handlePurchase={handlePurchase}
+        //   handlePurchase={handlePurchase}
+          handlePurchase={(cost) => handlePurchase(cost, producer.id)}
           wallet={wallet} 
         />
       ));
