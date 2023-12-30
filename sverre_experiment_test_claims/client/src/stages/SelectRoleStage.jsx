@@ -21,7 +21,7 @@ export function SelectRolesStage() {
             player.round.set("producerName", "Tony's toothpaste");//hardcoded name
           }
         if (player.round.get("capital") === undefined) {
-          player.round.set("capital", 100);
+          player.round.set("capital", 20);
         }
         if (player.round.get("unitsSold") === undefined) {
           player.round.set("unitsSold", 0);

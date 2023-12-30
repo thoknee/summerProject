@@ -220,12 +220,12 @@ function ProducerWaitingMessage() {
     return (
         <div style={styles.waitingScreen}>
             <h2>🕒 Waiting Room 🕒</h2>
-            <p>As a savvy Producer, take a moment to ponder: </p>
+            <p>While you wait: </p>
             <ul>
                 <li>"How many will buy your product? 🤔🛒"</li>
                 <li>"What moves are your competitors making? 🚀🕵️‍♂️"</li>
             </ul>
-            <p>Keep an eye on the market trends and plan your next big strategy! 💡📈</p>
+            <p>Keep an eye on the market trends and plan your next steps! 💡📈</p>
             <div style={styles.emoji}>🏭🌟</div>
         </div>
     );

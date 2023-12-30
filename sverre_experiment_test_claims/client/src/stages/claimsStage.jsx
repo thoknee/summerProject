@@ -178,10 +178,15 @@ export function ClaimsStage() {
 
   const handleSubmit = () => {
     if (role === "producer" && productQuality && advertisedQuality) {
+      const productCost = player.round.get("productCost");
+      const unitsCanProduce = Math.floor(capital / productCost);
+
       player.round.set("productQuality", productQuality);
       player.round.set("advertisedQuality", advertisedQuality);
-      player.round.set("stock", parseInt(player.round.get("capital") / player.round.get("productCost")))
-      console.log("Stock of this player is", parseInt(player.round.get("capital") / player.round.get("productCost")))
+      player.round.set("stock", unitsCanProduce);
+      player.round.set("capital", capital - (unitsCanProduce * productCost)); // Deduct the production cost from capital
+
+      console.log("Stock of this player is", unitsCanProduce);
       player.stage.set("submit", true);
     } else {
       alert("Please select both product quality and the quality to advertise before proceeding.");
