@@ -21,7 +21,12 @@ Empirica.onStageStart(({ stage }) => {
   // calculateAdvertiserScore(stage);
 });
 
-Empirica.onStageEnded(({ stage }) => {});
+Empirica.onStageEnded(({ stage }) => {
+  console.log("Stage object at onStageEnded:", stage); // To check the entire stage object
+  console.log(stage.currentGame.players)
+ 
+});
+
 
 Empirica.onRoundEnded(({ round }) => {});
 

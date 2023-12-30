@@ -168,7 +168,7 @@ export function ClaimsStage() {
   if (role === "producer") {
     return (
       <div style={styles.producerScreen}>
-        <br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/>  
+        <br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/> 
         <h1><b>Instructions:</b></h1>
         
         <h4>In this stage you will choose what quality of toothpaste to produce and how you want to advertise it. <br/> Note: Your goal is to maximize your profits.</h4>

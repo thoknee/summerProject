@@ -103,7 +103,7 @@ export function ChoiceStage() {
       <div style={styles.waitingScreen}>
         <h2>Waiting Screen</h2>
         <p>Wait for consumers to make their choices...</p>
-        <p>You have currently sold {unitsSold} units.</p>
+        <p>When they are done you will be taken to the next round. Press proceed when you have read this.</p>
         <button onClick={handleProceed} style={styles.proceedButton}>Proceed to next round</button>
       </div>
     );
