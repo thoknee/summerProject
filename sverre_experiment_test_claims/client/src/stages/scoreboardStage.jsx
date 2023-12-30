@@ -25,16 +25,14 @@ export function ScoreboardStage() {
             <th>ID</th>
             <th>Role</th>
             <th>Score</th>
-            
           </tr>
         </thead>
         <tbody>
           {sortedPlayers.map((p) => (
-            <tr key={p.id} style={styles.tableRow}>
+            <tr key={p.id} style={p.id === player.id ? styles.highlightedRow : styles.tableRow}>
               <td>{p.id}</td>
               <td>{p.get("role")}</td>
               <td>{p.get("score")}</td>
-              
             </tr>
           ))}
         </tbody>
@@ -43,6 +41,7 @@ export function ScoreboardStage() {
     </div>
   );
 }
+
 
 const styles = {
     proceedButton: {
@@ -90,6 +89,11 @@ const styles = {
   },
   td: {
     borderBottom: '1px solid #ddd',
+    padding: '12px', // Increased padding
+  },
+  highlightedRow: {
+    borderBottom: '1px solid #ddd',
+    backgroundColor: '#e6f7ff', // Light blue background for the current player's row
     padding: '12px', // Increased padding
   }
 

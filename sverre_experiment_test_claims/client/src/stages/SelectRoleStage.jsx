@@ -135,3 +135,19 @@ function RoleOption({ role, selectedRole, onRoleChange }) {
 
  {/* <RoleOption role="consumer" selectedRole={selectedRole} onRoleChange={handleRoleChange} />
       <RoleOption role="producer" selectedRole={selectedRole} onRoleChange={handleRoleChange} /> */}
+
+const styles = {
+    waitingScreen: {
+        textAlign: 'center',
+        padding: '20px',
+        backgroundColor: '#f0f0f0',
+        borderRadius: '8px',
+        boxShadow: '0 4px 8px rgba(0,0,0,0.2)',
+        maxWidth: '500px',
+        margin: '20px auto',
+    },
+    emoji: {
+        fontSize: '2rem',
+        marginTop: '20px',
+    }
+}

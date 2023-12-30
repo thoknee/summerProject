@@ -124,10 +124,10 @@ function InfoDisplay({ player, capital }) {
         Advertise as <b>{adQuality ? adQuality : "..."}</b>  quality at a price of <b>${productPrice ? productPrice : "..."}</b>
         <br/>
         <span role="img" aria-label="units">💲 </span>
-        Profit per unit sold: <b>${profit}</b>
+        Profit per unit sold: <b>${profit ? profit : "..."}</b>
         <br/>
         <span role="img" aria-label="units">💰 </span>
-        Profit if you sell everything: <b>${profit*unitsAmount}</b>
+        Profit if you sell everything: <b>${profit*unitsAmount ? profit*unitsAmount : "..."}</b>
        
       </div>
     );
@@ -156,11 +156,11 @@ export function ClaimsStage() {
   const [advertisedQuality, setAdvertisedQuality] = useState("");
   const capital = player.round.get("capital")
 
-  useEffect(() => {
-    if (role === "consumer") {
-      player.stage.set("submit", true);
-    }
-  }, [player, role]);
+//   useEffect(() => {
+//     if (role === "consumer") {
+//       player.stage.set("submit", true);
+//     }
+//   }, [player, role]);
 
   const handleQualitySelection = (quality) => {
     setProductQuality(quality);
@@ -175,6 +175,11 @@ export function ClaimsStage() {
     player.round.set("adQuality", quality);
     player.round.set("productPrice", price)
   };
+
+  const handleProceed = () => {
+    player.stage.set("submit", true);
+  };
+
 
   const handleSubmit = () => {
     if (role === "producer" && productQuality && advertisedQuality) {
@@ -200,8 +205,8 @@ export function ClaimsStage() {
   if (role === "consumer") {
     return (
       <div style={styles.waitingScreen}>
-        <h2>Waiting Screen</h2>
-        <p>Producers are currently choosing what to produce. Please wait.</p>
+        <ConsumerWaitingMessage/>
+        <button onClick={handleProceed} style={styles.proceedButton}>Proceed to next round</button>
       </div>
     );
   }
@@ -235,6 +240,24 @@ export function ClaimsStage() {
 
   return <div>Unknown role</div>;
 }
+
+
+function ConsumerWaitingMessage() {
+    return (
+        <div style={styles.waitingScreen}>
+            <h2>🕒 Waiting Room 🕒</h2>
+            <p>While you wait: </p>
+            <ul>
+                <li>"What products will be available? 🤔🛍️"</li>
+                <li>"Can you spot the best deals? 🕵️🔍"</li>
+            </ul>
+            <p>Get ready to make smart choices and find the best products! 🧠🎯</p>
+            <div style={styles.emoji}>🛒🌟</div>
+        </div>
+    );
+}
+
+
 
 // Styles
 const styles = {
@@ -293,7 +316,7 @@ const styles = {
   infoBox: {
     position: 'fixed',
     bottom: '20px', // Position it 20px from the bottom
-    left: '60%', // Center horizontally
+    left: '80%', // Center horizontally
     transform: 'translateX(-50%)', // Adjust for centering
     backgroundColor: 'white',
     padding: '10px',
@@ -303,8 +326,33 @@ const styles = {
   },
   
   waitingScreen: {
-    // Styles for the waiting screen
-    
-  }
+    textAlign: 'center',
+    padding: '20px',
+    backgroundColor: '#f0f0f0',
+    borderRadius: '8px',
+    boxShadow: '0 4px 8px rgba(0,0,0,0.2)',
+    maxWidth: '500px',
+    margin: '20px auto',
+},
+emoji: {
+    fontSize: '2rem',
+    marginTop: '20px',
+},
+proceedButton: {
+    backgroundColor: '#4CAF50', // Green background as in submitButton
+    color: 'white', // White text
+    padding: '12px 24px', // Generous padding for better touch area
+    fontSize: '16px', // Slightly larger font size
+    borderRadius: '5px', // Rounded corners
+    border: 'none', // Remove default border
+    cursor: 'pointer', // Cursor changes to pointer to indicate it's clickable
+    boxShadow: '0 4px #2e7d32', // Shadow effect for depth, darker than background
+    transition: 'all 0.2s ease-in-out', // Smooth transition for hover effects
+  
+    ':hover': {
+      backgroundColor: '#45a049', // Slightly lighter green when hovered
+      boxShadow: '0 2px #2e7d32', // Adjust shadow for hover effect
+    }
+  },
   // ...other styles you might have
 };
