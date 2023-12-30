@@ -12,6 +12,7 @@ Empirica.onGameStart(({ game }) => {
    round.addStage({ name: "deliberateStage", duration: 24000 });
    round.addStage({ name: "choiceStage", duration: 24000 });
    round.addStage({ name: "feedbackStage", duration: 24000 });
+   round.addStage({ name: "scoreboardStage", duration: 24000})
 });
 
 Empirica.onRoundStart(({ round }) => {});

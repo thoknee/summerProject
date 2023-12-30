@@ -13,6 +13,7 @@ import { ClaimsStage } from "./stages/claimsStage";
 import { DeliberateStage } from "./stages/deliberateStage";
 import { ChoiceStage } from "./stages/choiceStage";
 import { FeedbackStage } from "./stages/feedbackStage";
+import { ScoreboardStage } from "./stages/scoreboardStage";
 
 export function Stage() {
   const player = usePlayer();
@@ -44,6 +45,8 @@ if (player.stage.get("submit")) {
       return <ChoiceStage />
     case "feedbackStage":
       return <FeedbackStage />
+    case "scoreboardStage":
+      return <ScoreboardStage />
     default:
       return <Loading />;
   }

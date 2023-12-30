@@ -49,12 +49,13 @@ export function ChoiceStage() {
       player.set("wallet", newWalletValue);
   
       // Increment unitsSold for the producer
-      const producer = players.find(p => p.id === producerId);
-      if (producer) {
-        let unitsSold = producer.round.get("unitsSold") || 0;
-        unitsSold += 1; // Assuming each purchase is for one unit
-        producer.round.set("unitsSold", unitsSold);
-      }
+      const producerIndex = players.findIndex(p => p.id === producerId);
+      if (producerIndex !== -1) {
+      // Directly access and update the unitsSold for the producer
+      let unitsSold = players[producerIndex].round.get("unitsSold") || 0;
+      unitsSold += 1; // Assuming each purchase is for one unit
+      players[producerIndex].round.set("unitsSold", unitsSold);
+    }
   
       // Update basket for the consumer
       let basket = player.round.get("basket") || {};
@@ -63,6 +64,7 @@ export function ChoiceStage() {
       } else {
         basket[productId] = 1; // Add new product with quantity 1
       }
+      console.log("player basket updates", player.round.get("basket"))
       player.round.set("basket", basket);
   
     } else {
@@ -85,21 +87,24 @@ export function ChoiceStage() {
       ));
   };
 
-  useEffect(() => {
-    if (role === "producer") {
-      player.stage.set("submit", true);
-    }
-  }, [player, role]);
+//   useEffect(() => {
+//     if (role === "producer") {
+//       player.stage.set("submit", true);
+//     }
+//   }, [player, role]);
 
   if (!role) {
     return <div>Loading...</div>;
   }
 
   if (role === "producer") {
+    let unitsSold = player.round.get("unitsSold")
     return (
       <div style={styles.waitingScreen}>
         <h2>Waiting Screen</h2>
-        <p>Wait for consumers to make their choices.</p>
+        <p>Wait for consumers to make their choices...</p>
+        <p>You have currently sold {unitsSold} units.</p>
+        <button onClick={handleProceed} style={styles.proceedButton}>Proceed to next round</button>
       </div>
     );
   }
@@ -151,9 +156,7 @@ const styles = {
     margin: '0 auto', // Centers the image if it's smaller than the container
     marginBottom: '10px',
   },
-  proceedButton: {
-    // Styles for the proceed button
-  },
+ 
   // Add other styles as needed
   walletBox: {
     position: 'fixed',
