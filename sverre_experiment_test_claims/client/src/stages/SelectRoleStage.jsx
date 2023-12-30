@@ -10,14 +10,42 @@ export function SelectRolesStage() {
     setSelectedRole(event.target.value);
   }
 
-  function handleSubmit() {
+  function handleSubmit() {// initializing variables here. Might be done server side in the future
     if (selectedRole) {
       player.set("role", selectedRole);
+      
+      if (selectedRole === "producer") {
+        if (player.round.get("producerName") === undefined) {//hardcoded name
+            player.round.set("producerName", "Tony's toothpaste");
+          }
+        if (player.round.get("capital") === undefined) {
+          player.round.set("capital", 100);
+        }
+        if (player.round.get("unitsSold") === undefined) {
+          player.round.set("unitsSold", 0);
+        }
+        if (player.round.get("adQuality") === undefined) {
+          player.round.set("adQuality", "");
+        }
+        if (player.round.get("productQuality") === undefined) {
+          player.round.set("productQuality", "");
+        }
+      } else if (selectedRole === "consumer") {
+        if (player.round.get("wallet") === undefined) {
+            console.log("Setting starting value for wallet")
+          player.round.set("wallet", 100);
+        }
+        if (player.round.get("basket") === undefined) {
+          player.round.set("basket", {});
+        }
+      }
+  
       player.stage.set("submit", true);
     } else {
       alert("Please select a role before proceeding.");
     }
   }
+  
 
   return (
     <div className="md:min-w-96 lg:min-w-128 xl:min-w-192 flex flex-col items-center space-y-10">

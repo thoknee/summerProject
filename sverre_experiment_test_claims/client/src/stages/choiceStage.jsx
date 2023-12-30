@@ -3,21 +3,20 @@ import { usePlayer, usePlayers } from "@empirica/core/player/classic/react";
 
 function ConsumerProductCard({ producer, index, handlePurchase, wallet }) {
   const productQuality = producer.round.get("productQuality");
-  const adStrategy = producer.round.get("adStrategy");
-  const price = producer.round.get("price"); // Replace with actual logic to get price
+  const price = producer.round.get("productPrice"); // Replace with actual logic to get price
   const productImage = productQuality === "high" 
     ? "graphics/PremiumToothpasteAI.png" // High-quality image path
     : "graphics/StandardToothpasteAI.png"; // Low-quality image path
 
   return (
     <div className="product-card" style={styles.productCard}>
+      <h3>{`Ad # ${index + 1}`}</h3>
       <h4>Seller: {producer.id}</h4>
-      <h3>{`Product ${index + 1}`}</h3>
+      <h3>{producer.round.get("producerName")}</h3>
       <img src={productImage} alt={`Product ${index + 1}`} style={styles.productImage} />
-      <p>Advertised Quality: {productQuality}</p>
-      <p>Advertisement Strategy: {adStrategy}</p>
-      <p>Price: {price}</p>
-      <button onClick={() => handlePurchase(price, `Product ${index + 1}`)} disabled={wallet < price}>Buy</button>
+      <p>Quality: {productQuality}</p>
+      <p>Price: ${price}</p>
+      <button style = {styles.buyButton} onClick={() => handlePurchase(price, `Product ${index + 1}`)} disabled={wallet < price}>Buy</button>
     </div>
   );
 }
@@ -35,24 +34,42 @@ export function ChoiceStage() {
   const player = usePlayer();
   const players = usePlayers();
   const role = player.get("role");
-  const [wallet, setWallet] = useState(player.get("wallet") || 0);
+  const [wallet, setWallet] = useState(player.round.get("wallet") || 0);
 
   const handleProceed = () => {
     player.stage.set("submit", true);
   };
 
-  const handlePurchase = (cost, productId) => {
+  const handlePurchase = (cost, productId, producerId) => {
+    console.log("Consumer attempts to buy")
     if (wallet >= cost) {
+      // Update wallet
       const newWalletValue = wallet - cost;
       setWallet(newWalletValue);
       player.set("wallet", newWalletValue);
-      let purchases = player.round.get("purchases") || [];
-      purchases.push(productId);
-      player.round.set("purchases", purchases);
+  
+      // Increment unitsSold for the producer
+      const producer = players.find(p => p.id === producerId);
+      if (producer) {
+        let unitsSold = producer.round.get("unitsSold") || 0;
+        unitsSold += 1; // Assuming each purchase is for one unit
+        producer.round.set("unitsSold", unitsSold);
+      }
+  
+      // Update basket for the consumer
+      let basket = player.round.get("basket") || {};
+      if (basket[productId]) {
+        basket[productId] += 1; // Increment quantity if already bought
+      } else {
+        basket[productId] = 1; // Add new product with quantity 1
+      }
+      player.round.set("basket", basket);
+  
     } else {
       alert("Not enough funds to complete this purchase.");
     }
   };
+  
 
   const renderProductFeed = () => {
     return players
@@ -90,10 +107,14 @@ export function ChoiceStage() {
   if (role === "consumer") {
     return (
       <div>
+        <br/><br/><br/><br/><br/><br/><br/><br/><br/><br/>
         <h2>Advertisements</h2>
+        <h3>You can only buy if you have enough money in your wallet.</h3>
         <WalletDisplay wallet={wallet} />
         <div style={styles.productFeed}>{renderProductFeed()}</div>
-        <button onClick={handleProceed} style={styles.proceedButton}>Proceed to Leaderboard</button>
+        <br/><br/>
+        <button onClick={handleProceed} style={styles.proceedButton}>Proceed to next round</button>
+        <br/><br/><br/><br/>
       </div>
     );
   }
@@ -144,4 +165,46 @@ const styles = {
     borderRadius: '8px',
     zIndex: 1000,
   },
+  buyButton: {
+    backgroundColor: '#008CBA', // Blue background
+    color: 'white', // White text
+    padding: '10px 20px', // Padding
+    fontSize: '14px', // Font size
+    borderRadius: '4px', // Rounded corners
+    border: 'none', // Remove default border
+    cursor: 'pointer', // Cursor to pointer
+    boxShadow: '0 3px #005f73', // Shadow effect for depth
+    transition: 'all 0.2s ease', // Smooth transition for hover effects
+    margin: '10px 0', // Margin top and bottom
+  
+    ':hover': {
+      backgroundColor: '#0077b6', // Slightly lighter blue when hovered
+      boxShadow: '0 2px #005f73', // Adjust shadow for hover effect
+    },
+  
+    ':disabled': {
+      backgroundColor: '#cccccc', // Disabled state color
+      cursor: 'not-allowed', // Change cursor for disabled state
+      boxShadow: 'none',
+    }
+  },
+
+  proceedButton: {
+    backgroundColor: '#4CAF50', // Green background as in submitButton
+    color: 'white', // White text
+    padding: '12px 24px', // Generous padding for better touch area
+    fontSize: '16px', // Slightly larger font size
+    borderRadius: '5px', // Rounded corners
+    border: 'none', // Remove default border
+    cursor: 'pointer', // Cursor changes to pointer to indicate it's clickable
+    boxShadow: '0 4px #2e7d32', // Shadow effect for depth, darker than background
+    transition: 'all 0.2s ease-in-out', // Smooth transition for hover effects
+  
+    ':hover': {
+      backgroundColor: '#45a049', // Slightly lighter green when hovered
+      boxShadow: '0 2px #2e7d32', // Adjust shadow for hover effect
+    }
+  }
+  
+  
 };

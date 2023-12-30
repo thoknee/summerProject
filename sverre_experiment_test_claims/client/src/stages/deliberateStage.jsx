@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { usePlayer, usePlayers } from "@empirica/core/player/classic/react";
 
 function ProductCard({ producer, index }) {
