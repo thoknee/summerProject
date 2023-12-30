@@ -2,27 +2,23 @@ import { usePlayer } from "@empirica/core/player/classic/react";
 import React, { useState } from "react";
 import { Button } from "../components/Button";
 import { useGame } from "@empirica/core/player/classic/react";
+import { usePlayers } from "@empirica/core/player/classic/react";
+//import { a } from "@unocss/preset-mini/dist/utilities-a87209ad.js";
 
 export function SelectRolesStage() {
   const player = usePlayer();
   const [selectedRole, setSelectedRole] = useState("");
+  
+  //this is how we get factor variables
   const game = useGame();
   const treatment = game.get("treatment");
-
-  const shareOfProducers = treatment.producerPercentage//(game.producerPercentage ? game.producerPercentage : 0.5)
-  const playerCount = treatment.playerCount
-
-  let numberOfProducers = Math.round(shareOfProducers * playerCount)
-  if (numberOfProducers === 0){
-    numberOfProducers = 1;
-  }
-  let numberOfConsumers = playerCount - numberOfProducers
+  const shareOfProducers = treatment.producerPercentage//factor
 
   function handleRoleChange(event) {
     setSelectedRole(event.target.value);
-  }
+    player.set("role", event.target.value);
 
-  
+  }
 
   function handleSubmit() {// initializing variables here. Might be done server side in the future
     if (selectedRole) {
@@ -62,37 +58,31 @@ export function SelectRolesStage() {
 
   return (
     <div className="md:min-w-96 lg:min-w-128 xl:min-w-192 flex flex-col items-center space-y-10">
-      <p>Choose to play as consumer or producer</p>
-      { <p>In this game there will be {numberOfProducers} producers and {numberOfConsumers} consumers.</p> }
-
-      <div>
-        <label>
-          <input
-            type="radio"
-            name="role"
-            value="consumer"
-            checked={selectedRole === "consumer"}
-            onChange={handleRoleChange}
-          />
-          Consumer
-        </label>
-      </div>
-
-      <div>
-        <label>
-          <input
-            type="radio"
-            name="role"
-            value="producer"
-            checked={selectedRole === "producer"}
-            onChange={handleRoleChange}
-          />
-          Producer
-        </label>
-      </div>
+      {/* <p>Choose to play as consumer or producer</p> */}
+      <p>You will play as a {player.get("role")}.</p>    
+      {/* <RoleOption role="consumer" selectedRole={selectedRole} onRoleChange={handleRoleChange} />
+      <RoleOption role="producer" selectedRole={selectedRole} onRoleChange={handleRoleChange} /> */}
       <Button handleClick={handleSubmit} primary>
-        I'm done!
+        I'm ready!
       </Button>
     </div>
   );
 }
+
+
+function RoleOption({ role, selectedRole, onRoleChange }) {
+    return (
+      <div>
+        <label>
+          <input
+            type="radio"
+            name="role"
+            value={role}
+            checked={selectedRole === role}
+            onChange={onRoleChange}
+          />
+          {role.charAt(0).toUpperCase() + role.slice(1)}
+        </label>
+      </div>
+    );
+  }

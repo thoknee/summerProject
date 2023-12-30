@@ -1,15 +1,11 @@
 import { ClassicListenersCollector } from "@empirica/core/admin/classic";
 export const Empirica = new ClassicListenersCollector();
- 
-// Empirica.gameInit(game =>{
-//   game.players.forEach((player, i) =>{
-//     player.set("score", 0);
+import { usePlayers } from "@empirica/core";
+import { useGame } from "@empirica/core";
 
-//   });
-// })
-
+//On game stars runs after when desired number of players have joined the lobby
 Empirica.onGameStart(({ game }) => {
-  const treatment = game.get("treatment");
+  //Set up the initial rounds and stages
   const round = game.addRound({
     name: `Round`,
    });
@@ -19,22 +15,30 @@ Empirica.onGameStart(({ game }) => {
    round.addStage({ name: "choiceStage", duration: 24000 });
    round.addStage({ name: "feedbackStage", duration: 24000 });
    round.addStage({ name: "scoreboardStage", duration: 24000})
-
+   
+   //Sets each players starting score to 0
    game.players.forEach((player, i) =>{
     player.set("score", 0);
-
   });
+  //Randomly assign roles. Uses the factor "producerPercentage" to determine proportion of consumers.
+  assignRoles(game)
+
 });
 
 Empirica.onRoundStart(({ round }) => {});
 
 Empirica.onStageStart(({ stage }) => {
-  // calculateAdvertiserScore(stage);
+  if (stage.get("name") === "selectRoleStage"){
+    // numOfCurrentPlayers = usePlayers().length
+    // console.log(numOfCurrentPlayers)
+    console.log("assigning...")
+
+  }
 });
 
 Empirica.onStageEnded(({ stage }) => {
   if (stage.get("name") === "choiceStage") {
-    console.log("choice stage just ended")
+    console.log("Choice stage just ended")
     // Initialize a map to track units sold for each producer
     const unitsSoldMap = new Map();
 
@@ -75,8 +79,6 @@ Empirica.onStageEnded(({ stage }) => {
         const unitsSold = player.round.get("unitsSold") || 0; 
         const profit = unitsSold * (productPrice - productCost); // Simplified profit calculation
         producer.set("score", capital + profit)
-
-         //update score
       }
     }
 
@@ -87,44 +89,37 @@ Empirica.onStageEnded(({ stage }) => {
 });
 
 
-
-
 Empirica.onRoundEnded(({ round }) => {});
 
 Empirica.onGameEnded(({ game }) => {});
+
+function updateSalesCount(){
+  console.log("updateSalesCountFunction")
+}
+
+function assignRoles(game) {
+  const treatment = game.get("treatment");
+  const producerPercentage = treatment.producerPercentage;
+  const players = game.players;
+  const playersInGame = players.length;
+  let numberOfProducers = Math.round(producerPercentage * playersInGame);
+  if (numberOfProducers === 0) {
+    numberOfProducers = 1;
+  }
+
+  // Shuffle the array of players to randomize the order
+  const shuffledPlayers = [...players].sort(() => 0.5 - Math.random());
+
+  // Assign roles
+  shuffledPlayers.forEach((player, index) => {
+    const role = index < numberOfProducers ? "producer" : "consumer";
+    player.set("role", role);
+    console.log("Plauyer: ", player)
+    console.log("Has role: ", role)
+  });
+}
 
 function getRandomInt(max) {
   return Math.floor(Math.random() * max);
 }
 
-function calculateAdvertiserScore(stage) {
-  if (
-    stage.get("name") !== "Advertise" ||
-    stage.round.get("task") !== "advertise" ||
-    stage.get("name") !== "Advertise Again" ||
-    stage.round.get("task") !== "advertiseAgain"
-  ) {
-    return;
-  }
-
-  for (const player of stage.currentGame.players) {
-    console.log('calculating advertiser score')
-    let adQuality = player.get("adQuality")
-    let salesCount = 0
-    let randomDraw = 0
-    if (adQuality == "extraordinary") {
-      randomDraw = getRandomInt(100)
-      salesCount = randomDraw * 15;
-    } {
-      let randomDraw = getRandomInt(100)
-      salesCount = randomDraw * 10;
-    }
-
-    player.set("numBuyers", randomDraw);
-
-    let totalScore = player.get("score") || 0;
-    player.set("salesCount", salesCount);
-    player.set("score", totalScore + salesCount);
-    player.set("scoreUpdated", true)
-  }
-}
