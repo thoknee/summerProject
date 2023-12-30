@@ -7,19 +7,16 @@ export function SelectRolesStage() {
   const player = usePlayer();
   const [selectedRole, setSelectedRole] = useState("");
   const game = useGame();
-  console.log(game.playerCount)
+  const treatment = game.get("treatment");
 
+  const shareOfProducers = treatment.producerPercentage//(game.producerPercentage ? game.producerPercentage : 0.5)
+  const playerCount = treatment.playerCount
 
-  const shareOfProducers = (game.producerPercentage ? game.producerPercentage : 0.5)
-
-  console.log(shareOfProducers)
-  let numberOfProducers = Math.round(shareOfProducers * game.playerCount)
+  let numberOfProducers = Math.round(shareOfProducers * playerCount)
   if (numberOfProducers === 0){
     numberOfProducers = 1;
   }
-  let numberOfConsumers = game.playerCount - numberOfProducers
- 
-
+  let numberOfConsumers = playerCount - numberOfProducers
 
   function handleRoleChange(event) {
     setSelectedRole(event.target.value);
@@ -49,7 +46,6 @@ export function SelectRolesStage() {
         }
       } else if (selectedRole === "consumer") {
         if (player.round.get("wallet") === undefined) {
-            console.log("Setting starting value for wallet")
           player.round.set("wallet", 100);
         }
         if (player.round.get("basket") === undefined) {
@@ -67,7 +63,7 @@ export function SelectRolesStage() {
   return (
     <div className="md:min-w-96 lg:min-w-128 xl:min-w-192 flex flex-col items-center space-y-10">
       <p>Choose to play as consumer or producer</p>
-      {/* <p>In this game there will be {numberOfProducers} producers and {numberOfConsumers} consumers.</p> */}
+      { <p>In this game there will be {numberOfProducers} producers and {numberOfConsumers} consumers.</p> }
 
       <div>
         <label>

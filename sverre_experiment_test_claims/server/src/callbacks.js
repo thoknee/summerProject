@@ -9,6 +9,7 @@ export const Empirica = new ClassicListenersCollector();
 // })
 
 Empirica.onGameStart(({ game }) => {
+  const treatment = game.get("treatment");
   const round = game.addRound({
     name: `Round`,
    });

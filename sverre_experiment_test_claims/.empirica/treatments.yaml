@@ -21,10 +21,11 @@ treatments:
       desc: Single-player Game
       factors:
         playerCount: 1
+    - name: Three players
+      factors:
+        playerCount: 3
     - name: Two Players
       desc: Two-player Game
       factors:
         playerCount: 2
-    - name: Three players
-      factors:
-        playerCount: 3
+        producerPercentage: 0.5
