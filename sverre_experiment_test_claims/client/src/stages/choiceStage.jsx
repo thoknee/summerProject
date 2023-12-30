@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { usePlayer, usePlayers } from "@empirica/core/player/classic/react";
 
 function ConsumerProductCard({ producer, index, handlePurchase, wallet }) {
+  const producerStock = producer.round.get("stock") || 999
   const productQuality = producer.round.get("productQuality");
   const price = producer.round.get("productPrice"); // Replace with actual logic to get price
   const productImage = productQuality === "high" 
@@ -16,6 +17,7 @@ function ConsumerProductCard({ producer, index, handlePurchase, wallet }) {
       <img src={productImage} alt={`Product ${index + 1}`} style={styles.productImage} />
       <p>Quality: {productQuality}</p>
       <p>Price: ${price}</p>
+      <p>In stock: <b>{producerStock}</b></p>
       {/* <button style = {styles.buyButton} onClick={() => handlePurchase(price, `Product ${index + 1}`)} disabled={wallet < price}>Buy</button> */}
       <button style = {styles.buyButton} onClick={() => handlePurchase(price, producer.id)} disabled={wallet < price}>Buy</button>
     </div>
@@ -94,9 +96,7 @@ export function ChoiceStage() {
     let unitsSold = player.round.get("unitsSold")
     return (
       <div style={styles.waitingScreen}>
-        <h2>Waiting Screen</h2>
-        <p>Wait for consumers to make their choices...</p>
-        <p>When they are done you will be taken to the next round. Press proceed when you have read this.</p>
+        <ProducerWaitingMessage/>
         <button onClick={handleProceed} style={styles.proceedButton}>Proceed to next round</button>
       </div>
     );
@@ -121,9 +121,6 @@ export function ChoiceStage() {
 }
 
 const styles = {
-  waitingScreen: {
-    // Styles for the waiting screen
-  },
   walletDisplay: {
     // Styles for wallet display
   },
@@ -200,7 +197,37 @@ const styles = {
       backgroundColor: '#45a049', // Slightly lighter green when hovered
       boxShadow: '0 2px #2e7d32', // Adjust shadow for hover effect
     }
-  }
+  },
+  waitingScreen: {
+    textAlign: 'center',
+    padding: '20px',
+    backgroundColor: '#f0f0f0',
+    borderRadius: '8px',
+    boxShadow: '0 4px 8px rgba(0,0,0,0.2)',
+    maxWidth: '500px',
+    margin: '20px auto',
+},
+emoji: {
+    fontSize: '2rem',
+    marginTop: '20px',
+}
   
   
 };
+
+
+function ProducerWaitingMessage() {
+    return (
+        <div style={styles.waitingScreen}>
+            <h2>🕒 Waiting Room 🕒</h2>
+            <p>As a savvy Producer, take a moment to ponder: </p>
+            <ul>
+                <li>"How many will buy your product? 🤔🛒"</li>
+                <li>"What moves are your competitors making? 🚀🕵️‍♂️"</li>
+            </ul>
+            <p>Keep an eye on the market trends and plan your next big strategy! 💡📈</p>
+            <div style={styles.emoji}>🏭🌟</div>
+        </div>
+    );
+}
+

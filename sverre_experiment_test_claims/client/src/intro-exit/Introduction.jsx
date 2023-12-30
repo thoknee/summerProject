@@ -4,40 +4,33 @@ import { Button } from "../components/Button";
 export function Introduction({ next }) {
   return (
     <div className="mt-1 sm:mt-5 p-10">
+      <img src = ""/>
       <h1 className="text-lg leading-6 font-large text-gray-900" style={{ fontSize: '30px' }}>
         Marketplace Game Instructions
       </h1>
-      <div className="text-lg mt-10 mb-6">
-        Welcome to the Marketplace Game! In this game, you'll take on the role of either a producer or a consumer in a virtual market.
-        <br />
-        <strong>As a Producer:</strong>
-      </div>
-      <p>
-        - Determine the quality of the toothpaste you produce.
-      </p>
-      <p>
-        - Decide how to advertise your products and set their selling prices.
-      </p>
-      <p>
-        Your goal is to maximize profits, and you'll earn points based on the profits from your sales.
-      </p>
-      <div className="mt-10 mb-6">
-        <strong>As a Consumer:</strong>
-      </div>
-      <p>
-        - Assess advertisements to choose the toothpaste you wish to purchase, considering quality and price.
-      </p>
-      <p>
-        Your objective is to ensure value for money – the quality of the product should match the price you pay.
-      </p>
-      <p>
-        You'll earn points for making wise purchasing decisions that align with this principle.
-      </p>
+      <br/>
+      <GameIntroductionText/>
       <div style={{ marginTop: '30px' }}>
         <Button handleClick={next} autoFocus>
           <p>Next</p>
         </Button>
       </div>
+    </div>
+  );
+}
+
+function GameIntroductionText() {
+  return (
+    <div className="game-introduction">
+      <h2>🎉 Welcome to the Marketplace Adventure! 🌍</h2>
+      <br/>
+      <p>Welcome to a thrilling game of strategy and choice in the world of trade and commerce. In this game, you'll have the chance to play as either a creative <strong>Producer</strong> or a savvy <strong>Consumer</strong>.</p>
+
+      <p><strong>Producers</strong> craft and market products, balancing quality and cost to maximize profits. <strong>Consumers</strong> seek out the best deals, evaluating advertisements and products to make smart purchases.</p>
+
+      <p>Your decisions will shape your journey in this dynamic marketplace. Each role offers its own challenges and strategies.</p>
+      <br/>
+      <p>Are you ready to discover what the market holds for you? Let's dive in and find out! 🚀</p>
     </div>
   );
 }

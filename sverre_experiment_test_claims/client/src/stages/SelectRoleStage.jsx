@@ -3,7 +3,6 @@ import React, { useState } from "react";
 import { Button } from "../components/Button";
 import { useGame } from "@empirica/core/player/classic/react";
 import { usePlayers } from "@empirica/core/player/classic/react";
-//import { a } from "@unocss/preset-mini/dist/utilities-a87209ad.js";
 
 export function SelectRolesStage() {
   const player = usePlayer();
@@ -14,19 +13,12 @@ export function SelectRolesStage() {
   const treatment = game.get("treatment");
   const shareOfProducers = treatment.producerPercentage//factor
 
-  function handleRoleChange(event) {
-    setSelectedRole(event.target.value);
-    player.set("role", event.target.value);
-
-  }
-
-  function handleSubmit() {// initializing variables here. Might be done server side in the future
-    if (selectedRole) {
-      player.set("role", selectedRole);
-      
-      if (selectedRole === "producer") {
-        if (player.round.get("producerName") === undefined) {//hardcoded name
-            player.round.set("producerName", "Tony's toothpaste");
+  function handleSubmit() {// initializing variables here. Might be done server side in the future  
+    
+    //Producer initialization  
+    if (player.get("role") === "producer") {
+        if (player.round.get("producerName") === undefined) {
+            player.round.set("producerName", "Tony's toothpaste");//hardcoded name
           }
         if (player.round.get("capital") === undefined) {
           player.round.set("capital", 100);
@@ -40,9 +32,11 @@ export function SelectRolesStage() {
         if (player.round.get("productQuality") === undefined) {
           player.round.set("productQuality", "");
         }
-      } else if (selectedRole === "consumer") {
+      }
+      //Consumer initialization
+      else if (player.get("role") === "consumer") {
         if (player.round.get("wallet") === undefined) {
-          player.round.set("wallet", 100);
+          player.round.set("wallet", 20);
         }
         if (player.round.get("basket") === undefined) {
           player.round.set("basket", {});
@@ -50,18 +44,35 @@ export function SelectRolesStage() {
       }
   
       player.stage.set("submit", true);
-    } else {
-      alert("Please select a role before proceeding.");
-    }
+    
   }
-  
+  if (player.get("role") === "consumer"){
+    return(
+        <div className="md:min-w-96 lg:min-w-128 xl:min-w-192 flex flex-col items-center space-y-10 p-4">
+      <p>You will play as a <b>{player.get("role")}</b>!</p> 
+      <ConsumerInfo/>
+      <Button handleClick={handleSubmit} primary>
+        I'm ready!
+      </Button>
+    </div>
+    )
+  }
+
+  if (player.get("role") === "producer"){
+    return(
+        <div className="md:min-w-96 lg:min-w-128 xl:min-w-192 flex flex-col items-center space-y-10 p-4">
+      <p>You will play as a <b>{player.get("role")}</b>!</p> 
+      <ProducerInfo/>
+      <Button handleClick={handleSubmit} primary>
+        I'm ready!
+      </Button>
+    </div>
+    )
+  }
 
   return (
-    <div className="md:min-w-96 lg:min-w-128 xl:min-w-192 flex flex-col items-center space-y-10">
-      {/* <p>Choose to play as consumer or producer</p> */}
-      <p>You will play as a {player.get("role")}.</p>    
-      {/* <RoleOption role="consumer" selectedRole={selectedRole} onRoleChange={handleRoleChange} />
-      <RoleOption role="producer" selectedRole={selectedRole} onRoleChange={handleRoleChange} /> */}
+    <div className="md:min-w-96 lg:min-w-128 xl:min-w-192 flex flex-col items-center space-y-10 p-4">
+      <p>Role assignment failed. Contact research staff.</p>
       <Button handleClick={handleSubmit} primary>
         I'm ready!
       </Button>
@@ -86,3 +97,41 @@ function RoleOption({ role, selectedRole, onRoleChange }) {
       </div>
     );
   }
+
+  function ProducerInfo() {
+    return (
+      <div>
+        <p>🌟 <strong>Welcome Producers!</strong> 🌟</p>
+        
+        <p>As a producer, your main goal is to maximize your profits! 💰 Each round presents a new opportunity for you to shine. You get to decide what kind of products you'll produce and the best way to advertise them. Remember, premium products usually fetch a higher price! 💎</p>
+        <br/>
+        <p>Here's the catch: every round, you'll use all your capital (that's your hard-earned money 💵) to create products of the quality you choose. But be strategic! The consumers only learn about the true quality of your product after they buy it. So, think carefully about your production and advertising choices. 🤔</p>
+        <br/>
+        <p>And don't forget, you're not alone in this game! Other producers are out there, trying to make their mark just like you. Keep an eye on the competition while you plot your path to success. 🏭👀</p>
+        
+        <p>Are you ready to take on the challenge and become the top producer? Let's get started! 🚀🏆</p>
+      </div>
+    );
+  };
+  
+
+  function ConsumerInfo() {
+    return (
+        <div>
+            <p>🛒 <strong>Welcome Consumers!</strong> 🛒</p>
+            <br/>
+            <p>As a savvy consumer, your mission is to make smart buying decisions! 🧐 Every round is a new adventure in the marketplace, where you'll encounter a variety of products. Your goal is to get the best value for your money. Remember, not all that glitters is gold! 🌟</p>
+            <br/>
+            <p>Here's the twist: you'll be spending from your wallet 💸, but beware! The true quality of products is only revealed after purchase. So, use your intuition and make your choices wisely. Are the producers bluffing with their ads? Or is it really a deal of a lifetime? 🕵️‍♀️🕵️‍♂️</p>
+            <br/>
+            <p>Remember, you're competing against other consumers to be the most astute shopper. Keep an eye on your wallet and don't get swayed by every shiny ad! 🛍️💡</p>
+            <br/>
+            <p>Ready to embark on this shopping spree and make some clever purchases? Let's dive into the world of consumer wisdom! 🚀🛍️</p>
+        </div>
+    );
+};
+
+
+
+ {/* <RoleOption role="consumer" selectedRole={selectedRole} onRoleChange={handleRoleChange} />
+      <RoleOption role="producer" selectedRole={selectedRole} onRoleChange={handleRoleChange} /> */}

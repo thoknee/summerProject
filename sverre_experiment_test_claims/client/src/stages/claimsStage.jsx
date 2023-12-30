@@ -1,28 +1,32 @@
 import React, { useState, useEffect } from "react";
 import { usePlayer } from "@empirica/core/player/classic/react";
 
-function ProductQualitySelector({ selectedQuality, onSelectQuality }) {
+function ProductQualitySelector({ selectedQuality, onSelectQuality, player }) {
   const highQualityImg = "/graphics/PremiumToothpasteAI.png";
   const lowQualityImg = "/graphics/StandardToothpasteAI.png";
+  //Should maybe game. variables or factors in the future
+  const lowQualityProductionCost = 1
+  const highQualityProductionCost = 2
 
   return (
     <div>
       <h1><b>Choose what quality to produce</b></h1>
+      <br/>
       <div style={styles.choicesContainer}>
         <QualityOption
           quality="low"
           selectedQuality={selectedQuality}
           onSelectQuality={onSelectQuality}
-          label="Low Quality ⭐"
-          productCost = {4}
+          label="Low Quality 🏭⭐"
+          productCost = {lowQualityProductionCost}
           imageSrc={lowQualityImg}
         />
         <QualityOption
           quality="high"
           selectedQuality={selectedQuality}
           onSelectQuality={onSelectQuality}
-          label="High Quality ⭐⭐⭐"
-          productCost = {9}
+          label="High Quality 🏭⭐⭐⭐"
+          productCost = {highQualityProductionCost}
           imageSrc={highQualityImg}
         />
       </div>
@@ -52,17 +56,20 @@ function QualityOption({ quality, selectedQuality, onSelectQuality, label, produ
 function AdQualitySelector({ selectedQuality, onSelectQuality }) {
   const highQualityImg = "/graphics/PremiumToothpasteAI.png";
   const lowQualityImg = "/graphics/StandardToothpasteAI.png";
+  const lowQualityProductPrice = 3
+  const highQualityProductPrice = 7
 
   return (
     <div>
       <h1><b>Choose how you want to advertise your product</b></h1>
+      <br/>
       <div style={styles.choicesContainer}>
         <AdOption
           quality="low"
           selectedQuality={selectedQuality}
           onSelectQuality={onSelectQuality}
           label="Advertise as Low Quality 📢⭐"
-          marketPrice = {9}
+          marketPrice = {lowQualityProductPrice}
           imageSrc={lowQualityImg}
         />
         <AdOption
@@ -70,7 +77,7 @@ function AdQualitySelector({ selectedQuality, onSelectQuality }) {
           selectedQuality={selectedQuality}
           onSelectQuality={onSelectQuality}
           label="Advertise as High Quality 📢⭐⭐⭐"
-          marketPrice = {15}
+          marketPrice = {highQualityProductPrice}
           imageSrc={highQualityImg}
         />
       </div>
@@ -97,9 +104,36 @@ function AdOption({ quality, selectedQuality, onSelectQuality, label, marketPric
   );
 }
 
+function InfoDisplay({ player, capital }) {
+    const capitalethisround = player.round.get("capital")
+    const unitsAmount = parseInt(capital / player.round.get("productCost"))
+    const quality = player.round.get("productQuality")
+    const adQuality = player.round.get("adQuality")
+    const productPrice = player.round.get("productPrice")
+    const profit = player.round.get("productPrice") - player.round.get("productCost")
+    return (
+      <div style={styles.infoBox}>
+        <b>Choices summary</b> <br/>
+        <span role="img" aria-label="capital">💵</span>
+        Disposable capital for production: <b>${capitalethisround}</b>
+        <br/>
+        <span role="img" aria-label="units">🏭</span>
+        Produce {unitsAmount ? unitsAmount : "..."} <b>{quality}</b> quality units
+        <br/>
+        <span role="img" aria-label="units">📢 </span>
+        Advertise as <b>{adQuality ? adQuality : "..."}</b>  quality at a price of <b>${productPrice ? productPrice : "..."}</b>
+        <br/>
+        <span role="img" aria-label="units">💲 </span>
+        Profit per unit sold: <b>${profit}</b>
+        <br/>
+        <span role="img" aria-label="units">💰 </span>
+        Profit if you sell everything: <b>${profit*unitsAmount}</b>
+       
+      </div>
+    );
+  }
 export function ProfitMarginCalculator(  {producerPlayer} ){
 
-    //producerPlayer.round.set("name", "TonyToothpaste")
     return(
         <div>
             <div>You choose to produce a <b>{producerPlayer.round.get("productQuality")}</b> quality product
@@ -120,6 +154,7 @@ export function ClaimsStage() {
   const role = player.get("role");
   const [productQuality, setProductQuality] = useState("");
   const [advertisedQuality, setAdvertisedQuality] = useState("");
+  const capital = player.round.get("capital")
 
   useEffect(() => {
     if (role === "consumer") {
@@ -129,14 +164,14 @@ export function ClaimsStage() {
 
   const handleQualitySelection = (quality) => {
     setProductQuality(quality);
-    const cost = quality === "high" ? 9 : 4;
+    const cost = quality === "high" ? 2 : 1;
     player.round.set("productCost", cost);
     player.round.set("productQuality", quality)
   };
 
   const handleAdStrategySelection = (quality) => {
     setAdvertisedQuality(quality);
-    const price = quality === "high" ? 15 : 9;
+    const price = quality === "high" ? 7 : 3;
     player.round.set("adQuality", quality);
     player.round.set("productPrice", price)
   };
@@ -145,7 +180,8 @@ export function ClaimsStage() {
     if (role === "producer" && productQuality && advertisedQuality) {
       player.round.set("productQuality", productQuality);
       player.round.set("advertisedQuality", advertisedQuality);
-      //player.round.set("productQuality", quality)
+      player.round.set("stock", parseInt(player.round.get("capital") / player.round.get("productCost")))
+      console.log("Stock of this player is", parseInt(player.round.get("capital") / player.round.get("productCost")))
       player.stage.set("submit", true);
     } else {
       alert("Please select both product quality and the quality to advertise before proceeding.");
@@ -168,14 +204,16 @@ export function ClaimsStage() {
   if (role === "producer") {
     return (
       <div style={styles.producerScreen}>
-        <br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/> 
+        <br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/> <br/><br/> 
         <h1><b>Instructions:</b></h1>
         
         <h4>In this stage you will choose what quality of toothpaste to produce and how you want to advertise it. <br/> Note: Your goal is to maximize your profits.</h4>
         <br/>
+        { <InfoDisplay capital = {capital} player = {player}/> }
         <ProductQualitySelector
           selectedQuality={productQuality}
           onSelectQuality={handleQualitySelection}
+          player = {player}
         />
         
         <AdQualitySelector
@@ -183,8 +221,8 @@ export function ClaimsStage() {
           onSelectQuality={handleAdStrategySelection}
         />
 
-        <ProfitMarginCalculator producerPlayer={player}/>
-        <button onClick={handleSubmit} style={styles.submitButton}>Submit Choices</button>
+        {/* <ProfitMarginCalculator producerPlayer={player}/> */}
+        <button onClick={handleSubmit} style={styles.submitButton}>Submit choices and go to market</button>
         <br/><br/><br/>
       </div>
     );
@@ -196,7 +234,9 @@ export function ClaimsStage() {
 // Styles
 const styles = {
   producerScreen: {
-    paddingTop: '20px',
+    paddingTop: '40px',
+    paddingLeft: '40px',
+    paddingBottom: '80px'
   },
   choicesContainer: {
     display: 'flex',
@@ -244,6 +284,17 @@ const styles = {
       boxShadow: '0 2px #2e7d32', // Reduce the shadow to simulate being pressed
       transform: 'translateY(2px)', // Slightly shift the button down
     }
+  },
+  infoBox: {
+    position: 'fixed',
+    bottom: '20px', // Position it 20px from the bottom
+    left: '60%', // Center horizontally
+    transform: 'translateX(-50%)', // Adjust for centering
+    backgroundColor: 'white',
+    padding: '10px',
+    boxShadow: '0 4px 8px rgba(0,0,0,0.1)',
+    borderRadius: '8px',
+    zIndex: 1000,
   },
   
   waitingScreen: {
