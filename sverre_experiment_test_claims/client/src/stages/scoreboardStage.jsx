@@ -18,21 +18,23 @@ export function ScoreboardStage() {
 
   return (
     <div>
-      <h2 style={styles.heading}>Scoreboard</h2>
+      <h2 style={styles.heading}>Leaderboard</h2>
       <table style={styles.scoreboardTable}>
         <thead>
           <tr style={styles.tableHeader}>
             <th>ID</th>
-            <th>Score</th>
             <th>Role</th>
+            <th>Score</th>
+            
           </tr>
         </thead>
         <tbody>
           {sortedPlayers.map((p) => (
             <tr key={p.id} style={styles.tableRow}>
               <td>{p.id}</td>
-              <td>{p.get("score")}</td>
               <td>{p.get("role")}</td>
+              <td>{p.get("score")}</td>
+              
             </tr>
           ))}
         </tbody>
@@ -43,12 +45,25 @@ export function ScoreboardStage() {
 }
 
 const styles = {
-  proceedButton: {
-    // ... existing styles ...
-  },
+    proceedButton: {
+        backgroundColor: '#4CAF50', // Green background as in submitButton
+        color: 'white', // White text
+        padding: '12px 24px', // Generous padding for better touch area
+        fontSize: '16px', // Slightly larger font size
+        borderRadius: '5px', // Rounded corners
+        border: 'none', // Remove default border
+        cursor: 'pointer', // Cursor changes to pointer to indicate it's clickable
+        boxShadow: '0 4px #2e7d32', // Shadow effect for depth, darker than background
+        transition: 'all 0.2s ease-in-out', // Smooth transition for hover effects
+      
+        ':hover': {
+          backgroundColor: '#45a049', // Slightly lighter green when hovered
+          boxShadow: '0 2px #2e7d32', // Adjust shadow for hover effect
+        }
+},
   heading: {
     textAlign: 'center',
-    color: '#0056b3',
+    color: '#000000',
     fontSize: '24px',
     marginBottom: '20px',
     textTransform: 'uppercase',
@@ -57,8 +72,10 @@ const styles = {
   scoreboardTable: {
     width: '100%',
     borderCollapse: 'collapse',
+    borderSpacing: '15px', 
     marginTop: '20px',
     marginBottom: '20px',
+    fontSize: '1.2em', // Increase font size by 20%
   },
   tableHeader: {
     backgroundColor: '#003366', // Dark blue background
@@ -68,11 +85,12 @@ const styles = {
     borderBottom: '1px solid #ddd',
   },
   th: {
-    padding: '12px',
+    padding: '15px', // Increased padding
     textAlign: 'left',
   },
   td: {
     borderBottom: '1px solid #ddd',
-    padding: '8px',
+    padding: '12px', // Increased padding
   }
+
 };

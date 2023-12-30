@@ -66,11 +66,23 @@ Empirica.onStageEnded(({ stage }) => {
         // Get existing unitsSold, if any, and add the new units sold to it
         const existingUnitsSold = producer.round.get("unitsSold") || 0;
         producer.round.set("unitsSold", existingUnitsSold + unitsSold);
+        
+        //updating the score
+        const productPrice = player.round.get("productPrice")
+        const productCost = player.round.get("productCost")
+        const capital = player.round.get("capital")
+        const unitsSold = player.round.get("unitsSold") || 0; 
+        const profit = unitsSold * (productPrice - productCost); // Simplified profit calculation
+        producer.set("score", capital + profit)
+
+         //update score
       }
     }
 
     console.log("Units sold for each producer updated successfully.");
   }
+  
+
 });
 
 

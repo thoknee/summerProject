@@ -19,6 +19,7 @@ export function FeedbackStage() {
     const capital = player.round.get("capital")
     const unitsSold = player.round.get("unitsSold") || 0; // Replace with actual logic to get sales
     const profit = unitsSold * (productPrice - productCost); // Simplified profit calculation
+    
 
     return (
       <div>
