@@ -4,27 +4,33 @@ import { Button } from "../components/Button";
 export function Introduction({ next }) {
   return (
     <div className="mt-1 sm:mt-5 p-10">
-      <h1 className="text-lg leading-6 font-large text-gray-900" style={{'fontSize': '30px'}}>
-        Marketplace Instructions
+      <img src = ""/>
+      <h1 className="text-lg leading-6 font-large text-gray-900" style={{ fontSize: '30px' }}>
+        Marketplace Game Instructions
       </h1>
-      <div className="text-lg mt-10 mb-6">
-        {/* <p className="text-sm text-gray-500"> */}
-        <p>
-          In this marketplace, you will have to choose what your priorities are as a producer of toothpaste. You will be shown multiple products.
-        </p>
-        <br />
-          In <strong>each round of the game</strong>, you will:
-        <br />
-        <p>
-          (a) choose the quality of the product you produce. Choose how to advertise them. Choose what price you want to sell the product for.
-        </p>
-        <p> 
-          (b) obtain the results, gains and losses, based on the sales from the product you chose to advertise. 
-        </p>
+      <br/>
+      <GameIntroductionText/>
+      <div style={{ marginTop: '30px' }}>
+        <Button handleClick={next} autoFocus>
+          <p>Next</p>
+        </Button>
       </div>
-      <Button handleClick={next} autoFocus>
-        <p>Next</p>
-      </Button>
+    </div>
+  );
+}
+
+function GameIntroductionText() {
+  return (
+    <div className="game-introduction">
+      <h2>🎉 Welcome to the Marketplace Adventure! 🌍</h2>
+      <br/>
+      <p>Welcome to a thrilling game of strategy and choice in the world of trade and commerce. In this game, you'll have the chance to play as either a creative <strong>Producer</strong> or a savvy <strong>Consumer</strong>.</p>
+
+      <p><strong>Producers</strong> craft and market products, balancing quality and cost to maximize profits. <strong>Consumers</strong> seek out the best deals, evaluating advertisements and products to make smart purchases.</p>
+
+      <p>Your decisions will shape your journey in this dynamic marketplace. Each role offers its own challenges and strategies.</p>
+      <br/>
+      <p>Are you ready to discover what the market holds for you? Let's dive in and find out! 🚀</p>
     </div>
   );
 }
