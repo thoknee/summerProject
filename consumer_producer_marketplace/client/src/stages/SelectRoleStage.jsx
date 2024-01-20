@@ -15,7 +15,8 @@ export function SelectRolesStage() {
 
   function handleSubmit() {// initializing variables here. Might be done server side in the future  
     
-    //Producer initialization  
+    //Producer initialization
+    // TODO: Change how producerName is set so that it isn't hard coded
     if (player.get("role") === "producer") {
         if (player.round.get("producerName") === undefined) {
             player.round.set("producerName", "Tony's toothpaste");//hardcoded name
