@@ -15,14 +15,20 @@ export function SelectRolesStage() {
 
   function randomProducerName(){
       /*
-      * Randomly selects a name and a number and return it as the producer name.
+      * Randomly selects a name a number for the product name
       * */
-      const names = ["Ralph", "Mario", "Steve", "Michael", "David", "Aran",
+      const names = ["Ralph", "Mario", "Steve", "Dazai", "Jason", "Aran",
       "Lara", "Joseph", "Nathan", "Niko", "Ezio", "Kenneth", "Marlon", "Josue",
       "Admilton", "Isa", "Jerry", "Parker", "Wayne", "West", "Kent", "Allen", "Stark"];
-      const nums= Math.floor(Math.random() * 999) + 1;
       const chosenName = names[Math.floor(Math.random() * names.length)];
-      return `${chosenName}${nums}'s toothpaste`;
+
+      /*const adj = ["expired", "excellent", "weak", "obsolete", "premium", "cheap",
+        "superior", "crappy"]*/
+      //const chosenAdj = adj[Math.floor(Math.random() * adj.length)];
+
+      const nums= Math.floor(Math.random() * 999) + 1;
+
+      return `${chosenName}${nums}'s`;
   }
   function handleSubmit() {// initializing variables here. Might be done server side in the future  
     
