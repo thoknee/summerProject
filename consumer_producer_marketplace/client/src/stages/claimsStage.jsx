@@ -8,6 +8,7 @@ function ProductQualitySelector({ selectedQuality, onSelectQuality, player }) {
   const lowQualityProductionCost = 1
   const highQualityProductionCost = 2
 
+
   return (
     <div>
       <h1><b>Choose what quality to produce</b></h1>
@@ -85,53 +86,110 @@ function AdQualitySelector({ selectedQuality, onSelectQuality }) {
   );
 }
 
-function AdOption({ quality, selectedQuality, onSelectQuality, label, marketPrice, imageSrc }) {
-  return (
-    <div style={styles.choice}>
-      <label style={styles.label}>
-        <input
-          type="radio"
-          name="advertisedQuality"
-          value={quality}
-          checked={selectedQuality === quality}
-          onChange={() => onSelectQuality(quality)}
-        />
-        {label}
-      </label>
-      <p>Sell for market price of ${marketPrice}</p>
-      <img src={imageSrc} alt={`${quality} Quality Ad`} style={styles.image} />
-    </div>
-  );
+function WarrantSelector({ player, warrantAdded, setWarrantAdded }) {
+    return (
+        <div>
+            <div className="container" style={{
+                cursor: "pointer",
+                paddingLeft: "20px",
+                paddingRight: "20px",
+                paddingBottom: "20px",
+                paddingTop: "20px",
+                outline: warrantAdded ? "3px solid #6688FF" : "1px solid #AAAAAA",
+                outlineOffset: "3px",
+                borderRadius: "15px",
+                marginBottom: "20px",
+            }} onClick={_ => {
+                setWarrantAdded(!warrantAdded);
+                player.round.set("warrantAdded", !warrantAdded);
+                player.round.set("warrantPrice", !warrantAdded ? 100 : 0);
+            }}>
+                <input
+                    style={{
+                        borderRadius: "999px",
+                        cursor: "pointer"
+                    }}
+                    type="checkbox"
+                    id="addWarrant"
+                    checked={warrantAdded}
+                    readOnly={true}
+                />
+                <div className="option" style={{
+                    // textAlign: "center",
+                    // color: "#000",
+                    // fontSize: "16px",
+                    // marginRight: "10px",
+                    // width: "370px",
+                }}>
+                    <h2 style={{fontWeight: "bold", fontSize: "18px"}}>
+                        Warrant my Advertisement</h2>
+                    <p style={{fontWeight: "normal"}}>This will cost
+                        you <b>$100</b><br />Potential customers can see if you have chosen to warrant your advertisement or not, and a warrant can
+                            boost your credibility in the marketplace. If your ad is not found to be false, the money spent on your warrant will be fully refunded. However, if your warrant is challenged and your ad is found
+                            to be false, the money spent on the warrant will be lost to the challenger – anyone in the market,
+                            including a competitor, may challenge this warrant.</p>
+                </div>
+            </div>
+        </div>
+    );
 }
 
-function InfoDisplay({ player, capital }) {
+function AdOption({quality, selectedQuality, onSelectQuality, label, marketPrice, imageSrc}) {
+    return (
+        <div style={styles.choice}>
+            <label style={styles.label}>
+                <input
+                    type="radio"
+                    name="advertisedQuality"
+                    value={quality}
+                    checked={selectedQuality === quality}
+                    onChange={() => onSelectQuality(quality)}
+                />
+                {label}
+            </label>
+            <p>Sell for market price of ${marketPrice}</p>
+            <img src={imageSrc} alt={`${quality} Quality Ad`} style={styles.image}/>
+        </div>
+    );
+}
+
+function InfoDisplay({player, capital}) {
     const capitalethisround = player.round.get("capital")
     const unitsAmount = parseInt(capital / player.round.get("productCost"))
     const quality = player.round.get("productQuality")
+    const warrantAdded = player.round.get("warrantAdded");
+    const warrantPrice = player.round.get("warrantPrice");
     const adQuality = player.round.get("adQuality")
     const productPrice = player.round.get("productPrice")
     const profit = player.round.get("productPrice") - player.round.get("productCost")
     return (
-      <div style={styles.infoBox}>
-        <b>Choices summary</b> <br/>
-        <span role="img" aria-label="capital">💵</span>
-        Disposable capital for production: <b>${capitalethisround}</b>
-        <br/>
-        <span role="img" aria-label="units">🏭</span>
-        Produce {unitsAmount ? unitsAmount : "..."} <b>{quality}</b> quality units
-        <br/>
-        <span role="img" aria-label="units">📢 </span>
-        Advertise as <b>{adQuality ? adQuality : "..."}</b>  quality at a price of <b>${productPrice ? productPrice : "..."}</b>
-        <br/>
-        <span role="img" aria-label="units">💲 </span>
-        Profit per unit sold: <b>${profit ? profit : "..."}</b>
-        <br/>
-        <span role="img" aria-label="units">💰 </span>
-        Profit if you sell everything: <b>${profit*unitsAmount ? profit*unitsAmount : "..."}</b>
-       
-      </div>
+        <div style={styles.infoBox}>
+            <b>Choices summary</b> <br/>
+            <span role="img" aria-label="capital">💵</span>
+            Disposable capital for production: <b>${capitalethisround}</b>
+            <br/>
+            <span role="img" aria-label="units">🏭</span>
+            Produce {unitsAmount ? unitsAmount : "..."} <b>{quality}</b> quality units
+            <br/>
+            <span role="img" aria-label="units">📢 </span>
+            Advertise as <b>{adQuality ? adQuality : "..."}</b> quality at a price
+            of <b>${productPrice ? productPrice : "..."}</b>
+            <br/>
+            <span role="img" aria-label="units">💲 </span>
+            Profit per unit sold: <b>${profit ? profit : "..."}</b>
+            <br/>
+            <span role="img" aria-label="units">📢 </span>
+            Warrant your ad? <b>{warrantAdded ? "Yes" : "No"}</b>
+
+            <br/>
+            { /* Don't factor in warrant in total profit calculation, because it may be fully refunded */ }
+            <span role="img" aria-label="units">💰 </span>
+            Profit if you sell everything: <b>${profit * unitsAmount ? profit * unitsAmount : "..."}</b>
+
+        </div>
     );
-  }
+}
+
 export function ProfitMarginCalculator(  {producerPlayer} ){
 
     return(
@@ -154,6 +212,7 @@ export function ClaimsStage() {
   const role = player.get("role");
   const [productQuality, setProductQuality] = useState("");
   const [advertisedQuality, setAdvertisedQuality] = useState("");
+  const [warrantAdded, setWarrantAdded] = useState(false);
   const capital = player.round.get("capital")
 
 //   useEffect(() => {
@@ -185,11 +244,14 @@ export function ClaimsStage() {
     if (role === "producer" && productQuality && advertisedQuality) {
       const productCost = player.round.get("productCost");
       const unitsCanProduce = Math.floor(capital / productCost);
+      const warrantPrice = warrantAdded ? 100 : 0;
 
       player.round.set("productQuality", productQuality);
       player.round.set("advertisedQuality", advertisedQuality);
+      player.round.set("warrantAdded", warrantAdded);
+      player.round.set("warrantPrice", warrantPrice); // If the warrant is added, another $100 should be deducted from capital. Otherwise, no deductions.
       player.round.set("stock", unitsCanProduce);
-      player.round.set("capital", capital - (unitsCanProduce * productCost)); // Deduct the production cost from capital
+      player.round.set("capital", capital - (unitsCanProduce * productCost) - warrantPrice); // Deduct the production cost from capital
 
       console.log("Stock of this player is", unitsCanProduce);
       player.stage.set("submit", true);
@@ -212,29 +274,38 @@ export function ClaimsStage() {
   }
 
   if (role === "producer") {
-    return (
-      <div style={styles.producerScreen}>
-        <br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/> <br/><br/> 
-        <h1><b>Instructions:</b></h1>
-        
-        <h4>In this stage you will choose what quality of toothpaste to produce and how you want to advertise it. <br/> Note: Your goal is to maximize your profits.</h4>
-        <br/>
-        { <InfoDisplay capital = {capital} player = {player}/> }
-        <ProductQualitySelector
-          selectedQuality={productQuality}
-          onSelectQuality={handleQualitySelection}
-          player = {player}
-        />
-        
-        <AdQualitySelector
-          selectedQuality={advertisedQuality}
-          onSelectQuality={handleAdStrategySelection}
-        />
 
-        {/* <ProfitMarginCalculator producerPlayer={player}/> */}
-        <button onClick={handleSubmit} style={styles.submitButton}>Submit choices and go to market</button>
-        <br/><br/><br/>
-      </div>
+    return (
+        <div style={styles.producerScreen}>
+            <br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/> <br/><br/>
+            <br/><br/><br/><br/><br/><br/><br/><br/><br/>
+            <h1><b>Instructions:</b></h1>
+
+            <h4>In this stage you will choose what quality of toothpaste to produce and how you want to advertise
+                it. <br/> Note: Your goal is to maximize your profits.</h4>
+            <br/>
+            {<InfoDisplay capital={capital} player={player}/>}
+            <ProductQualitySelector
+                selectedQuality={productQuality}
+                onSelectQuality={handleQualitySelection}
+                player={player}
+            />
+
+            <AdQualitySelector
+                selectedQuality={advertisedQuality}
+                onSelectQuality={handleAdStrategySelection}
+            />
+
+            <WarrantSelector
+                player={player}
+                warrantAdded={warrantAdded}
+                setWarrantAdded={setWarrantAdded}
+            />
+
+            {/* <ProfitMarginCalculator producerPlayer={player}/> */}
+            <button onClick={handleSubmit} style={styles.submitButton}>Submit choices and go to market</button>
+            <br/><br/><br/>
+        </div>
     );
   }
 
