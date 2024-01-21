@@ -13,14 +13,26 @@ export function SelectRolesStage() {
   const treatment = game.get("treatment");
   const shareOfProducers = treatment.producerPercentage//factor
 
+  function randomProducerName(){
+      /*
+      * Randomly selects a name and a number and return it as the producer name.
+      * */
+      const names = ["Ralph", "Mario", "Steve", "Michael", "David", "Aran",
+      "Lara", "Joseph", "Nathan", "Niko", "Ezio", "Kenneth", "Marlon", "Josue",
+      "Admilton", "Isa", "Jerry", "Parker", "Wayne", "West", "Kent", "Allen", "Stark"];
+      const nums= Math.floor(Math.random() * 999) + 1;
+      const chosenName = names[Math.floor(Math.random() * names.length)];
+      return `${chosenName}${nums}'s toothpaste`;
+  }
   function handleSubmit() {// initializing variables here. Might be done server side in the future  
     
     //Producer initialization
     // TODO: Change how producerName is set so that it isn't hard coded
+    // TODO: Figure out how to set lemon market flag?
+
     if (player.get("role") === "producer") {
-        if (player.round.get("producerName") === undefined) {
-            player.round.set("producerName", "Tony's toothpaste");//hardcoded name
-          }
+        player.round.set("producerName", randomProducerName());//hardcoded name
+
         if (player.round.get("capital") === undefined) {
           player.round.set("capital", 20);
         }
