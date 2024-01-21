@@ -162,6 +162,16 @@ export function ClaimsStage() {
 //     }
 //   }, [player, role]);
 
+  function adjSelector(quality){
+    // Returns an descriptive adj dependent on player ad quality
+    const productName = player.round.get("producerName");
+    const adjPos = ["excellent", "premium", "superior", "legendary"];
+    const adjNeg = ["expired", "weak", "obsolete", "cheap", "crappy"];
+    const chosenAdj = quality === "high"
+        ? adjPos[Math.floor(Math.random() * adjPos.length)]
+        : adjNeg[Math.floor(Math.random() * adjNeg.length)];
+    return `${productName} ${chosenAdj}'s toothpaste`;
+  }
   const handleQualitySelection = (quality) => {
     setProductQuality(quality);
     const cost = quality === "high" ? 2 : 1;
@@ -174,6 +184,7 @@ export function ClaimsStage() {
     const price = quality === "high" ? 7 : 3;
     player.round.set("adQuality", quality);
     player.round.set("productPrice", price)
+    player.round.set("producerName", adjSelector(quality))
   };
 
   const handleProceed = () => {
