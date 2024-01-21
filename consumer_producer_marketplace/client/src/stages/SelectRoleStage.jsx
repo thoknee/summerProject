@@ -27,11 +27,10 @@ export function SelectRolesStage() {
   function handleSubmit() {// initializing variables here. Might be done server side in the future  
     
     //Producer initialization
-    // TODO: Change how producerName is set so that it isn't hard coded
     // TODO: Figure out how to set lemon market flag?
 
     if (player.get("role") === "producer") {
-        player.round.set("producerName", randomProducerName());//hardcoded name
+        player.round.set("producerName", randomProducerName());//No longer hard coded
 
         if (player.round.get("capital") === undefined) {
           player.round.set("capital", 20);
