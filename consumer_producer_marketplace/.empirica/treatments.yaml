@@ -16,6 +16,10 @@ factors:
         - value: 0.3
         - value: 0.5
         - value: 0.8
+    - name: marketType
+      desc: The type of market being deployed
+      values:
+        - value: lemons-market
 treatments:
     - name: Solo
       desc: Single-player Game
@@ -29,3 +33,4 @@ treatments:
       factors:
         playerCount: 2
         producerPercentage: 0.5
+        marketType: lemons-market
