@@ -33,7 +33,6 @@ export function SelectRolesStage() {
   function handleSubmit() {// initializing variables here. Might be done server side in the future  
     
     //Producer initialization
-    // TODO: Figure out how to set lemon market flag?
 
     if (player.get("role") === "producer") {
         player.round.set("producerName", randomProducerName());//No longer hard coded
