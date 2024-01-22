@@ -33,4 +33,3 @@ treatments:
       factors:
         playerCount: 2
         producerPercentage: 0.5
-        marketType: lemons-market
