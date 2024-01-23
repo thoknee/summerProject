@@ -13,13 +13,32 @@ export function SelectRolesStage() {
   const treatment = game.get("treatment");
   const shareOfProducers = treatment.producerPercentage//factor
 
+  function randomProducerName(){
+      /*
+      * Randomly selects a name a number for the product name
+      * */
+      const names = ["Ralph", "Mario", "Steve", "Dazai", "Jason", "Aran",
+      "Lara", "Joseph", "Nathan", "Niko", "Ezio", "Kenneth", "Marlon", "Josue",
+      "Admilton", "Isa", "Jerry", "Parker", "Wayne", "West", "Kent", "Allen", "Stark"];
+      const chosenName = names[Math.floor(Math.random() * names.length)];
+
+      /*const adj = ["expired", "excellent", "weak", "obsolete", "premium", "cheap",
+        "superior", "crappy"]*/
+      //const chosenAdj = adj[Math.floor(Math.random() * adj.length)];
+
+      const nums= Math.floor(Math.random() * 999) + 1;
+
+      return `${chosenName}${nums}'s`;
+  }
   function handleSubmit() {// initializing variables here. Might be done server side in the future  
     
-    //Producer initialization  
+    //Producer initialization
+
     if (player.get("role") === "producer") {
-        if (player.round.get("producerName") === undefined) {
-            player.round.set("producerName", "Tony's toothpaste");//hardcoded name
-          }
+        player.round.set("producerName", randomProducerName());//No longer hard coded
+        //baseProducerName is used specifically for adjSelector function in claimsStage.jsx
+        player.round.set("baseProducerName", player.round.get("producerName"));
+
         if (player.round.get("capital") === undefined) {
           player.round.set("capital", 20);
         }
