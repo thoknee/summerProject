@@ -4,27 +4,37 @@ import { usePlayer, usePlayers } from "@empirica/core/player/classic/react";
 function ConsumerProductCard({ producer, index, handlePurchase, wallet }) {
   const producerStock = producer.round.get("stock") || 999
   const adQuality = producer.round.get("adQuality");
+  const warrantAdded = producer.round.get("warrantAdded");
+  const warrantPrice = producer.round.get("warrantPrice");
   const price = producer.round.get("productPrice"); // Replace with actual logic to get price
   const productImage = adQuality === "high"
     ? "graphics/PremiumToothpasteAI.png" // High-quality image path
     : "graphics/StandardToothpasteAI.png"; // Low-quality image path
 
   return (
-    <div className="product-card" style={styles.productCard}>
-      <h3>{`Ad # ${index + 1}`}</h3>
-      <h4>Seller: {producer.id}</h4>
-      <h3>{producer.round.get("producerName")}</h3>
-      <img src={productImage} alt={`Product ${index + 1}`} style={styles.productImage} />
-      <p>Quality: {adQuality}</p>
-      <p>Price: ${price}</p>
-      <p>In stock: <b>{producerStock}</b></p>
-      {/* <button style = {styles.buyButton} onClick={() => handlePurchase(price, `Product ${index + 1}`)} disabled={wallet < price}>Buy</button> */}
-      <button style = {styles.buyButton} onClick={() => handlePurchase(price, producer.id)} disabled={wallet < price}>Buy</button>
-    </div>
+      <div className="product-card" style={styles.productCard}>
+          { warrantAdded ? (
+              <div className="warrant-banner" style={{ backgroundColor: "#4287f5", transform: "rotate(30deg)", width: "200px", position: "absolute", right: "0", marginRight: "-45px", marginTop: "-10px"}}>
+              <b style={{color: "white", fontFamily: "Avenir"}}>WARRANTED</b>
+              </div>
+          ) : <></>}
+          <h3>{`Ad # ${index + 1}`}</h3>
+          <h4>Seller: {producer.id}</h4>
+          <h3>{producer.round.get("producerName")}</h3>
+          <img src={productImage} alt={`Product ${index + 1}`} style={styles.productImage}/>
+          <p>Quality: {adQuality}</p>
+          <p>Price: ${price}</p>
+          {warrantAdded ? <p>Warranted for: ${warrantPrice}</p> : <></>}
+          <p>In stock: <b>{producerStock}</b></p>
+          {/* <button style = {styles.buyButton} onClick={() => handlePurchase(price, `Product ${index + 1}`)} disabled={wallet < price}>Buy</button> */}
+          <button style={styles.buyButton} onClick={() => handlePurchase(price, producer.id)}
+                  disabled={wallet < price}>Buy
+          </button>
+      </div>
   );
 }
 
-function WalletDisplay({ wallet }) {
+function WalletDisplay({wallet}) {
     return (
       <div style={styles.walletBox}>
         <span role="img" aria-label="wallet">💰</span>
@@ -105,8 +115,8 @@ export function ChoiceStage() {
   if (role === "consumer") {
     return (
       <div>
-        <br/><br/><br/><br/><br/><br/><br/><br/><br/><br/>
-        <h2>Advertisements</h2>
+        <br/>
+        <h2 style={{fontWeight: "bold"}}>Advertisements</h2>
         <h3>You can only buy if you have enough money in your wallet.</h3>
         <WalletDisplay wallet={wallet} />
         <div style={styles.productFeed}>{renderProductFeed()}</div>
@@ -131,12 +141,14 @@ const styles = {
     // Styles for the product card
     border: "1px solid #ddd",
     boxShadow: "0 4px 8px rgba(0,0,0,0.1)",
-    padding: "20px",
+    padding: "30px",
     borderRadius: "8px",
-    width: "300px",
+    width: "325px",
     textAlign: "center",
     backgroundColor: "#fff",
     margin: "0 auto",
+    position: "relative",
+    overflow: "hidden"
   },
   productImage: {
     maxWidth: '100%', // Limits the width, scales down if necessary

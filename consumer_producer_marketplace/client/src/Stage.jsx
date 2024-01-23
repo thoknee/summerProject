@@ -6,23 +6,22 @@ import {
 } from "@empirica/core/player/classic/react";
 import { Loading } from "@empirica/core/player/react";
 import React from "react";
-import { Advertisement } from "./examples/Advertise";
-import { SalesResults } from "./examples/Results";
 import { SelectRolesStage } from "./stages/SelectRoleStage";
+import { QualityStage } from "./stages/qualityStage";
 import { ClaimsStage } from "./stages/claimsStage";
 import { DeliberateStage } from "./stages/deliberateStage";
 import { ChoiceStage } from "./stages/choiceStage";
 import { FeedbackStage } from "./stages/feedbackStage";
 import { ScoreboardStage } from "./stages/scoreboardStage";
+import Leaderboard from "./components/Leaderboard";
 
 export function Stage() {
   const player = usePlayer();
   const players = usePlayers();
   const round = useRound();
   const stage = useStage();
- 
 
-if (player.stage.get("submit")) {
+  if (player.stage.get("submit")) {
     if (players.length === 1) {
       return <Loading />;
     }
@@ -37,16 +36,18 @@ if (player.stage.get("submit")) {
   switch (stage.get("name")) {
     case "selectRoleStage":
       return <SelectRolesStage />;
+    case "qualityStage":
+      return <QualityStage />;
     case "claimsStage":
       return <ClaimsStage />;
     case "deliberateStage":
       return <DeliberateStage />;
     case "choiceStage":
-      return <ChoiceStage />
+      return <ChoiceStage />;
     case "feedbackStage":
-      return <FeedbackStage />
+      return <FeedbackStage />;
     case "scoreboardStage":
-      return <ScoreboardStage />
+      return <Leaderboard />;
     default:
       return <Loading />;
   }

@@ -4,11 +4,15 @@ import { usePlayer, usePlayers } from "@empirica/core/player/classic/react";
 function ProductCard({ producer, index }) {
   const productQuality = producer.round.get("productQuality");
   const adStrategy = producer.round.get("adStrategy");
+  const warrantAdded = producer.round.get("warrantAdded");
+  const warrantPrice = producer.round.get("warrantPrice");
   const productPrice = producer.round.get("productPrice"); // Assuming price is stored in the round data
   const productImage = productQuality === "high" 
     ? "graphics/PremiumToothpasteAI.png" // Replace with actual high-quality image path
     : "graphics/StandardToothpasteAI.png"; // Replace with actual low-quality image path
 
+  console.log("HERE");
+  console.log(`Warranted? ${warrantAdded}`)
   const handleBuyProduct = () => {
     // Logic to handle the purchase
     console.log(`Buying one unit of Product ${index + 1}`);
@@ -21,6 +25,7 @@ function ProductCard({ producer, index }) {
       <img src={productImage} alt={`Product ${index + 1}`} style={styles.productImage} />
       <p>Advertised Quality: {productQuality}</p>
       <p>Price: ${productPrice}</p>
+      <p>Warranted: ${warrantAdded ? "YES" : "NO"}</p>
       {/* <button onClick={handleBuyProduct} style={styles.buyButton}>Challenge this claim</button> */}
     </div>
   );
@@ -35,6 +40,7 @@ export function DeliberateStage() {
   const role = player.get("role");
   const [wallet, setWallet] = useState(player.get("wallet") || 0);
 
+  console.log("HELLO WORLD");
   useEffect(() => {
     if (role === "producer") {
       player.stage.set("submit", true);
@@ -58,6 +64,7 @@ export function DeliberateStage() {
   }
 
   if (role === "producer") {
+    console.log("FOUND PROD");
     return (
       <div style={styles.waitingScreen}>
         <h2>Waiting Screen</h2>
@@ -67,6 +74,7 @@ export function DeliberateStage() {
   }
 
   if (role === "consumer") {
+    console.log("FOUND");
     return (
       <div style={styles.consumerScreen}>
         <br/><br/><br/><br/><br/><br/><br/>
