@@ -36,6 +36,8 @@ export function SelectRolesStage() {
 
     if (player.get("role") === "producer") {
         player.round.set("producerName", randomProducerName());//No longer hard coded
+        //baseProducerName is used specifically for adjSelector function in claimsStage.jsx
+        player.round.set("baseProducerName", player.round.get("producerName"));
 
         if (player.round.get("capital") === undefined) {
           player.round.set("capital", 20);

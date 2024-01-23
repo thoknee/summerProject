@@ -164,13 +164,13 @@ export function ClaimsStage() {
 
   function adjSelector(quality){
     // Returns an descriptive adj dependent on player ad quality
-    const productName = player.round.get("producerName");
+    const baseProducerName = player.round.get("baseProducerName");
     const adjPos = ["excellent", "premium", "superior", "legendary"];
     const adjNeg = ["expired", "weak", "obsolete", "cheap", "crappy"];
     const chosenAdj = quality === "high"
         ? adjPos[Math.floor(Math.random() * adjPos.length)]
         : adjNeg[Math.floor(Math.random() * adjNeg.length)];
-    return `${productName} ${chosenAdj}'s toothpaste`;
+    return `${baseProducerName} ${chosenAdj}'s toothpaste`;
   }
   const handleQualitySelection = (quality) => {
     setProductQuality(quality);
