@@ -181,6 +181,7 @@ function assignRoles(game) {
 Empirica.onGameStart(async ({ game }) => {
   const round = game.addRound({ name: `Round` });
   round.addStage({ name: "selectRoleStage", duration: 24000 });
+  round.addStage({ name: "qualityStage", duration: 24000 });
   round.addStage({ name: "claimsStage", duration: 24000 });
   round.addStage({ name: "choiceStage", duration: 24000 });
   round.addStage({ name: "feedbackStage", duration: 24000 });

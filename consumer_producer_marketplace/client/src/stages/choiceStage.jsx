@@ -3,11 +3,11 @@ import { usePlayer, usePlayers } from "@empirica/core/player/classic/react";
 
 function ConsumerProductCard({ producer, index, handlePurchase, wallet }) {
   const producerStock = producer.round.get("stock") || 999
-  const productQuality = producer.round.get("productQuality");
+  const adQuality = producer.round.get("adQuality");
   const warrantAdded = producer.round.get("warrantAdded");
   const warrantPrice = producer.round.get("warrantPrice");
   const price = producer.round.get("productPrice"); // Replace with actual logic to get price
-  const productImage = productQuality === "high" 
+  const productImage = adQuality === "high"
     ? "graphics/PremiumToothpasteAI.png" // High-quality image path
     : "graphics/StandardToothpasteAI.png"; // Low-quality image path
 
@@ -22,7 +22,7 @@ function ConsumerProductCard({ producer, index, handlePurchase, wallet }) {
           <h4>Seller: {producer.id}</h4>
           <h3>{producer.round.get("producerName")}</h3>
           <img src={productImage} alt={`Product ${index + 1}`} style={styles.productImage}/>
-          <p>Quality: {productQuality}</p>
+          <p>Quality: {adQuality}</p>
           <p>Price: ${price}</p>
           {warrantAdded ? <p>Warranted for: ${warrantPrice}</p> : <></>}
           <p>In stock: <b>{producerStock}</b></p>
@@ -115,8 +115,8 @@ export function ChoiceStage() {
   if (role === "consumer") {
     return (
       <div>
-        <br/><br/><br/><br/><br/><br/><br/><br/><br/><br/>
-        <h2>Advertisements</h2>
+        <br/>
+        <h2 style={{fontWeight: "bold"}}>Advertisements</h2>
         <h3>You can only buy if you have enough money in your wallet.</h3>
         <WalletDisplay wallet={wallet} />
         <div style={styles.productFeed}>{renderProductFeed()}</div>
