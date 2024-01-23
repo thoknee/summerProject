@@ -3,6 +3,7 @@ import {
   usePlayer,
   usePlayers,
   useStage,
+  useGame,
 } from "@empirica/core/player/classic/react";
 import React, { useState } from "react";
 import { Button } from "./Button";
@@ -15,6 +16,7 @@ const Leaderboard = (props) => {
   const player = usePlayer();
   const players = usePlayers();
   const stage = useStage();
+  const game = useGame();
 
   const [scores, setScores] = useState([]);
 
@@ -23,14 +25,25 @@ const Leaderboard = (props) => {
   };
 
   useEffect(() => {
-    get("/leaderboard").then((res) => {
-      console.log(res);
+    get("/leaderboard", { gameid: String(game.id) }).then((res) => {
       const scoreElems = [];
+      res.scores.sort((prev, next) => next.score - prev.score); // sort descending order
       for (const scoreInfo of res.scores) {
         scoreElems.push(
-          <div key={scoreInfo._id} className="score-container">
+          <div
+            key={scoreInfo._id}
+            className="score-container"
+            style={{
+              backgroundColor: `${
+                scoreInfo.role === `PRODUCER` ? `gray` : `white`
+              }`,
+            }}
+          >
             <p>
-              <strong>{scoreInfo.identifier}</strong>
+              <strong>{scoreInfo.role}</strong>
+            </p>
+            <p>
+              <strong>{scoreInfo.playerid}</strong>
             </p>
             <p>{scoreInfo.score}</p>
           </div>

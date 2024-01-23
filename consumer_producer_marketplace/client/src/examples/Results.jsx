@@ -45,11 +45,6 @@ export function SalesResults({}) {
   const finalScore = currentScore + salesCount;
 
   async function handleSubmit() {
-    await post("/leaderboard/update", {
-      identifier: player.get("participantIdentifier"),
-      score: currentScore,
-    }).then((res) => console.log(`Leaderboard updated: ${res}`));
-
     console.log("Moving on from results round");
     player.stage.set("submit", true);
     player.set("score", finalScore);
