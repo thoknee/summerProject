@@ -267,7 +267,8 @@ export function ClaimsStage() {
       player.round.set("warrantAdded", warrantAdded);
       player.round.set("warrantPrice", warrantPrice); // For now, the warrant price is hard-coded to 100
       player.round.set("stock", unitsCanProduce);
-      player.round.set("capital", capital - (unitsCanProduce * productCost)); // Deduct the production cost from capital
+      player.round.set("capital", capital - (unitsCanProduce * productCost) - warrantPrice); // Deduct the production cost from capital
+      player.round.set("producerName", adjSelector(player.round.get("adQuality")));
 
       console.log("Stock of this player is", unitsCanProduce);
       player.stage.set("submit", true);
