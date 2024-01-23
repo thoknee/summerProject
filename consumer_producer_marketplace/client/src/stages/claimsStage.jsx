@@ -255,7 +255,7 @@ export function ClaimsStage() {
 
 
   const handleSubmit = () => {
-    if (role === "producer" && selectedIdx) {
+    if (role === "producer" && selectedIdx !== -1) {
         player.round.set("productPrice", selectedIdx === 0 ? 3 : 7)
       const productCost = player.round.get("productCost");
       const unitsCanProduce = Math.floor(capital / productCost);
