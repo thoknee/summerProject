@@ -3,7 +3,7 @@ import { usePlayer, usePlayers } from "@empirica/core/player/classic/react";
 
 function ConsumerProductCard({ producer, index, handlePurchase, wallet }) {
   const producerStock = producer.round.get("stock") || 999
-  const productQuality = producer.round.get("productQuality");
+const productQuality = producer.round.get("adQuality");
   const warrantAdded = producer.round.get("warrantAdded");
   const warrantPrice = producer.round.get("warrantPrice");
   const price = producer.round.get("productPrice"); // Replace with actual logic to get price
@@ -115,8 +115,8 @@ export function ChoiceStage() {
   if (role === "consumer") {
     return (
       <div>
-        <br/><br/><br/><br/><br/><br/><br/><br/><br/><br/>
-        <h2>Advertisements</h2>
+        <br/>
+        <h2 style={{fontWeight: "bold"}}>Advertisements</h2>
         <h3>You can only buy if you have enough money in your wallet.</h3>
         <WalletDisplay wallet={wallet} />
         <div style={styles.productFeed}>{renderProductFeed()}</div>

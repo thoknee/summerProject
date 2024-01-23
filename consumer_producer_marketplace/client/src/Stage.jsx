@@ -6,9 +6,8 @@ import {
 } from "@empirica/core/player/classic/react";
 import { Loading } from "@empirica/core/player/react";
 import React from "react";
-import { Advertisement } from "./examples/Advertise";
-import { SalesResults } from "./examples/Results";
 import { SelectRolesStage } from "./stages/SelectRoleStage";
+import { QualityStage } from "./stages/qualityStage";
 import { ClaimsStage } from "./stages/claimsStage";
 import { DeliberateStage } from "./stages/deliberateStage";
 import { ChoiceStage } from "./stages/choiceStage";
@@ -37,6 +36,8 @@ if (player.stage.get("submit")) {
   switch (stage.get("name")) {
     case "selectRoleStage":
       return <SelectRolesStage />;
+    case "qualityStage":
+      return <QualityStage />;
     case "claimsStage":
       return <ClaimsStage />;
     case "deliberateStage":
