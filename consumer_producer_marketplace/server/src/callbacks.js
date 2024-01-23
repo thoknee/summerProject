@@ -2,7 +2,10 @@ import { ClassicListenersCollector } from "@empirica/core/admin/classic";
 export const Empirica = new ClassicListenersCollector();
 import mongoose from "mongoose";
 import express from "express";
+import cors from "cors";
 import Score from "../models/Score";
+import LeaderBoard from "../models/Leaderboard";
+import Leaderboard from "../models/Leaderboard";
 
 /**
  * DATABASE SETUP
@@ -24,32 +27,51 @@ mongoose
  */
 const PORT = 3001;
 const app = express();
+app.use(cors());
 app.use(express.json());
 
-app.get("/leaderboard", (req, res) => {
-  Score.find().then((scores) => {
-    res.send({ scores: scores });
-  });
+app.get("/leaderboard", async (req, res) => {
+  await Leaderboard.findOne({ gameid: req.query.gameid })
+    .then(async (leaderboard) => {
+      const scores = [];
+      for (const scoreId of leaderboard.scores) {
+        await Score.findById(scoreId).then(async (score) => {
+          scores.push(score);
+        });
+      }
+      res.send({ scores: scores });
+    })
+    .catch((err) => {});
 });
 
-app.post("/leaderboard/update", (req, res) => {
-  Score.findOneAndUpdate(
-    { identifier: req.body.identifier },
-    { $inc: { score: req.body.score } },
-    { upsert: true, new: true }
-  ).then((updatedScore) => {
-    res.send({ score: updatedScore });
-  });
-});
+const initLeaderboard = async (game) => {
+  const scoreIds = [];
+  for (const player of game.players) {
+    const newScore = new Score({
+      gameid: game.id,
+      playerid: player.get("participantIdentifier"),
+      role: player.get("role") === "consumer" ? "CONSUMER" : "PRODUCER",
+      score: 0,
+    });
+    await newScore
+      .save()
+      .then(async (score) => {
+        scoreIds.push(score._id.toString());
+      })
+      .catch((err) => {});
+  }
 
-const initLeaderboard = async () => {
-  Score.find().then(async (scores) => {
-    if (scores.length === 0) {
-      const newScore = new Score({ identifier: "Amazon", score: 1000 });
-      await newScore.save();
-    }
-    console.log(`Leaderboard initialized`);
+  const leaderboard = new Leaderboard({
+    date: new Date().toLocaleTimeString(),
+    gameid: game.id,
+    scores: scoreIds,
   });
+  await leaderboard
+    .save()
+    .then((newBoard) => {
+      console.log(`Leaderboard initialized: ${newBoard._id}`);
+    })
+    .catch((err) => {});
 
   // start listening for leaderboard requests
   app.listen(PORT, () => {
@@ -58,8 +80,8 @@ const initLeaderboard = async () => {
 };
 
 // Function to update the score of consumers
-function updateConsumerScores(game) {
-  game.players.forEach((player) => {
+async function updateConsumerScores(game) {
+  await game.players.forEach(async (player) => {
     if (player.get("role") === "consumer") {
       const basket = player.round.get("basket") || {};
       let score = player.get("score") || 0;
@@ -74,6 +96,21 @@ function updateConsumerScores(game) {
       });
 
       player.set("score", score);
+
+      const body = {
+        gameid: game.id,
+        playerid: player.get("participantIdentifier"),
+        role: "CONSUMER",
+      };
+      await Score.findOneAndUpdate(
+        body,
+        { score: score },
+        { upsert: true, new: true }
+      ).then((updatedScore) => {
+        console.log(
+          `Leaderboard updated for consumer ${updatedScore.playerid}: ${updatedScore.score}`
+        );
+      });
     }
   });
 }
@@ -97,8 +134,8 @@ function processConsumerBaskets(game) {
 }
 
 // Function to update the score of producers
-function updateProducerScores(game, unitsSoldMap) {
-  game.players.forEach((player) => {
+async function updateProducerScores(game, unitsSoldMap) {
+  await game.players.forEach(async (player) => {
     if (player.get("role") === "producer") {
       const producerId = player.id;
       const unitsSold = unitsSoldMap.get(producerId) || 0;
@@ -108,6 +145,21 @@ function updateProducerScores(game, unitsSoldMap) {
       const capital = player.round.get("capital");
       player.round.set("unitsSold", unitsSold);
       player.set("score", capital + profit);
+
+      const body = {
+        gameid: game.id,
+        playerid: player.get("participantIdentifier"),
+        role: "PRODUCER",
+      };
+      await Score.findOneAndUpdate(
+        body,
+        { score: player.get("score") },
+        { upsert: true, new: true }
+      ).then((updatedScore) => {
+        console.log(
+          `Leaderboard updated for producer ${updatedScore.playerid}: ${updatedScore.score}`
+        );
+      });
     }
   });
 }
@@ -126,9 +178,7 @@ function assignRoles(game) {
   });
 }
 
-Empirica.onGameStart(({ game }) => {
-  initLeaderboard();
-
+Empirica.onGameStart(async ({ game }) => {
   const round = game.addRound({ name: `Round` });
   round.addStage({ name: "selectRoleStage", duration: 24000 });
   round.addStage({ name: "qualityStage", duration: 24000 });
@@ -140,6 +190,8 @@ Empirica.onGameStart(({ game }) => {
 
   game.players.forEach((player) => player.set("score", 0));
   assignRoles(game);
+
+  await initLeaderboard(game);
 });
 
 Empirica.onStageEnded(({ stage }) => {
