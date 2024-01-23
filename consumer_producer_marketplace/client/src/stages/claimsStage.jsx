@@ -255,7 +255,7 @@ export function ClaimsStage() {
 
 
   const handleSubmit = () => {
-    if (role === "producer" && selectedIdx) {
+    if (role === "producer" && selectedIdx !== -1) {
         player.round.set("productPrice", selectedIdx === 0 ? 3 : 7)
       const productCost = player.round.get("productCost");
       const unitsCanProduce = Math.floor(capital / productCost);
@@ -268,6 +268,7 @@ export function ClaimsStage() {
       player.round.set("warrantPrice", warrantPrice); // If the warrant is added, another $100 should be deducted from capital. Otherwise, no deductions.
       player.round.set("stock", unitsCanProduce);
       player.round.set("capital", capital - (unitsCanProduce * productCost) - warrantPrice); // Deduct the production cost from capital
+      player.round.set("producerName", adjSelector(player.round.get("adQuality")));
 
       console.log("Stock of this player is", unitsCanProduce);
       player.stage.set("submit", true);
