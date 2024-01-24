@@ -23,6 +23,16 @@ export function WarrantModal({ isOpen, onClose, title, children}) {
           <h3 className="text-2xl leading-6 font-bold text-gray-900 mb-4" id="modal-headline">
             {title}
           </h3>
+
+          <Button
+            className="absolute top-4 right-4 text-gray-500 hover:text-white focus:outline-none"
+            handleClick={onClose}
+            type="button"
+            autoFocus={true}
+          >
+            &#10005;
+          </Button>
+ 
           <div className="mt-2">{children}</div>
         </div>
       </div>
