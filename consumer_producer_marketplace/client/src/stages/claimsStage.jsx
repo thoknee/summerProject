@@ -168,9 +168,34 @@ function WarrantSelector({ player, warrantAdded, setWarrantAdded}) {
                             including a competitor, may challenge this warrant.</p>
                 </div>
             </div>
+          
+        <WarrantModal isOpen={isModalOpen} 
+        onClose={() => {
+        setIsModalOpen(false);
+        // setSelectedCards(initialSelectedCards.map((_, index) => index));
+        }} 
+         title="Warrant" children={
+     <>
+         {Array.isArray(warrants) && warrants.length > 0 && (
+             <div className="flex justify-center space-x-4">
+                 {warrants.map((warrant, index) => {
+                     return (
+                         <div
+                                //  style={isSelected(index) ? selectedCardStyle : {}}
+                                 className="flex flex-col items-center cursor-pointer select:border-2 border-black"
+                                 key={index}
+                             >
+                             <img src={warrant.icon} alt="icon" className="mb-2 max-w-full h-auto rounded-lg" />
+                             <h1 className="font-bold text-center mb-4">{warrant.description}</h1>
+                             <h1 className="font-semibold text-xl text-center"><span style={{ color: "green" }}>${warrant.price}</span></h1>
+                         </div>
+                     );
+                 })}
+             </div>
+         )}
+     </>
+ }/>
         </div>
-         
-
     );
 }
 
