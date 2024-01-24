@@ -1,83 +1,5 @@
 import { ClassicListenersCollector } from "@empirica/core/admin/classic";
 export const Empirica = new ClassicListenersCollector();
-import mongoose from "mongoose";
-import express from "express";
-import cors from "cors";
-import Score from "../models/Score";
-import LeaderBoard from "../models/Leaderboard";
-import Leaderboard from "../models/Leaderboard";
-
-/**
- * DATABASE SETUP
- */
-const mongoConnectionURL =
-  "mongodb+srv://awhipp:wrsnmmIsGhRizTbi@empirica.inpamgh.mongodb.net/?retryWrites=true&w=majority";
-const databaseName = "empirica";
-mongoose
-  .connect(mongoConnectionURL, {
-    useNewUrlParser: true,
-    useUnifiedTopology: true,
-    dbName: databaseName,
-  })
-  .then(() => console.log("Connected to MongoDB"))
-  .catch((err) => console.log(`Error connecting to MongoDB: ${err}`));
-
-/**
- * CUSTOM API SETUP
- */
-const PORT = 3001;
-const app = express();
-app.use(cors());
-app.use(express.json());
-
-app.get("/leaderboard", async (req, res) => {
-  await Leaderboard.findOne({ gameid: req.query.gameid })
-    .then(async (leaderboard) => {
-      const scores = [];
-      for (const scoreId of leaderboard.scores) {
-        await Score.findById(scoreId).then(async (score) => {
-          scores.push(score);
-        });
-      }
-      res.send({ scores: scores });
-    })
-    .catch((err) => {});
-});
-
-const initLeaderboard = async (game) => {
-  const scoreIds = [];
-  for (const player of game.players) {
-    const newScore = new Score({
-      gameid: game.id,
-      playerid: player.get("participantIdentifier"),
-      role: player.get("role") === "consumer" ? "CONSUMER" : "PRODUCER",
-      score: 0,
-    });
-    await newScore
-      .save()
-      .then(async (score) => {
-        scoreIds.push(score._id.toString());
-      })
-      .catch((err) => {});
-  }
-
-  const leaderboard = new Leaderboard({
-    date: new Date().toLocaleTimeString(),
-    gameid: game.id,
-    scores: scoreIds,
-  });
-  await leaderboard
-    .save()
-    .then((newBoard) => {
-      console.log(`Leaderboard initialized: ${newBoard._id}`);
-    })
-    .catch((err) => {});
-
-  // start listening for leaderboard requests
-  app.listen(PORT, () => {
-    console.log(`Server is running on port ${PORT}`);
-  });
-};
 
 // Function to update the score of consumers
 async function updateConsumerScores(game) {
@@ -96,21 +18,6 @@ async function updateConsumerScores(game) {
       });
 
       player.set("score", score);
-
-      const body = {
-        gameid: game.id,
-        playerid: player.get("participantIdentifier"),
-        role: "CONSUMER",
-      };
-      await Score.findOneAndUpdate(
-        body,
-        { score: score },
-        { upsert: true, new: true }
-      ).then((updatedScore) => {
-        console.log(
-          `Leaderboard updated for consumer ${updatedScore.playerid}: ${updatedScore.score}`
-        );
-      });
     }
   });
 }
@@ -145,21 +52,6 @@ async function updateProducerScores(game, unitsSoldMap) {
       const capital = player.round.get("capital");
       player.round.set("unitsSold", unitsSold);
       player.set("score", capital + profit);
-
-      const body = {
-        gameid: game.id,
-        playerid: player.get("participantIdentifier"),
-        role: "PRODUCER",
-      };
-      await Score.findOneAndUpdate(
-        body,
-        { score: player.get("score") },
-        { upsert: true, new: true }
-      ).then((updatedScore) => {
-        console.log(
-          `Leaderboard updated for producer ${updatedScore.playerid}: ${updatedScore.score}`
-        );
-      });
     }
   });
 }
@@ -190,8 +82,6 @@ Empirica.onGameStart(async ({ game }) => {
 
   game.players.forEach((player) => player.set("score", 0));
   assignRoles(game);
-
-  await initLeaderboard(game);
 });
 
 Empirica.onStageEnded(({ stage }) => {

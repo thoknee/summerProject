@@ -3,20 +3,16 @@ import {
   usePlayer,
   usePlayers,
   useStage,
-  useGame,
 } from "@empirica/core/player/classic/react";
 import React, { useState } from "react";
 import { Button } from "./Button";
 import { useEffect } from "react";
-import { get, post } from "../util";
 import "./Modal.css";
 import "./Leaderboard.css";
 
 const Leaderboard = (props) => {
-  const player = usePlayer();
   const players = usePlayers();
   const stage = useStage();
-  const game = useGame();
 
   const [scores, setScores] = useState([]);
 
@@ -25,32 +21,29 @@ const Leaderboard = (props) => {
   };
 
   useEffect(() => {
-    get("/leaderboard", { gameid: String(game.id) }).then((res) => {
-      const scoreElems = [];
-      res.scores.sort((prev, next) => next.score - prev.score); // sort descending order
-      for (const scoreInfo of res.scores) {
-        scoreElems.push(
-          <div
-            key={scoreInfo._id}
-            className="score-container"
-            style={{
-              backgroundColor: `${
-                scoreInfo.role === `PRODUCER` ? `gray` : `white`
-              }`,
-            }}
-          >
-            <p>
-              <strong>{scoreInfo.role}</strong>
-            </p>
-            <p>
-              <strong>{scoreInfo.playerid}</strong>
-            </p>
-            <p>{scoreInfo.score}</p>
-          </div>
-        );
-      }
-      setScores(scoreElems);
-    });
+    const sorted = players.sort(
+      (prev, next) => next.get("score") - prev.get("score")
+    ); // sort descending order
+    const scoreElems = sorted.map((player) => (
+      <div
+        key={player.id}
+        className="score-container"
+        style={{
+          backgroundColor: `${
+            player.get("role") === `producer` ? `gray` : `white`
+          }`,
+        }}
+      >
+        <p>
+          <strong>{player.get("role")}</strong>
+        </p>
+        <p>
+          <strong>{player.get("participantIdentifier")}</strong>
+        </p>
+        <p>{player.get("score")}</p>
+      </div>
+    ));
+    setScores(scoreElems);
   }, []);
 
   return (
