@@ -1,0 +1,17 @@
+.submit-page {
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  width: 100vh;
+
+  justify-content: center;
+  align-items: center;
+}
+
+.survey-link {
+  -webkit-text-fill-color: black;
+}
+
+.survey-link:hover {
+  -webkit-text-fill-color: blue;
+}
