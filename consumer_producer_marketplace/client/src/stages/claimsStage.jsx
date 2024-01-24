@@ -212,12 +212,28 @@ export function ClaimsStage() {
   const [warrantAdded, setWarrantAdded] = useState(false);
   const capital = player.round.get("capital")
 
+  // Default values for player, to avoid read error for later stages
+  player.round.set("productCost", 2);
+  player.round.set("productionQuality", "high");
+  player.round.set("adQuality", "high");
+  player.round.set("productPrice", 7);
+
 //   useEffect(() => {
 //     if (role === "consumer") {
 //       player.stage.set("submit", true);
 //     }
 //   }, [player, role]);
 
+  function adjSelector(quality){
+    // Returns an descriptive adj dependent on player ad quality
+    const baseProducerName = player.round.get("baseProducerName");
+    const adjPos = ["excellent", "premium", "superior", "legendary"];
+    const adjNeg = ["expired", "weak", "obsolete", "cheap", "crappy"];
+    const chosenAdj = quality === "high"
+        ? adjPos[Math.floor(Math.random() * adjPos.length)]
+        : adjNeg[Math.floor(Math.random() * adjNeg.length)];
+    return `${baseProducerName} ${chosenAdj}'s toothpaste`;
+  }
   const handleQualitySelection = (quality) => {
     setProductQuality(quality);
     const cost = quality === "high" ? 2 : 1;
@@ -230,6 +246,7 @@ export function ClaimsStage() {
     const price = quality === "high" ? 7 : 3;
     player.round.set("adQuality", quality);
     player.round.set("productPrice", price)
+    player.round.set("producerName", adjSelector(quality))
   };
 
   const handleProceed = () => {
@@ -250,7 +267,8 @@ export function ClaimsStage() {
       player.round.set("warrantAdded", warrantAdded);
       player.round.set("warrantPrice", warrantPrice); // For now, the warrant price is hard-coded to 100
       player.round.set("stock", unitsCanProduce);
-      player.round.set("capital", capital - (unitsCanProduce * productCost)); // Deduct the production cost from capital
+      player.round.set("capital", capital - (unitsCanProduce * productCost) - warrantPrice); // Deduct the production cost from capital
+      player.round.set("producerName", adjSelector(player.round.get("adQuality")));
 
       console.log("Stock of this player is", unitsCanProduce);
       player.stage.set("submit", true);

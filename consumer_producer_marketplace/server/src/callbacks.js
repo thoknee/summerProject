@@ -2,14 +2,14 @@ import { ClassicListenersCollector } from "@empirica/core/admin/classic";
 export const Empirica = new ClassicListenersCollector();
 
 // Function to update the score of consumers
-function updateConsumerScores(game) {
-  game.players.forEach((player) => {
+async function updateConsumerScores(game) {
+  await game.players.forEach(async (player) => {
     if (player.get("role") === "consumer") {
       const basket = player.round.get("basket") || {};
       let score = player.get("score") || 0;
 
       Object.entries(basket).forEach(([productId, quantity]) => {
-        const producer = game.players.find(p => p.id === productId);
+        const producer = game.players.find((p) => p.id === productId);
         if (producer) {
           const productQuality = producer.round.get("productQuality");
           const points = productQuality === "high" ? 10 : 5;
@@ -29,7 +29,10 @@ function processConsumerBaskets(game) {
     if (player.get("role") === "consumer") {
       const basket = player.round.get("basket") || {};
       Object.entries(basket).forEach(([producerId, quantity]) => {
-        unitsSoldMap.set(producerId, (unitsSoldMap.get(producerId) || 0) + quantity);
+        unitsSoldMap.set(
+          producerId,
+          (unitsSoldMap.get(producerId) || 0) + quantity
+        );
       });
     }
   });
@@ -38,8 +41,8 @@ function processConsumerBaskets(game) {
 }
 
 // Function to update the score of producers
-function updateProducerScores(game, unitsSoldMap) {
-  game.players.forEach((player) => {
+async function updateProducerScores(game, unitsSoldMap) {
+  await game.players.forEach(async (player) => {
     if (player.get("role") === "producer") {
       const producerId = player.id;
       const unitsSold = unitsSoldMap.get(producerId) || 0;
@@ -47,7 +50,7 @@ function updateProducerScores(game, unitsSoldMap) {
       const productCost = player.round.get("productCost");
       const profit = unitsSold * (productPrice - productCost);
       const capital = player.round.get("capital");
-      player.round.set("unitsSold", unitsSold)
+      player.round.set("unitsSold", unitsSold);
       player.set("score", capital + profit);
     }
   });
@@ -59,7 +62,7 @@ function assignRoles(game) {
   const producerPercentage = treatment.producerPercentage;
   const players = game.players;
   const numberOfProducers = Math.round(producerPercentage * players.length);
-  
+
   const shuffledPlayers = [...players].sort(() => 0.5 - Math.random());
   shuffledPlayers.forEach((player, index) => {
     const role = index < numberOfProducers ? "producer" : "consumer";
@@ -67,7 +70,7 @@ function assignRoles(game) {
   });
 }
 
-Empirica.onGameStart(({ game }) => {
+Empirica.onGameStart(async ({ game }) => {
   const round = game.addRound({ name: `Round` });
   round.addStage({ name: "selectRoleStage", duration: 24000 });
   round.addStage({ name: "qualityStage", duration: 24000 });
@@ -76,8 +79,8 @@ Empirica.onGameStart(({ game }) => {
   round.addStage({ name: "feedbackStage", duration: 24000 });
   round.addStage({ name: "scoreboardStage", duration: 24000 });
   //deliberate stage for future versions
-  
-  game.players.forEach(player => player.set("score", 0));
+
+  game.players.forEach((player) => player.set("score", 0));
   assignRoles(game);
 });
 
