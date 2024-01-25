@@ -1,96 +1,136 @@
 import React, { useState, useEffect } from "react";
 import { usePlayer } from "@empirica/core/player/classic/react";
-import {PayoffMatrix} from "../components/PayoffMatrix";
-//
-// function ProductQualitySelector({ selectedQuality, onSelectQuality, player }) {
-//   const highQualityImg = "/graphics/PremiumToothpasteAI.png";
-//   const lowQualityImg = "/graphics/StandardToothpasteAI.png";
-//   //Should maybe game. variables or factors in the future
-//   const lowQualityProductionCost = 1
-//   const highQualityProductionCost = 2
-//
-//
-//   return (
-//     <div>
-//       <h1><b>Choose what quality to produce</b></h1>
-//       <br/>
-//       <div style={styles.choicesContainer}>
-//         <QualityOption
-//           quality="low"
-//           selectedQuality={selectedQuality}
-//           onSelectQuality={onSelectQuality}
-//           label="Low Quality 🏭⭐"
-//           productCost = {lowQualityProductionCost}
-//           imageSrc={lowQualityImg}
-//         />
-//         <QualityOption
-//           quality="high"
-//           selectedQuality={selectedQuality}
-//           onSelectQuality={onSelectQuality}
-//           label="High Quality 🏭⭐⭐⭐"
-//           productCost = {highQualityProductionCost}
-//           imageSrc={highQualityImg}
-//         />
-//       </div>
-//     </div>
-//   );
-// }
-//
-// function QualityOption({ quality, selectedQuality, onSelectQuality, label, productCost, imageSrc }) {
-//   return (
-//     <div style={styles.choice}>
-//       <label style={styles.label}>
-//         <input
-//           type="radio"
-//           name="productQuality"
-//           value={quality}
-//           checked={selectedQuality === quality}
-//           onChange={() => onSelectQuality(quality)}
-//         />
-//         {label}
-//       </label>
-//       <p>Production cost: ${productCost}</p>
-//       <img src={imageSrc} alt={`${quality} Quality Product`} style={styles.image} />
-//     </div>
-//   );
-// }
-//
-// function AdQualitySelector({ selectedQuality, onSelectQuality }) {
-//   const highQualityImg = "/graphics/PremiumToothpasteAI.png";
-//   const lowQualityImg = "/graphics/StandardToothpasteAI.png";
-//   const lowQualityProductPrice = 3
-//   const highQualityProductPrice = 7
-//
-//   return (
-//     <div>
-//       <h1><b>Choose how you want to advertise your product</b></h1>
-//       <br/>
-//       <div style={styles.choicesContainer}>
-//         <AdOption
-//           quality="low"
-//           selectedQuality={selectedQuality}
-//           onSelectQuality={onSelectQuality}
-//           label="Advertise as Low Quality 📢⭐"
-//           marketPrice = {lowQualityProductPrice}
-//           imageSrc={lowQualityImg}
-//         />
-//         <AdOption
-//           quality="high"
-//           selectedQuality={selectedQuality}
-//           onSelectQuality={onSelectQuality}
-//           label="Advertise as High Quality 📢⭐⭐⭐"
-//           marketPrice = {highQualityProductPrice}
-//           imageSrc={highQualityImg}
-//         />
-//       </div>
-//     </div>
-//   );
-// }
+import { WarrantModal } from "../components/WarrantModal";
+import warrants from "../../data.json"
+// import { Button } from "../components/Button";  // @shahabhishek1729
 
-function WarrantSelector({ player, warrantAdded, setWarrantAdded }) {
+function ProductQualitySelector({ selectedQuality, onSelectQuality, player }) {
+  const highQualityImg = "/graphics/PremiumToothpasteAI.png";
+  const lowQualityImg = "/graphics/StandardToothpasteAI.png";
+  //Should maybe game. variables or factors in the future
+  const lowQualityProductionCost = 1
+  const highQualityProductionCost = 2
+
+  const qualityOptions = [
+    { quality: "low", label: "Low Quality 🏭⭐", productCost: lowQualityProductionCost, imageSrc: lowQualityImg },
+    { quality: "high", label: "High Quality 🏭⭐⭐⭐", productCost: highQualityProductionCost, imageSrc: highQualityImg },
+  ];
+  
+
+  return (
+    <div>
+      <h1><b>Choose what quality to produce</b></h1>
+      <br/>
+      {qualityOptions.map((option) => (
+        <QualityOption
+          key={option.quality}
+          {...option}
+          selectedQuality={selectedQuality}
+          onSelectQuality={onSelectQuality}
+        />
+      ))}
+    </div>
+  );
+}
+
+function QualityOption({ quality, selectedQuality, onSelectQuality, label, productCost, imageSrc }) {
+  return (
+    <div style={styles.choice}>
+      <label style={styles.label}>
+        <input
+          type="radio"
+          name="productQuality"
+          value={quality}
+          checked={selectedQuality === quality}
+          onChange={() => onSelectQuality(quality)}
+        />
+        {label}
+      </label>
+      <p>Production cost: ${productCost}</p>
+      <img src={imageSrc} alt={`${quality} Quality Product`} style={styles.image} />
+    </div>
+  );
+}
+
+function AdQualitySelector({ selectedQuality, onSelectQuality }) {
+  const highQualityImg = "/graphics/PremiumToothpasteAI.png";
+  const lowQualityImg = "/graphics/StandardToothpasteAI.png";
+  const lowQualityProductPrice = 3
+  const highQualityProductPrice = 7
+
+  return (
+    <div>
+      <h1><b>Choose how you want to advertise your product</b></h1>
+      <br/>
+      <div style={styles.choicesContainer}>
+        <AdOption
+          quality="low"
+          selectedQuality={selectedQuality}
+          onSelectQuality={onSelectQuality}
+          label="Advertise as Low Quality 📢⭐"
+          marketPrice = {lowQualityProductPrice}
+          imageSrc={lowQualityImg}
+        />
+        <AdOption
+          quality="high"
+          selectedQuality={selectedQuality}
+          onSelectQuality={onSelectQuality}
+          label="Advertise as High Quality 📢⭐⭐⭐"
+          marketPrice = {highQualityProductPrice}
+          imageSrc={highQualityImg}
+        />
+      </div>
+    </div>
+  );
+}
+
+function WarrantSelector({ player, warrantAdded, setWarrantAdded}) {
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
+  const onWarrantAddition = () => {
+    setIsModalOpen(true);
+};
     return (
+      // @shahabhishek1729
+        // <div>
+        //     <div className="container" style={{
+        //         cursor: "pointer",
+        //         paddingLeft: "20px",
+        //         paddingRight: "20px",
+        //         paddingBottom: "20px",
+        //         paddingTop: "20px",
+        //         outline: warrantAdded ? "3px solid #6688FF" : "1px solid #AAAAAA",
+        //         outlineOffset: "3px",
+        //         borderRadius: "15px",
+        //         marginBottom: "20px",
+        //     }} onClick={_ => {
+        //         setWarrantAdded(!warrantAdded);
+        //         player.round.set("warrantAdded", !warrantAdded);
+        //         player.round.set("warrantPrice", !warrantAdded ? 100 : 0);
+        //     }}>
+        //         <input
+        //             style={{
+        //                 borderRadius: "999px",
+        //                 cursor: "pointer"
+        //             }}
+        //             type="checkbox"
+        //             id="addWarrant"
+        //             checked={warrantAdded}
+        //             readOnly={true}
+        //         />
+        //         <div className="option">
+        //             <h2 style={{fontWeight: "bold", fontSize: "18px"}}>
+        //                 Warrant my Advertisement</h2>
+        //             <p style={{fontWeight: "normal"}}>This will cost
+        //                 you <b>$100</b><br />Potential customers can see if you have chosen to warrant your advertisement or not, and a warrant can
+        //                     boost your credibility in the marketplace. If your ad is not found to be false, the money spent on your warrant will be fully refunded. However, if your warrant is challenged and your ad is found
+        //                     to be false, the money spent on the warrant will be lost to the challenger – anyone in the market,
+        //                     including a competitor, may challenge this warrant.</p>
+        //         </div>
+        //     </div>
+        // </div>
         <div>
-            <div className="container" style={{
+          <div className="container" style={{
                 cursor: "pointer",
                 paddingLeft: "20px",
                 paddingRight: "20px",
@@ -116,8 +156,11 @@ function WarrantSelector({ player, warrantAdded, setWarrantAdded }) {
                     readOnly={true}
                 />
                 <div className="option">
-                    <h2 style={{fontWeight: "bold", fontSize: "18px"}}>
+                  <div className="flex justify-between"><h2 style={{fontWeight: "bold", fontSize: "18px"}}>
                         Warrant my Advertisement</h2>
+                        <div className="bg-blue-400 p-2 rounded-lg" onClick={onWarrantAddition}>View</div>
+                        </div>
+                    
                     <p style={{fontWeight: "normal"}}>This will cost
                         you <b>$100</b><br />Potential customers can see if you have chosen to warrant your advertisement or not, and a warrant can
                             boost your credibility in the marketplace. If your ad is not found to be false, the money spent on your warrant will be fully refunded. However, if your warrant is challenged and your ad is found
@@ -125,6 +168,33 @@ function WarrantSelector({ player, warrantAdded, setWarrantAdded }) {
                             including a competitor, may challenge this warrant.</p>
                 </div>
             </div>
+          
+        <WarrantModal isOpen={isModalOpen} 
+        onClose={() => {
+        setIsModalOpen(false);
+        // setSelectedCards(initialSelectedCards.map((_, index) => index));
+        }} 
+         title="Warrant" children={
+     <>
+         {Array.isArray(warrants) && warrants.length > 0 && (
+             <div className="flex justify-center space-x-4">
+                 {warrants.map((warrant, index) => {
+                     return (
+                         <div
+                                //  style={isSelected(index) ? selectedCardStyle : {}}
+                                 className="flex flex-col items-center cursor-pointer select:border-2 border-black"
+                                 key={index}
+                             >
+                             <img src={warrant.icon} alt="icon" className="mb-2 max-w-full h-auto rounded-lg" />
+                             <h1 className="font-bold text-center mb-4">{warrant.description}</h1>
+                             <h1 className="font-semibold text-xl text-center"><span style={{ color: "green" }}>${warrant.price}</span></h1>
+                         </div>
+                     );
+                 })}
+             </div>
+         )}
+     </>
+ }/>
         </div>
     );
 }
@@ -365,6 +435,7 @@ export function ClaimsStage() {
                 player={player}
                 warrantAdded={warrantAdded}
                 setWarrantAdded={setWarrantAdded}
+                // onWarrantAddition={handleWarrantAddition}
             />
 
             {/* <ProfitMarginCalculator producerPlayer={player}/> */}
