@@ -2,6 +2,8 @@ import React, { useState, useEffect } from "react";
 import { usePlayer } from "@empirica/core/player/classic/react";
 import { WarrantModal } from "../components/WarrantModal";
 import warrants from "../../data.json"
+import {PayoffMatrix} from "../components/PayoffMatrix";
+
 // import { Button } from "../components/Button";  // @shahabhishek1729
 
 function ProductQualitySelector({ selectedQuality, onSelectQuality, player }) {
@@ -33,24 +35,24 @@ function ProductQualitySelector({ selectedQuality, onSelectQuality, player }) {
   );
 }
 
-function QualityOption({ quality, selectedQuality, onSelectQuality, label, productCost, imageSrc }) {
-  return (
-    <div style={styles.choice}>
-      <label style={styles.label}>
-        <input
-          type="radio"
-          name="productQuality"
-          value={quality}
-          checked={selectedQuality === quality}
-          onChange={() => onSelectQuality(quality)}
-        />
-        {label}
-      </label>
-      <p>Production cost: ${productCost}</p>
-      <img src={imageSrc} alt={`${quality} Quality Product`} style={styles.image} />
-    </div>
-  );
-}
+// function QualityOption({ quality, selectedQuality, onSelectQuality, label, productCost, imageSrc }) {
+//   return (
+//     <div style={styles.choice}>
+//       <label style={styles.label}>
+//         <input
+//           type="radio"
+//           name="productQuality"
+//           value={quality}
+//           checked={selectedQuality === quality}
+//           onChange={() => onSelectQuality(quality)}
+//         />
+//         {label}
+//       </label>
+//       <p>Production cost: ${productCost}</p>
+//       <img src={imageSrc} alt={`${quality} Quality Product`} style={styles.image} />
+//     </div>
+//   );
+// }
 
 function AdQualitySelector({ selectedQuality, onSelectQuality }) {
   const highQualityImg = "/graphics/PremiumToothpasteAI.png";
@@ -86,49 +88,52 @@ function AdQualitySelector({ selectedQuality, onSelectQuality }) {
 
 function WarrantSelector({ player, warrantAdded, setWarrantAdded}) {
   const [isModalOpen, setIsModalOpen] = useState(false);
-
+  const [isCheckboxSelected, setIsCheckboxSelected] = useState(false);
+  const [selectedWarrant, setSelectedWarrant] = useState(null);
+  const [isSelected,setIsSelected] = useState("");
+  
   const onWarrantAddition = () => {
     setIsModalOpen(true);
-};
+  };
+  
+  const onWarrantSelection = (e, price, description) => {
+    if (warrantAdded) {
+        player.round.set("warrantDesc", description);
+        player.round.set("warrantPrice", price);
+        console.log("Description", description);
+        setIsSelected(description);
+        setSelectedWarrant(description);
+    }
+  };
+  const onWarrantDeselection = () => {
+    player.round.set("warrantDesc", "");
+    player.round.set("warrantPrice", 0);
+    setIsSelected("");
+    setSelectedWarrant(null);
+    console.log("Warrant deselected");
+  };
+  const removeWarrants = (warrantAdded) => {
+    if(warrantAdded == false){
+
+      player.round.set("warrantDesc", "")
+      player.round.set("warrantPrice", 0);
+      setIsSelected("");
+      console.log("Warrant removed");
+    }
+  }
+
+  useEffect(() => {
+    if (!isCheckboxSelected) {
+      onWarrantDeselection();
+    }
+  }, [isCheckboxSelected]);
+
+  const selectedCardStyle = {
+    backgroundColor: "rgba(0, 0, 255, 0.2)",
+    borderRadius: "6px",
+    padding: "10px",
+}
     return (
-      // @shahabhishek1729
-        // <div>
-        //     <div className="container" style={{
-        //         cursor: "pointer",
-        //         paddingLeft: "20px",
-        //         paddingRight: "20px",
-        //         paddingBottom: "20px",
-        //         paddingTop: "20px",
-        //         outline: warrantAdded ? "3px solid #6688FF" : "1px solid #AAAAAA",
-        //         outlineOffset: "3px",
-        //         borderRadius: "15px",
-        //         marginBottom: "20px",
-        //     }} onClick={_ => {
-        //         setWarrantAdded(!warrantAdded);
-        //         player.round.set("warrantAdded", !warrantAdded);
-        //         player.round.set("warrantPrice", !warrantAdded ? 100 : 0);
-        //     }}>
-        //         <input
-        //             style={{
-        //                 borderRadius: "999px",
-        //                 cursor: "pointer"
-        //             }}
-        //             type="checkbox"
-        //             id="addWarrant"
-        //             checked={warrantAdded}
-        //             readOnly={true}
-        //         />
-        //         <div className="option">
-        //             <h2 style={{fontWeight: "bold", fontSize: "18px"}}>
-        //                 Warrant my Advertisement</h2>
-        //             <p style={{fontWeight: "normal"}}>This will cost
-        //                 you <b>$100</b><br />Potential customers can see if you have chosen to warrant your advertisement or not, and a warrant can
-        //                     boost your credibility in the marketplace. If your ad is not found to be false, the money spent on your warrant will be fully refunded. However, if your warrant is challenged and your ad is found
-        //                     to be false, the money spent on the warrant will be lost to the challenger – anyone in the market,
-        //                     including a competitor, may challenge this warrant.</p>
-        //         </div>
-        //     </div>
-        // </div>
         <div>
           <div className="container" style={{
                 cursor: "pointer",
@@ -140,10 +145,6 @@ function WarrantSelector({ player, warrantAdded, setWarrantAdded}) {
                 outlineOffset: "3px",
                 borderRadius: "15px",
                 marginBottom: "20px",
-            }} onClick={_ => {
-                setWarrantAdded(!warrantAdded);
-                player.round.set("warrantAdded", !warrantAdded);
-                player.round.set("warrantPrice", !warrantAdded ? 100 : 0);
             }}>
                 <input
                     style={{
@@ -152,15 +153,33 @@ function WarrantSelector({ player, warrantAdded, setWarrantAdded}) {
                     }}
                     type="checkbox"
                     id="addWarrant"
-                    checked={warrantAdded}
+                    checked={isCheckboxSelected}
+                    onClick={() => {
+                        setWarrantAdded(!isCheckboxSelected);
+                        setIsCheckboxSelected(!isCheckboxSelected);
+                        if (!isCheckboxSelected) {
+                            setSelectedWarrant(null);
+                        }
+                    }}
                     readOnly={true}
                 />
                 <div className="option">
-                  <div className="flex justify-between"><h2 style={{fontWeight: "bold", fontSize: "18px"}}>
-                        Warrant my Advertisement</h2>
-                        <div className="bg-blue-400 p-2 rounded-lg" onClick={onWarrantAddition}>View</div>
-                        </div>
-                    
+                  <div className="flex justify-between">
+                      <h2 style={{ fontWeight: "bold", fontSize: "18px" }}>
+                          Warrant my Advertisement
+                      </h2>
+                      {isCheckboxSelected && (
+                      <button
+                        className={`bg-blue-400 p-2 rounded-lg ${
+                          selectedWarrant ? "" : "bg-red-400"
+                        }`}
+                        disabled={!isCheckboxSelected}
+                        onClick={onWarrantAddition}
+                      >
+                        {selectedWarrant ? "Warrant Selected" : "Select Warrant"}
+                      </button>
+                    )}
+                  </div>
                     <p style={{fontWeight: "normal"}}>This will cost
                         you <b>$100</b><br />Potential customers can see if you have chosen to warrant your advertisement or not, and a warrant can
                             boost your credibility in the marketplace. If your ad is not found to be false, the money spent on your warrant will be fully refunded. However, if your warrant is challenged and your ad is found
@@ -172,6 +191,7 @@ function WarrantSelector({ player, warrantAdded, setWarrantAdded}) {
         <WarrantModal isOpen={isModalOpen} 
         onClose={() => {
         setIsModalOpen(false);
+        
         // setSelectedCards(initialSelectedCards.map((_, index) => index));
         }} 
          title="Warrant" children={
@@ -181,9 +201,15 @@ function WarrantSelector({ player, warrantAdded, setWarrantAdded}) {
                  {warrants.map((warrant, index) => {
                      return (
                          <div
-                                //  style={isSelected(index) ? selectedCardStyle : {}}
+                                 style={isSelected === warrant.description ? selectedCardStyle : {}}
                                  className="flex flex-col items-center cursor-pointer select:border-2 border-black"
                                  key={index}
+                                 onClick={(e) => {
+                                  if (isSelected === warrant.description) {
+                                      onWarrantDeselection();
+                                  }
+                                  onWarrantSelection(e, warrant.price, warrant.description, warrantAdded);
+                              }}
                              >
                              <img src={warrant.icon} alt="icon" className="mb-2 max-w-full h-auto rounded-lg" />
                              <h1 className="font-bold text-center mb-4">{warrant.description}</h1>
@@ -353,18 +379,20 @@ export function ClaimsStage() {
 
   const handleSubmit = () => {
     if (role === "producer" && selectedIdx !== -1) {
+      if (warrantAdded && player.round.get("warrantDesc") == "") {
+            alert("Please select the Warrant option to continue!");
+            return;
+      }
       player.round.set("productPrice", selectedIdx === 0 ? 3 : 7)
       const productCost = player.round.get("productCost");
       const unitsCanProduce = Math.floor(capital / productCost);
-      const warrantPrice = warrantAdded ? 100 : 0;
-
+      // const warrantPrice = warrantAdded ? 100 : 0;
       player.round.set("adQuality", selectedIdx === 0 ? "low" : "high");
       player.round.set("warrantAdded", warrantAdded);
-      player.round.set("warrantPrice", warrantPrice); // For now, the warrant price is hard-coded to 100
+      // player.round.set("warrantPrice", warrantPrice); // For now, the warrant price is hard-coded to 100
       player.round.set("stock", unitsCanProduce);
       player.round.set("capital", capital - unitsCanProduce * productCost); // Deduct the production cost from capital
       player.round.set("producerName", adjSelector(player.round.get("adQuality")));
-
       console.log("Stock of this player is", unitsCanProduce);
       player.stage.set("submit", true);
     } else {
@@ -430,7 +458,7 @@ export function ClaimsStage() {
                     selectedIdx={selectedIdx}
                     setSelectedIdx={setSelectedIdx}/>
             </div>
-
+            
             <WarrantSelector
                 player={player}
                 warrantAdded={warrantAdded}
