@@ -1,7 +1,7 @@
-import {usePlayer} from "@empirica/core/player/classic/react";
-import {Button} from "../components/Button";
+import { usePlayer } from "@empirica/core/player/classic/react";
+import { Button } from "../components/Button";
 import React, { useState, useEffect } from "react";
-import {PayoffMatrix} from "../components/PayoffMatrix";
+import { PayoffMatrix } from "../components/PayoffMatrix";
 
 export function QualityStage() {
     const highQualityImg = "/graphics/PremiumToothpasteAI.png";
@@ -28,7 +28,7 @@ export function QualityStage() {
         handleProceed()
         return (
             <div style={styles.waitingScreen}>
-                <ConsumerWaitingMessage/>
+                <ConsumerWaitingMessage />
                 <button onClick={handleProceed} style={styles.proceedButton}>Proceed to next round</button>
             </div>
         );
@@ -37,21 +37,17 @@ export function QualityStage() {
     const [selectedIdx, setSelectedIdx] = useState(-1);
 
     return (
-        <div className="flex flex-col items-center" style={{marginTop: "20px"}}>
-            <h1 style={{fontSize: "38px", fontStyle: "bold", fontFamily: "Futura"}}>Choose Quality</h1>
-            <p style={{fontFamily: "Avenir", fontSize: "20px", marginTop: "20px"}}>You are a producer of toothpaste, and
-                you may choose
-                what quality you would like to produce.</p>
-            <div style={{
-                display: "flex",
-                justifyContent: "space-around",
-                alignItems: "center",
-                margin: "20px",
-                marginTop: "50px"
-            }}>
-                <div style={{cursor: "pointer"}} onClick={_ => setSelectedIdx(0)}>
+        <div className="flex flex-col -top-6 justify-center border-3 border-indigo-800 p-6 rounded-lg shadow-md relative mt-16">
+
+            <h1 className="absolute -top-5 left-1/2 transform -translate-x-1/2 bg-yellow-200 border-2 border-teal-600 pl-2 pr-2 rounded-lg text-lg mb-4" style={{ fontFamily: "'Archivo', sans-serif", whiteSpace: 'nowrap', textAlign: 'center' }}>
+                Choose Quality
+            </h1>
+            <h1 className="flex justify-center mt-2 mb-6">You are a producer of toothpaste, and you may choose what quality you would like to produce.</h1>
+
+            <div className="flex justify-center space-x-4 h-full">
+                <div style={{ cursor: "pointer", display: "flex", flexDirection: "column", alignItems: "center" }} onClick={_ => setSelectedIdx(0)}>
                     <div className="option" style={{
-                        textAlign: "center", padding: "20px",
+                        textAlign: "center", padding: "15px",
                         backgroundColor: "#FA6B84",
                         color: "#FFF",
                         border: "none",
@@ -62,21 +58,21 @@ export function QualityStage() {
                         marginRight: "10px",
                         width: "370px"
                     }}>
-                        <h2 style={{fontWeight: "bold", fontFamily: "Avenir", fontSize: "24px"}}>Produce Low
+                        <h2 style={{ fontWeight: "bold", fontFamily: "'Archivo', sans-serif", fontSize: "20px" }}>Produce Low
                             Quality</h2>
-                        <p style={{fontWeight: "lighter", fontFamily: "Avenir"}}>This will cost you <b>$1</b> to
+                        <p style={{ fontWeight: "lighter", fontFamily: "Avenir" }}>This will cost you <b>$1</b> to
                             produce,
                             and you
                             may advertise it as you wish.</p>
                     </div>
-                    <img
-                        style={{height: "500px", marginLeft: "108px", marginTop: "10px", borderRadius: "20px"}}
-                        src={lowQualityImg} alt="Low quality toothpaste"/>
+                    <img className="mb-6"
+                        style={{ height: "375px", marginTop: "25px", borderRadius: "20px", filter: "drop-shadow(5px 5px 10px rgba(0, 0, 0, 0.2))" }}
+                        src={lowQualityImg} alt="Low quality toothpaste" />
                 </div>
-                <div style={{cursor: "pointer"}}
-                     onClick={_ => setSelectedIdx(1)}>
+                <div style={{ cursor: "pointer", display: "flex", flexDirection: "column", alignItems: "center" }}
+                    onClick={_ => setSelectedIdx(1)}>
                     <div className="option" style={{
-                        textAlign: "center", padding: "20px",
+                        textAlign: "center", padding: "15px",
                         backgroundColor: "#00CDBB",
                         color: "#FFF",
                         // border: "none",
@@ -88,21 +84,24 @@ export function QualityStage() {
                         marginLeft: "10px",
                         width: "370px"
                     }}>
-                        <h2 style={{fontWeight: "bold", fontFamily: "Avenir", fontSize: "24px"}}>Produce High
+                        <h2 style={{ fontWeight: "bold", fontFamily: "'Archivo', sans-serif", fontSize: "20px" }}>Produce High
                             Quality</h2>
-                        <p style={{fontWeight: "lighter", fontFamily: "Avenir"}}>This will cost you <b>$2</b> to
+                        <p style={{ fontWeight: "lighter", fontFamily: "Avenir" }}>This will cost you <b>$2</b> to
                             produce,
                             and you
                             may advertise it as you wish.</p>
                     </div>
                     <img
-                        style={{height: "500px", marginLeft: "108px", marginTop: "10px", borderRadius: "20px"}}
-                        src={highQualityImg} alt="Low quality toothpaste"/>
+                        style={{ height: "375px", marginTop: "25px", borderRadius: "20px", filter: "drop-shadow(5px 5px 10px rgba(0, 0, 0, 0.2))" }}
+                        src={highQualityImg} alt="Low quality toothpaste" />
                 </div>
             </div>
 
-            <Button handleClick={handleSubmit} style={{paddingBottom: "100px", marginBottom: "100px"}}> Next Page
-                →</Button>
+            <div className="flex justify-center items-center">
+                <Button handleClick={handleSubmit} style={{ width: "200px" }}>
+                Next Page →
+                </Button>
+            </div>
         </div>
     );
 }
@@ -120,7 +119,7 @@ function ConsumerWaitingMessage() {
             <p>For convenience, the table below represents how many points you would gain/lose for each possible
                 combination of the quality you pay for and the quality you actually receive:</p>
             {/* TODO: Remove hardcoded costs and values */}
-            <PayoffMatrix cost_hi={2} cost_lo={1} value_hi={12} value_lo={5}/>
+            <PayoffMatrix cost_hi={2} cost_lo={1} value_hi={12} value_lo={5} />
             <br />
             <p>Get ready to make smart choices and find the best products! 🧠🎯</p>
             <div style={styles.emoji}>🛒🌟</div>
