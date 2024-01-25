@@ -2,6 +2,7 @@ import { usePlayer } from "@empirica/core/player/classic/react";
 import React, { useState } from "react";
 // import { Alert } from "../components/Alert";
 import { Button } from "../components/Button";
+import "./ExitSurvey.css";
 
 export function ExitSurvey({ next }) {
   const labelClassName = "block text-sm font-medium text-gray-700 my-2";
@@ -15,6 +16,7 @@ export function ExitSurvey({ next }) {
   const [feedback, setFeedback] = useState("");
   const [fair, setFair] = useState("");
   const [education, setEducation] = useState("");
+  const [submitted, setSubmitted] = useState(false);
 
   function handleSubmit(event) {
     event.preventDefault();
@@ -25,7 +27,14 @@ export function ExitSurvey({ next }) {
       feedback,
       education,
     });
-    next();
+    setSubmitted(true);
+    setTimeout(() => {
+      window.open(
+        "https://bostonu.qualtrics.com/jfe/form/SV_6xjGAQv9CyGi6yO",
+        "_blank"
+      );
+      next();
+    }, 5000);
   }
 
   function handleEducationChange(e) {
@@ -51,123 +60,144 @@ export function ExitSurvey({ next }) {
       >
         <div className="space-y-8 divide-y divide-gray-200">
           <div>
-            <div>
-              <h3 className="text-lg leading-6 font-medium text-gray-900">
-                Exit Survey
-              </h3>
-              <p className="mt-1 text-sm text-gray-500">
-                Please answer the following short survey. You do not have to
-                provide any information you feel uncomfortable with.
-              </p>
-            </div>
-
-            <div className="space-y-8 mt-6">
-              <div className="flex flex-row">
+            {submitted ? (
+              <div className="submit-page">
+                <p>
+                  <strong>
+                    Thanks for your response! Please wait to be redirected to
+                    the next survey.
+                  </strong>
+                </p>
+                If you're not automatically redirected in 5 seconds, visit{" "}
+                <a
+                  href="https://bostonu.qualtrics.com/jfe/form/SV_6xjGAQv9CyGi6yO"
+                  target="_blank"
+                >
+                  <p className="survey-link">this link</p>
+                </a>
+              </div>
+            ) : (
+              <>
                 <div>
-                  <label htmlFor="email" className={labelClassName}>
-                    Age
-                  </label>
-                  <div className="mt-1">
-                    <input
-                      id="age"
-                      name="age"
-                      type="number"
-                      autoComplete="off"
+                  <h3 className="text-lg leading-6 font-medium text-gray-900">
+                    Exit Survey
+                  </h3>
+                  <p className="mt-1 text-sm text-gray-500">
+                    Please answer the following short survey. You do not have to
+                    provide any information you feel uncomfortable with.
+                  </p>
+                </div>
+                <div className="space-y-8 mt-6">
+                  <div className="flex flex-row">
+                    <div>
+                      <label htmlFor="email" className={labelClassName}>
+                        Age
+                      </label>
+                      <div className="mt-1">
+                        <input
+                          id="age"
+                          name="age"
+                          type="number"
+                          autoComplete="off"
+                          className={inputClassName}
+                          value={age}
+                          onChange={(e) => setAge(e.target.value)}
+                        />
+                      </div>
+                    </div>
+                    <div className="ml-5">
+                      <label htmlFor="email" className={labelClassName}>
+                        Gender
+                      </label>
+                      <div className="mt-1">
+                        <input
+                          id="gender"
+                          name="gender"
+                          autoComplete="off"
+                          className={inputClassName}
+                          value={gender}
+                          onChange={(e) => setGender(e.target.value)}
+                        />
+                      </div>
+                    </div>
+                  </div>
+
+                  <div>
+                    <label className={labelClassName}>
+                      Highest Education Qualification
+                    </label>
+                    <div className="grid gap-2">
+                      <Radio
+                        selected={education}
+                        name="education"
+                        value="high-school"
+                        label="High School"
+                        onChange={handleEducationChange}
+                      />
+                      <Radio
+                        selected={education}
+                        name="education"
+                        value="bachelor"
+                        label="US Bachelor's Degree"
+                        onChange={handleEducationChange}
+                      />
+                      <Radio
+                        selected={education}
+                        name="education"
+                        value="master"
+                        label="Master's or higher"
+                        onChange={handleEducationChange}
+                      />
+                      <Radio
+                        selected={education}
+                        name="education"
+                        value="other"
+                        label="Other"
+                        onChange={handleEducationChange}
+                      />
+                    </div>
+                  </div>
+
+                  <div className="grid grid-cols-3 gap-x-6 gap-y-3">
+                    <label className={labelClassName}>
+                      Would you prefer to advertise a product's true quality or
+                      exaggerate in the future?
+                    </label>
+
+                    <label className={labelClassName}>
+                      Could you explain why or provide other feedback, including
+                      problems you encountered.
+                    </label>
+
+                    <br />
+
+                    <textarea
                       className={inputClassName}
-                      value={age}
-                      onChange={(e) => setAge(e.target.value)}
+                      dir="auto"
+                      id="advertise"
+                      name="advertise"
+                      rows={4}
+                      value={advertise}
+                      onChange={(e) => setAdvertise(e.target.value)}
+                    />
+
+                    <textarea
+                      className={inputClassName}
+                      dir="auto"
+                      id="feedback"
+                      name="feedback"
+                      rows={4}
+                      value={feedback}
+                      onChange={(e) => setFeedback(e.target.value)}
                     />
                   </div>
-                </div>
-                <div className="ml-5">
-                  <label htmlFor="email" className={labelClassName}>
-                    Gender
-                  </label>
-                  <div className="mt-1">
-                    <input
-                      id="gender"
-                      name="gender"
-                      autoComplete="off"
-                      className={inputClassName}
-                      value={gender}
-                      onChange={(e) => setGender(e.target.value)}
-                    />
+
+                  <div className="mb-12">
+                    <Button type="submit">Submit</Button>
                   </div>
                 </div>
-              </div>
-
-              <div>
-                <label className={labelClassName}>
-                  Highest Education Qualification
-                </label>
-                <div className="grid gap-2">
-                  <Radio
-                    selected={education}
-                    name="education"
-                    value="high-school"
-                    label="High School"
-                    onChange={handleEducationChange}
-                  />
-                  <Radio
-                    selected={education}
-                    name="education"
-                    value="bachelor"
-                    label="US Bachelor's Degree"
-                    onChange={handleEducationChange}
-                  />
-                  <Radio
-                    selected={education}
-                    name="education"
-                    value="master"
-                    label="Master's or higher"
-                    onChange={handleEducationChange}
-                  />
-                  <Radio
-                    selected={education}
-                    name="education"
-                    value="other"
-                    label="Other"
-                    onChange={handleEducationChange}
-                  />
-                </div>
-              </div>
-
-              <div className="grid grid-cols-3 gap-x-6 gap-y-3">
-                <label className={labelClassName}>
-                  Would you prefer to advertise a product's true quality or exaggerate in the future?
-                </label>
-
-                <label className={labelClassName}>
-                  Could you explain why or provide other feedback, including problems you encountered.
-                </label>
-
-                <br/>
-
-                <textarea
-                  className={inputClassName}
-                  dir="auto"
-                  id="advertise"
-                  name="advertise"
-                  rows={4}
-                  value={advertise}
-                  onChange={(e) => setAdvertise(e.target.value)}
-                />
-
-                <textarea
-                  className={inputClassName}
-                  dir="auto"
-                  id="feedback"
-                  name="feedback"
-                  rows={4}
-                  value={feedback}
-                  onChange={(e) => setFeedback(e.target.value)}
-                />
-              </div>
-
-              <div className="mb-12">
-                <Button type="submit">Submit</Button>
-              </div>
-            </div>
+              </>
+            )}
           </div>
         </div>
       </form>

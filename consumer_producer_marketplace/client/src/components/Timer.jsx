@@ -2,17 +2,15 @@ import { useStageTimer } from "@empirica/core/player/classic/react";
 import React from "react";
 
 export function Timer() {
-  const timer = useStageTimer();
+  const { remaining } = useStageTimer() || {};
 
-  let remaining;
-  if (timer?.remaining || timer?.remaining === 0) {
-    remaining = Math.round(timer?.remaining / 1000);
-  }
+  let formattedTime = remaining !== undefined ? humanTimer(Math.round(remaining / 1000)) : "--:--";
+  const isAlmostFinished = remaining !== undefined && remaining <= 15000; 
 
   return (
-    <div className="flex flex-col items-center">
-      <h1 className="tabular-nums text-3xl text-gray-500 font-semibold">
-        {humanTimer(remaining)}
+    <div className={`flex flex-col items-center ${isAlmostFinished ? 'animate-pulse text-red-500' : ''}`}>
+      <h1 className="tabular-nums text-3xl font-semibold">
+        {formattedTime}
       </h1>
     </div>
   );
@@ -23,22 +21,10 @@ function humanTimer(seconds) {
     return "--:--";
   }
 
-  let out = "";
   const s = seconds % 60;
-  out += s < 10 ? "0" + s : s;
+  const m = Math.floor(seconds / 60) % 60;
+  const h = Math.floor(seconds / 3600);
 
-  const min = (seconds - s) / 60;
-  if (min === 0) {
-    return `00:${out}`;
-  }
-
-  const m = min % 60;
-  out = `${m < 10 ? "0" + m : m}:${out}`;
-
-  const h = (min - m) / 60;
-  if (h === 0) {
-    return out;
-  }
-
-  return `${h}:${out}`;
+  const formattedTime = `${h.toString().padStart(2, '0')}:${m.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')}`;
+  return formattedTime;
 }

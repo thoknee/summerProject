@@ -12,6 +12,7 @@ import "./Leaderboard.css";
 
 const Leaderboard = (props) => {
   const players = usePlayers();
+  const player = usePlayer();
   const stage = useStage();
 
   const [scores, setScores] = useState([]);
