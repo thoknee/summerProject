@@ -40,7 +40,6 @@ export function DeliberateStage() {
   const role = player.get("role");
   const [wallet, setWallet] = useState(player.get("wallet") || 0);
 
-  console.log("HELLO WORLD");
   useEffect(() => {
     if (role === "producer") {
       player.stage.set("submit", true);

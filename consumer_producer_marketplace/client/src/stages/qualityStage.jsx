@@ -24,12 +24,13 @@ export function QualityStage() {
 
     const role = player.get("role");
     if (role === "consumer") {
-        return (
-            <div style={styles.waitingScreen}>
-                <ConsumerWaitingMessage/>
-                <button onClick={handleProceed} style={styles.proceedButton}>Proceed to next round</button>
-            </div>
-        );
+        handleProceed()
+        // return (
+        //     <div style={styles.waitingScreen}>
+        //         <ConsumerWaitingMessage/>
+        //         <button onClick={handleProceed} style={styles.proceedButton}>Proceed to next round</button>
+        //     </div>
+        // );
     }
 
     const [selectedIdx, setSelectedIdx] = useState(-1);
