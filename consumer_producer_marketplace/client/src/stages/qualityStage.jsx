@@ -1,6 +1,7 @@
 import {usePlayer} from "@empirica/core/player/classic/react";
 import {Button} from "../components/Button";
 import React, { useState, useEffect } from "react";
+import {PayoffMatrix} from "../components/PayoffMatrix";
 
 export function QualityStage() {
     const highQualityImg = "/graphics/PremiumToothpasteAI.png";
@@ -24,6 +25,7 @@ export function QualityStage() {
 
     const role = player.get("role");
     if (role === "consumer") {
+        handleProceed()
         return (
             <div style={styles.waitingScreen}>
                 <ConsumerWaitingMessage/>
@@ -114,12 +116,17 @@ function ConsumerWaitingMessage() {
                 <li>"What products will be available? 🤔🛍️"</li>
                 <li>"Can you spot the best deals? 🕵️🔍"</li>
             </ul>
+            <br />
+            <p>For convenience, the table below represents how many points you would gain/lose for each possible
+                combination of the quality you pay for and the quality you actually receive:</p>
+            {/* TODO: Remove hardcoded costs and values */}
+            <PayoffMatrix cost_hi={2} cost_lo={1} value_hi={12} value_lo={5}/>
+            <br />
             <p>Get ready to make smart choices and find the best products! 🧠🎯</p>
             <div style={styles.emoji}>🛒🌟</div>
         </div>
     );
 }
-
 
 
 // Styles
