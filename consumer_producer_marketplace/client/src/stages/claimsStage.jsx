@@ -479,6 +479,8 @@ export function ClaimsStage(roundNumber) {
 
 
 function ConsumerWaitingMessage() {
+  const player = usePlayer();
+  const role = player.get("role");
   return (
     <div style={styles.waitingScreen}>
       <h2>🕒 Waiting Room 🕒</h2>
@@ -492,7 +494,7 @@ function ConsumerWaitingMessage() {
 
       <p>For convenience, the table below represents how many points you would gain/lose for each possible combination of the quality you pay for and the quality you actually receive:</p>
       {/* TODO: Remove hardcoded costs and values */}
-      <PayoffMatrix cost_hi={2} cost_lo={1} value_hi={12} value_lo={5} />
+      <PayoffMatrix cost_hi={2} cost_lo={1} value_hi={12} value_lo={5} role={role}/>
 
       <br />
 

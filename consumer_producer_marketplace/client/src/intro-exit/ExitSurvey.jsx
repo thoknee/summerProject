@@ -60,25 +60,21 @@ export function ExitSurvey({ next }) {
       >
         <div className="space-y-8 divide-y divide-gray-200">
           <div>
-            {submitted ? (
-              <div className="submit-page">
-                <p>
-                  <strong>
-                    Thanks for your response!
-                  </strong>
-                </p>
-                <div>
+          {submitted ? (
+            <div className="submit-page flex flex-col items-center justify-center h-full">
+              <p>
+                <strong>Thanks for your response!</strong>
+              </p>
+              <div className="mt-4">
                 <a
                   href="https://bostonu.qualtrics.com/jfe/form/SV_6xjGAQv9CyGi6yO"
                   target="_blank"
                 >
                   <p className="survey-link">Click here to continue</p>
                 </a>
-                </div>
-                
-                
               </div>
-            ) : (
+            </div>
+          ) : (
               <>
                 <div>
                   <h3 className="text-lg leading-6 font-medium text-gray-900">

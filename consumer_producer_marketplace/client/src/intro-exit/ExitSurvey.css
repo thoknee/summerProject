@@ -1,11 +1,9 @@
 .submit-page {
-  text-align: center;
   display: flex;
   flex-direction: column;
-  width: 100vh;
-
-  justify-content: center;
   align-items: center;
+  justify-content: center;
+  height: 80vh;
 }
 
 .survey-link {
