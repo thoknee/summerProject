@@ -318,7 +318,7 @@ export function ProfitMarginCalculator({ producerPlayer }) {
   )
 }
 
-export function ClaimsStage() {
+export function ClaimsStage(roundNumber) {
   const player = usePlayer();
   const role = player.get("role");
   const [selectedIdx, setSelectedIdx] = useState(-1);
@@ -331,11 +331,11 @@ export function ClaimsStage() {
   player.round.set("adQuality", "high");
   player.round.set("productPrice", 7);
 
-  //   useEffect(() => {
-  //     if (role === "consumer") {
-  //       player.stage.set("submit", true);
-  //     }
-  //   }, [player, role]);
+    useEffect(() => {
+      if (role === "consumer") {
+        player.stage.set("submit", true);
+      }
+    }, [player, role]);
 
   function adjSelector(quality) {
     // Returns an descriptive adj dependent on player ad quality
@@ -366,6 +366,7 @@ export function ClaimsStage() {
     player.stage.set("submit", true);
   };
 
+  // console.log(roundNumber)
 
   const handleSubmit = () => {
     if (role === "producer" && selectedIdx !== -1) {
@@ -373,16 +374,32 @@ export function ClaimsStage() {
         alert("Please select the Warrant option to continue!");
         return;
       }
-      player.round.set("productPrice", selectedIdx === 0 ? 3 : 7)
       const productCost = player.round.get("productCost");
+      console.log("product cost: ",productCost);
+      console.log("capital: ",capital)
       const unitsCanProduce = Math.floor(capital / productCost);
+      console.log(unitsCanProduce);
+      console.log(productCost)
+      // player.set(roundNumber.concat("_choices"),
+      //     [
+            player.round.set("productPrice", selectedIdx === 0 ? 3 : 7),
+            player.round.set("adQuality", selectedIdx === 0 ? "low" : "high"),
+            player.round.set("warrantAdded", warrantAdded),
+            player.round.set("stock", unitsCanProduce),
+            player.round.set("capital", capital - unitsCanProduce * productCost), // Deduct the production cost from capital
+            player.round.set("producerName", adjSelector(player.round.get("adQuality")))
+          // ])
+      // console.log("Prod price in handle: ", player.round.get("_choices")[4]);
+      // player.round.set("productPrice", selectedIdx === 0 ? 3 : 7)
+      // const productCost = player.round.get("productCost");
+      // const unitsCanProduce = Math.floor(capital / productCost);
       // const warrantPrice = warrantAdded ? 100 : 0;
-      player.round.set("adQuality", selectedIdx === 0 ? "low" : "high");
-      player.round.set("warrantAdded", warrantAdded);
-      // player.round.set("warrantPrice", warrantPrice); // For now, the warrant price is hard-coded to 100
-      player.round.set("stock", unitsCanProduce);
-      player.round.set("capital", capital - unitsCanProduce * productCost); // Deduct the production cost from capital
-      player.round.set("producerName", adjSelector(player.round.get("adQuality")));
+      // player.round.set("adQuality", selectedIdx === 0 ? "low" : "high");
+      // player.round.set("warrantAdded", warrantAdded);
+      // // player.round.set("warrantPrice", warrantPrice); // For now, the warrant price is hard-coded to 100
+      // player.round.set("stock", unitsCanProduce);
+      // player.round.set("capital", capital - unitsCanProduce * productCost); // Deduct the production cost from capital
+      // player.round.set("producerName", adjSelector(player.round.get("adQuality")));
       console.log("Stock of this player is", unitsCanProduce);
       player.stage.set("submit", true);
     } else {

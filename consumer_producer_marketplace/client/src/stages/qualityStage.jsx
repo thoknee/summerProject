@@ -14,9 +14,12 @@ export function QualityStage() {
     function handleSubmit() {
         // console.log(`Proudction quality was ${player.get("productionQuality")}`)
         // console.log(`Proudction cost was ${player.get("productionCost")}`)
-        player.stage.set("submit", true);
-        player.round.set("productQuality", selectedIdx === 0 ? "low" : "high");
-        player.round.set("productCost", selectedIdx === 0 ? "1" : "2");
+        if(role === "producer"){
+            player.stage.set("submit", true);
+            player.round.set("productQuality", selectedIdx === 0 ? "low" : "high");
+            player.round.set("productCost", selectedIdx === 0 ? "1" : "2");
+        }
+        
     }
 
     function handleProceed() {
@@ -25,7 +28,6 @@ export function QualityStage() {
 
     const role = player.get("role");
     if (role === "consumer") {
-        handleProceed()
         return (
             <div style={styles.waitingScreen}>
                 <ConsumerWaitingMessage />

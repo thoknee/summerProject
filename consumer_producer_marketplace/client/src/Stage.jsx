@@ -35,20 +35,20 @@ export function Stage() {
 
   switch (stage.get("name")) {
     case "selectRoleStage":
-      return <SelectRolesStage />;
+      return <SelectRolesStage/>;
     case "qualityStage":
       return <QualityStage />;
     case "claimsStage":
-      return <ClaimsStage />;
+      return <ClaimsStage round={round}/>;
     case "deliberateStage":
       return <DeliberateStage />;
     case "choiceStage":
-      return <ChoiceStage />;
+      return <ChoiceStage/>;
     case "feedbackStage":
-      return <FeedbackStage />;
+      return <FeedbackStage/>;
     case "scoreboardStage":
-      return <Leaderboard />;
+      return <Leaderboard/>;
     default:
-      return <Loading />;
+      return <Loading/>;
   }
 }
