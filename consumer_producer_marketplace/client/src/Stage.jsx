@@ -12,7 +12,7 @@ import { ClaimsStage } from "./stages/claimsStage";
 import { DeliberateStage } from "./stages/deliberateStage";
 import { ChoiceStage } from "./stages/choiceStage";
 import { FeedbackStage } from "./stages/feedbackStage";
-import { ScoreboardStage } from "./stages/scoreboardStage";
+// import { ScoreboardStage } from "./stages/scoreboardStage";
 import Leaderboard from "./components/Leaderboard";
 
 export function Stage() {

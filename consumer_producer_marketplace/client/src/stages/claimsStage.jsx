@@ -354,13 +354,13 @@ export function ClaimsStage(roundNumber) {
     player.round.set("productQuality", quality)
   };
 
-  const handleAdStrategySelection = (quality) => {
-    setAdvertisedQuality(quality);
-    const price = quality === "high" ? 7 : 3;
-    player.round.set("adQuality", quality);
-    player.round.set("productPrice", price)
-    player.round.set("producerName", adjSelector(quality))
-  };
+  // const handleAdStrategySelection = (quality) => {
+  //   setAdvertisedQuality(quality);
+  //   const price = quality === "high" ? 7 : 3;
+  //   player.round.set("adQuality", quality);
+  //   player.round.set("productPrice", price)
+  //   player.round.set("producerName", adjSelector(quality))
+  // };
 
   const handleProceed = () => {
     player.stage.set("submit", true);
@@ -388,15 +388,17 @@ export function ClaimsStage(roundNumber) {
             player.round.set("stock", unitsCanProduce),
             player.round.set("capital", capital - unitsCanProduce * productCost), // Deduct the production cost from capital
             player.round.set("producerName", adjSelector(player.round.get("adQuality")))
+            let productPricez = player.round.get("productPrice")
+            console.log("Product Price: ", productPricez);
           // ])
       // console.log("Prod price in handle: ", player.round.get("_choices")[4]);
       // player.round.set("productPrice", selectedIdx === 0 ? 3 : 7)
       // const productCost = player.round.get("productCost");
       // const unitsCanProduce = Math.floor(capital / productCost);
-      // const warrantPrice = warrantAdded ? 100 : 0;
+      const warrantPrice = warrantAdded ? 100 : 0;
       // player.round.set("adQuality", selectedIdx === 0 ? "low" : "high");
       // player.round.set("warrantAdded", warrantAdded);
-      // // player.round.set("warrantPrice", warrantPrice); // For now, the warrant price is hard-coded to 100
+      player.round.set("warrantPrice", warrantPrice); // For now, the warrant price is hard-coded to 100
       // player.round.set("stock", unitsCanProduce);
       // player.round.set("capital", capital - unitsCanProduce * productCost); // Deduct the production cost from capital
       // player.round.set("producerName", adjSelector(player.round.get("adQuality")));
