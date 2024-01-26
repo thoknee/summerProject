@@ -46,6 +46,9 @@ function ConsumerProductCard({ producer, index, handlePurchase, wallet }) {
       <p>
         In stock: <b>{stock}</b>
       </p>
+      <p>
+        Challenge status: <b>{}</b>
+      </p>
       {/* <button style = {styles.buyButton} onClick={() => handlePurchase(price, `Product ${index + 1}`)} disabled={wallet < price}>Buy</button> */}
       <button
         style={styles.buyButton}
@@ -57,6 +60,14 @@ function ConsumerProductCard({ producer, index, handlePurchase, wallet }) {
         disabled={wallet < price}
       >
         Buy
+      </button>
+      <button
+        style={styles.buyButton}
+        onClick={() => {
+        }}
+        disabled={!warrantAdded}
+      >
+        Challenge
       </button>
     </div>
   );
@@ -218,7 +229,7 @@ const styles = {
     cursor: "pointer", // Cursor to pointer
     boxShadow: "0 3px #005f73", // Shadow effect for depth
     transition: "all 0.2s ease", // Smooth transition for hover effects
-    margin: "10px 0", // Margin top and bottom
+    margin: "10px 10px", // Margin top and bottom
 
     ":hover": {
       backgroundColor: "#0077b6", // Slightly lighter blue when hovered
