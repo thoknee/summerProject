@@ -114,6 +114,7 @@ export function ChoiceStage() {
         basket[producerId] = 1; // Add new product with quantity 1
       }
       console.log("player basket updates", player.round.get("basket"));
+      console.log("player wallet updates", player.round.get("wallet"));
       player.round.set("basket", basket);
 
       const prod = players.find((item) => item.id === producerId);
