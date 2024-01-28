@@ -325,11 +325,11 @@ export function ClaimsStage(roundNumber) {
   const [warrantAdded, setWarrantAdded] = useState(false);
   const capital = player.round.get("capital")
 
-  // Default values for player, to avoid read error for later stages
-  player.round.set("productCost", 2);
-  player.round.set("productionQuality", "high");
-  player.round.set("adQuality", "high");
-  player.round.set("productPrice", 7);
+//   // Default values for player, to avoid read error for later stages
+//   player.round.set("productCost", 2);
+//   player.round.set("productionQuality", "high");
+//   player.round.set("adQuality", "high");
+//   player.round.set("productPrice", 7);
 
     useEffect(() => {
       if (role === "consumer") {
