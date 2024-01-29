@@ -13,6 +13,7 @@ export function ScoreboardStage() {
   });
 
   const handleProceed = () => {
+    console.log(player.get("role"))
     player.stage.set("submit", true);
   };
 

@@ -318,18 +318,24 @@ export function ProfitMarginCalculator({ producerPlayer }) {
   )
 }
 
-export function ClaimsStage() {
+export function ClaimsStage(roundNumber) {
   const player = usePlayer();
   const role = player.get("role");
   const [selectedIdx, setSelectedIdx] = useState(-1);
   const [warrantAdded, setWarrantAdded] = useState(false);
   const capital = player.round.get("capital")
 
-  //   useEffect(() => {
-  //     if (role === "consumer") {
-  //       player.stage.set("submit", true);
-  //     }
-  //   }, [player, role]);
+//   // Default values for player, to avoid read error for later stages
+//   player.round.set("productCost", 2);
+//   player.round.set("productionQuality", "high");
+//   player.round.set("adQuality", "high");
+//   player.round.set("productPrice", 7);
+
+    useEffect(() => {
+      if (role === "consumer") {
+        player.stage.set("submit", true);
+      }
+    }, [player, role]);
 
   function adjSelector(quality) {
     // Returns an descriptive adj dependent on player ad quality
@@ -348,18 +354,19 @@ export function ClaimsStage() {
     player.round.set("productQuality", quality)
   };
 
-  const handleAdStrategySelection = (quality) => {
-    setAdvertisedQuality(quality);
-    const price = quality === "high" ? 7 : 3;
-    player.round.set("adQuality", quality);
-    player.round.set("productPrice", price)
-    player.round.set("producerName", adjSelector(quality))
-  };
+  // const handleAdStrategySelection = (quality) => {
+  //   setAdvertisedQuality(quality);
+  //   const price = quality === "high" ? 7 : 3;
+  //   player.round.set("adQuality", quality);
+  //   player.round.set("productPrice", price)
+  //   player.round.set("producerName", adjSelector(quality))
+  // };
 
   const handleProceed = () => {
     player.stage.set("submit", true);
   };
 
+  // console.log(roundNumber)
 
   const handleSubmit = () => {
     if (role === "producer" && selectedIdx !== -1) {
@@ -367,16 +374,34 @@ export function ClaimsStage() {
         alert("Please select the Warrant option to continue!");
         return;
       }
-      player.round.set("productPrice", selectedIdx === 0 ? 3 : 7)
       const productCost = player.round.get("productCost");
+      console.log("product cost: ",productCost);
+      console.log("capital: ",capital)
       const unitsCanProduce = Math.floor(capital / productCost);
-      // const warrantPrice = warrantAdded ? 100 : 0;
-      player.round.set("adQuality", selectedIdx === 0 ? "low" : "high");
-      player.round.set("warrantAdded", warrantAdded);
-      // player.round.set("warrantPrice", warrantPrice); // For now, the warrant price is hard-coded to 100
-      player.round.set("stock", unitsCanProduce);
-      player.round.set("capital", capital - unitsCanProduce * productCost); // Deduct the production cost from capital
-      player.round.set("producerName", adjSelector(player.round.get("adQuality")));
+      console.log(unitsCanProduce);
+      console.log(productCost)
+      // player.set(roundNumber.concat("_choices"),
+      //     [
+            player.round.set("productPrice", selectedIdx === 0 ? 3 : 7),
+            player.round.set("adQuality", selectedIdx === 0 ? "low" : "high"),
+            player.round.set("warrantAdded", warrantAdded),
+            player.round.set("stock", unitsCanProduce),
+            player.round.set("capital", capital - unitsCanProduce * productCost), // Deduct the production cost from capital
+            player.round.set("producerName", adjSelector(player.round.get("adQuality")))
+            let productPricez = player.round.get("productPrice")
+            console.log("Product Price: ", productPricez);
+          // ])
+      // console.log("Prod price in handle: ", player.round.get("_choices")[4]);
+      // player.round.set("productPrice", selectedIdx === 0 ? 3 : 7)
+      // const productCost = player.round.get("productCost");
+      // const unitsCanProduce = Math.floor(capital / productCost);
+      const warrantPrice = warrantAdded ? 100 : 0;
+      // player.round.set("adQuality", selectedIdx === 0 ? "low" : "high");
+      // player.round.set("warrantAdded", warrantAdded);
+      player.round.set("warrantPrice", warrantPrice); // For now, the warrant price is hard-coded to 100
+      // player.round.set("stock", unitsCanProduce);
+      // player.round.set("capital", capital - unitsCanProduce * productCost); // Deduct the production cost from capital
+      // player.round.set("producerName", adjSelector(player.round.get("adQuality")));
       console.log("Stock of this player is", unitsCanProduce);
       player.stage.set("submit", true);
     } else {
@@ -456,6 +481,8 @@ export function ClaimsStage() {
 
 
 function ConsumerWaitingMessage() {
+  const player = usePlayer();
+  const role = player.get("role");
   return (
     <div style={styles.waitingScreen}>
       <h2>🕒 Waiting Room 🕒</h2>
@@ -469,7 +496,7 @@ function ConsumerWaitingMessage() {
 
       <p>For convenience, the table below represents how many points you would gain/lose for each possible combination of the quality you pay for and the quality you actually receive:</p>
       {/* TODO: Remove hardcoded costs and values */}
-      <PayoffMatrix cost_hi={2} cost_lo={1} value_hi={12} value_lo={5} />
+      <PayoffMatrix cost_hi={2} cost_lo={1} value_hi={12} value_lo={5} role={role}/>
 
       <br />
 

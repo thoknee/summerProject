@@ -80,6 +80,7 @@ export function ChoiceStage() {
   const [wallet, setWallet] = useState(player.round.get("wallet") || 0);
 
   const handleProceed = () => {
+    // if(role === "consumer" || role === "producer")
     player.stage.set("submit", true);
   };
 
@@ -122,11 +123,11 @@ export function ChoiceStage() {
       ));
   };
 
-  //   useEffect(() => {
-  //     if (role === "producer") {
-  //       player.stage.set("submit", true);
-  //     }
-  //   }, [player, role]);
+    // useEffect(() => {
+    //   if (role === "producer") {
+    //     player.stage.set("submit", true);
+    //   }
+    // }, [player, role]);
 
   if (!role) {
     return <div>Loading...</div>;
