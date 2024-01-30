@@ -51,7 +51,11 @@ async function updateProducerScores(game, unitsSoldMap) {
       const profit = unitsSold * (productPrice - productCost);
       const capital = player.round.get("capital");
       player.round.set("unitsSold", unitsSold);
-      player.set("score", capital + profit);
+      let score = player.get("score") || 0;
+      score += (capital + profit);
+      console.log(capital + profit);
+      console.log(score);
+      player.set("score", score);
     }
   });
 }
@@ -71,14 +75,16 @@ function assignRoles(game) {
 }
 
 Empirica.onGameStart(async ({ game }) => {
-  const round = game.addRound({ name: `Round` });
-  round.addStage({ name: "selectRoleStage", duration: 24000 });
-  round.addStage({ name: "qualityStage", duration: 24000 });
-  round.addStage({ name: "claimsStage", duration: 24000 });
-  round.addStage({ name: "choiceStage", duration: 24000 });
-  round.addStage({ name: "feedbackStage", duration: 24000 });
-  round.addStage({ name: "scoreboardStage", duration: 24000 });
-  //deliberate stage for future versions
+  const numRounds = 5;
+  for (let roundNumber = 1; roundNumber <= numRounds; roundNumber++) {
+    const round = game.addRound({ name: `Round${roundNumber}` });
+    round.addStage({ name: "selectRoleStage", duration: 24000 });
+    round.addStage({ name: "qualityStage", duration: 24000 });
+    round.addStage({ name: "claimsStage", duration: 24000 });
+    round.addStage({ name: "choiceStage", duration: 24000 });
+    round.addStage({ name: "feedbackStage", duration: 24000 });
+    round.addStage({ name: "scoreboardStage", duration: 24000 });
+  }
 
   game.players.forEach((player) => player.set("score", 0));
   assignRoles(game);

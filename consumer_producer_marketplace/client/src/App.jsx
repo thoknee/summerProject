@@ -1,12 +1,27 @@
 import { EmpiricaClassic } from "@empirica/core/player/classic";
 import { EmpiricaContext } from "@empirica/core/player/classic/react";
 import { EmpiricaMenu, EmpiricaParticipant } from "@empirica/core/player/react";
-import React from "react";
+import React, { useEffect } from "react";
 import { Game } from "./Game";
 import { ExitSurvey } from "./intro-exit/ExitSurvey";
 import { Introduction } from "./intro-exit/Introduction";
 
 export default function App() {
+  // DOM-Render_FIX / cc: @Neel
+  useEffect(() => {
+    window.addEventListener('error', () => {
+      alert('Something went wrong. This page should reload in 3 secs else please refresh the page.');
+      setTimeout (() => {
+        window.location.reload();
+      }, 3000);
+    });
+    return () => {
+      window.removeEventListener('error', () => {
+        alert('Something went wrong. This page should reload in 3 secs else please refresh the page.');
+      });
+    };
+  }, []);
+
   const urlParams = new URLSearchParams(window.location.search);
   const playerKey = urlParams.get("participantKey") || "";
 
