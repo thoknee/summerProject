@@ -7,6 +7,7 @@ function ConsumerProductCard({ producer, index, handlePurchase, wallet }) {
   const warrantAdded = producer.round.get("warrantAdded");
   const warrantPrice = producer.round.get("warrantPrice");
   const price = producer.round.get("productPrice"); // Replace with actual logic to get price
+  // TODO: Remove hardcoded values
   const productImage =
     adQuality === "high"
       ? "graphics/PremiumToothpasteAI.png" // High-quality image path

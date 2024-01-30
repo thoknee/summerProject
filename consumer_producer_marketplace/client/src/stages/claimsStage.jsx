@@ -382,6 +382,7 @@ export function ClaimsStage(roundNumber) {
       console.log(productCost)
       // player.set(roundNumber.concat("_choices"),
       //     [
+      // TODO: Remove hardcoded values
             player.round.set("productPrice", selectedIdx === 0 ? 3 : 7),
             player.round.set("adQuality", selectedIdx === 0 ? "low" : "high"),
             player.round.set("warrantAdded", warrantAdded),
@@ -395,6 +396,7 @@ export function ClaimsStage(roundNumber) {
       // player.round.set("productPrice", selectedIdx === 0 ? 3 : 7)
       // const productCost = player.round.get("productCost");
       // const unitsCanProduce = Math.floor(capital / productCost);
+      // TODO: Remove hardcoded values
       const warrantPrice = warrantAdded ? 100 : 0;
       // player.round.set("adQuality", selectedIdx === 0 ? "low" : "high");
       // player.round.set("warrantAdded", warrantAdded);

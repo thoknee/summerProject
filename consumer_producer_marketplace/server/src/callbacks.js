@@ -4,21 +4,20 @@ export const Empirica = new ClassicListenersCollector();
 // Function to update the score of consumers
 async function updateConsumerScores(game) {
   await game.players.forEach(async (player) => {
-    if (player.get("role") === "consumer") {
-      const basket = player.round.get("basket") || {};
-      let score = player.get("score") || 0;
-
-      Object.entries(basket).forEach(([productId, quantity]) => {
-        const producer = game.players.find((p) => p.id === productId);
-        if (producer) {
-          const productQuality = producer.round.get("productQuality");
-          const points = productQuality === "high" ? 10 : 5;
-          score += points * quantity;
-        }
-      });
-
-      player.set("score", score);
-    }
+    if (player.get("role") !== "consumer") return;
+    const basket = player.round.get("basket") || {};
+    let score = player.get("score") || 0;
+    Object.entries(basket).forEach(([productId, quantity]) => {
+      const producer = game.players.find((p) => p.id === productId);
+      if (producer) {
+        const productQuality = producer.round.get("productQuality");
+        const productPrice = producer.round.get("productPrice");
+        // TODO: Remove hardcoded values
+        const points = productQuality === "high" ? 10 : 5;
+        score += quantity * (points - productPrice);
+      }
+    });
+    player.set("score", score);
   });
 }
 
@@ -75,6 +74,7 @@ function assignRoles(game) {
 }
 
 Empirica.onGameStart(async ({ game }) => {
+  // TODO: Remove hardcoded values
   const numRounds = 5;
   for (let roundNumber = 1; roundNumber <= numRounds; roundNumber++) {
     const round = game.addRound({ name: `Round${roundNumber}` });
