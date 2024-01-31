@@ -20,6 +20,8 @@ factors:
       desc: The type of market being deployed
       values:
         - value: lemons-market
+        - value: coasian-market
+        - value: pigouvian-market
 treatments:
     - name: Solo
       desc: Single-player Game
@@ -31,5 +33,6 @@ treatments:
     - name: Two Players
       desc: Two-player Game
       factors:
+        marketType: lemons-market
         playerCount: 2
         producerPercentage: 0.5
