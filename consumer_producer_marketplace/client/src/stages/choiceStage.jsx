@@ -20,6 +20,7 @@ function ConsumerProductCard({ producer, index, handlePurchase, wallet, setWalle
           setQuantity(quantity - 1);
           setWallet(wallet + price);
           setStock(stock + 1);
+          handlePurchase(wallet, producer.id, stock, quantity - 1);
       }
   }
   const incrementQuantity = () => {
@@ -27,6 +28,7 @@ function ConsumerProductCard({ producer, index, handlePurchase, wallet, setWalle
           setQuantity(quantity + 1);
           setWallet(wallet - price);
           setStock(stock - 1);
+          handlePurchase(wallet, producer.id, stock, quantity + 1);
       }
   }
 
@@ -71,18 +73,18 @@ function ConsumerProductCard({ producer, index, handlePurchase, wallet, setWalle
               <button style={styles.plusButton} onClick={incrementQuantity}>+</button>
           </div>
 
-          <button
-              style={styles.buyButton}
-              onClick={() => {
-                  handlePurchase(wallet, producer.id, stock, quantity)
-                  // handlePurchase(price, producer.id);
-                  // console.log(`Stock : ${producer.round.get("stock")}`);
-                  // setStock(producer.round.get("stock"));
-              }}
-              // disabled={wallet < price}
-          >
-              Checkout <b>{quantity}</b> item{quantity !== 1 ? "s" : ""}
-          </button>
+          {/*<button*/}
+          {/*    style={styles.buyButton}*/}
+          {/*    onClick={() => {*/}
+          {/*        handlePurchase(wallet, producer.id, stock, quantity)*/}
+                  {/*// handlePurchase(price, producer.id);*/}
+                  {/*// console.log(`Stock : ${producer.round.get("stock")}`);*/}
+                  {/*// setStock(producer.round.get("stock"));*/}
+              {/*// }}*/}
+              {/*// disabled={wallet < price}*/}
+          {/*>*/}
+              {/*Checkout <b>{quantity}</b> item{quantity !== 1 ? "s" : ""}*/}
+          {/*</button>*/}
 
       </div>
   );
@@ -144,8 +146,6 @@ export function ChoiceStage() {
 
       const prod = players.find((item) => item.id === producerId);
       prod.round.set("stock", stock);
-
-      player.stage.set("submit", true);
   };
 
   const renderProductFeed = () => {

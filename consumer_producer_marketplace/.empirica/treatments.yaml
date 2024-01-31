@@ -33,6 +33,6 @@ treatments:
     - name: Two Players
       desc: Two-player Game
       factors:
-        marketType: lemons-market
+        marketType: coasian-market
         playerCount: 2
         producerPercentage: 0.5
