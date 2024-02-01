@@ -2,6 +2,7 @@ import { usePlayer } from "@empirica/core/player/classic/react";
 import { Button } from "../components/Button";
 import React, { useState, useEffect } from "react";
 import { PayoffMatrix } from "../components/PayoffMatrix";
+import { MakeQualityOption } from "../components/OptionButton";
 
 export function QualityStage() {
     const highQualityImg = "/graphics/PremiumToothpasteAI.png";
@@ -9,17 +10,13 @@ export function QualityStage() {
 
     const player = usePlayer();
 
-    // const roundID = `round${roundNumber}`;
-    //
     function handleSubmit() {
-        // console.log(`Proudction quality was ${player.get("productionQuality")}`)
-        // console.log(`Proudction cost was ${player.get("productionCost")}`)
-        if(role === "producer"){
+        if (role === "producer") {
             player.stage.set("submit", true);
+            // TODO: Remove hardcoded values
             player.round.set("productQuality", selectedIdx === 0 ? "low" : "high");
             player.round.set("productCost", selectedIdx === 0 ? "1" : "2");
         }
-        
     }
 
     function handleProceed() {
@@ -46,57 +43,18 @@ export function QualityStage() {
             </h1>
             <h1 className="flex justify-center mt-2 mb-6">You are a producer of toothpaste, and you may choose what quality you would like to produce.</h1>
 
-            <div className="flex justify-center space-x-4 h-full">
-                <div style={{ cursor: "pointer", display: "flex", flexDirection: "column", alignItems: "center" }} onClick={_ => setSelectedIdx(0)}>
-                    <div className="option" style={{
-                        textAlign: "center", padding: "15px",
-                        backgroundColor: "#FA6B84",
-                        color: "#FFF",
-                        border: "none",
-                        borderRadius: "15px",
-                        outline: selectedIdx === 0 ? "4px solid #FA6B84" : "none",
-                        outlineOffset: "3px",
-                        fontSize: "16px",
-                        marginRight: "10px",
-                        width: "370px"
-                    }}>
-                        <h2 style={{ fontWeight: "bold", fontFamily: "'Archivo', sans-serif", fontSize: "20px" }}>Produce Low
-                            Quality</h2>
-                        <p style={{ fontWeight: "lighter", fontFamily: "Avenir" }}>This will cost you <b>$1</b> to
-                            produce,
-                            and you
-                            may advertise it as you wish.</p>
-                    </div>
-                    <img className="mb-6"
-                        style={{ height: "375px", marginTop: "25px", borderRadius: "20px", filter: "drop-shadow(5px 5px 10px rgba(0, 0, 0, 0.2))" }}
-                        src={lowQualityImg} alt="Low quality toothpaste" />
-                </div>
-                <div style={{ cursor: "pointer", display: "flex", flexDirection: "column", alignItems: "center" }}
-                    onClick={_ => setSelectedIdx(1)}>
-                    <div className="option" style={{
-                        textAlign: "center", padding: "15px",
-                        backgroundColor: "#00CDBB",
-                        color: "#FFF",
-                        // border: "none",
-                        outline: selectedIdx === 1 ? "4px solid #00CDBB" : "none",
-                        outlineOffset: "3px",
-                        borderRadius: "15px",
-                        cursor: "pointer",
-                        fontSize: "16px",
-                        marginLeft: "10px",
-                        width: "370px"
-                    }}>
-                        <h2 style={{ fontWeight: "bold", fontFamily: "'Archivo', sans-serif", fontSize: "20px" }}>Produce High
-                            Quality</h2>
-                        <p style={{ fontWeight: "lighter", fontFamily: "Avenir" }}>This will cost you <b>$2</b> to
-                            produce,
-                            and you
-                            may advertise it as you wish.</p>
-                    </div>
-                    <img
-                        style={{ height: "375px", marginTop: "25px", borderRadius: "20px", filter: "drop-shadow(5px 5px 10px rgba(0, 0, 0, 0.2))" }}
-                        src={highQualityImg} alt="Low quality toothpaste" />
-                </div>
+            <div className="flex justify-center gap-10 items-center">
+            <MakeQualityOption
+                quality={"low"}
+                imgUrl={lowQualityImg}
+                selectedIdx={selectedIdx}
+                setSelectedIdx={setSelectedIdx} />
+
+            <MakeQualityOption
+                quality={"high"}
+                imgUrl={highQualityImg}
+                selectedIdx={selectedIdx}
+                setSelectedIdx={setSelectedIdx} />
             </div>
 
             <div className="flex justify-center items-center">

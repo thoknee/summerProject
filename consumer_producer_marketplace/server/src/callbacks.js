@@ -4,21 +4,23 @@ export const Empirica = new ClassicListenersCollector();
 // Function to update the score of consumers
 async function updateConsumerScores(game) {
   await game.players.forEach(async (player) => {
-    if (player.get("role") === "consumer") {
-      const basket = player.round.get("basket") || {};
-      let score = player.get("score") || 0;
-
-      Object.entries(basket).forEach(([productId, quantity]) => {
-        const producer = game.players.find((p) => p.id === productId);
-        if (producer) {
-          const productQuality = producer.round.get("productQuality");
-          const points = productQuality === "high" ? 10 : 5;
-          score += points * quantity;
-        }
-      });
-
-      player.set("score", score);
-    }
+    if (player.get("role") !== "consumer") return;
+    const basket = player.round.get("basket") || {};
+    const originalScore = player.get("score") || 0;
+    let score = player.get("score") || 0;
+    Object.entries(basket).forEach(([productId, quantity]) => {
+      const producer = game.players.find((p) => p.id === productId);
+      if (producer) {
+        const productQuality = producer.round.get("productQuality");
+        const productPrice = producer.round.get("productPrice");
+        // TODO: Remove hardcoded values
+        const points = productQuality === "high" ? 10 : 5;
+        score += quantity * (points - productPrice);
+      }
+    });
+    player.set("score", score);
+    // This shows how the score changed (i.e., +10, -5), to see if this changes consumer behavior
+    player.set("scoreDiff", score - originalScore);
   });
 }
 
@@ -43,20 +45,20 @@ function processConsumerBaskets(game) {
 // Function to update the score of producers
 async function updateProducerScores(game, unitsSoldMap) {
   await game.players.forEach(async (player) => {
-    if (player.get("role") === "producer") {
-      const producerId = player.id;
-      const unitsSold = unitsSoldMap.get(producerId) || 0;
-      const productPrice = player.round.get("productPrice");
-      const productCost = player.round.get("productCost");
-      const profit = unitsSold * (productPrice - productCost);
-      const capital = player.round.get("capital");
-      player.round.set("unitsSold", unitsSold);
-      let score = player.get("score") || 0;
-      score += (capital + profit);
-      console.log(capital + profit);
-      console.log(score);
-      player.set("score", score);
-    }
+    if (player.get("role") !== "producer") return;
+    const producerId = player.id;
+    const unitsSold = unitsSoldMap.get(producerId) || 0;
+    const productPrice = player.round.get("productPrice");
+    const productCost = player.round.get("productCost");
+    const profit = unitsSold * (productPrice - productCost);
+    const capital = player.round.get("capital");
+    player.round.set("unitsSold", unitsSold);
+    const originalScore = player.get("score") || 0;
+    let score = originalScore;
+    score += (capital + profit);
+    player.set("score", score);
+    // This shows how the score changed (i.e., +10, -5), to see if this changes producer behavior
+    player.set("scoreDiff", score - originalScore);
   });
 }
 
@@ -75,6 +77,7 @@ function assignRoles(game) {
 }
 
 Empirica.onGameStart(async ({ game }) => {
+  // TODO: Remove hardcoded values
   const numRounds = 5;
   for (let roundNumber = 1; roundNumber <= numRounds; roundNumber++) {
     const round = game.addRound({ name: `Round${roundNumber}` });

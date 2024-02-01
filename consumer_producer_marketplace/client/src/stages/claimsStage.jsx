@@ -1,90 +1,9 @@
 import React, { useState, useEffect } from "react";
-import { usePlayer } from "@empirica/core/player/classic/react";
+import {useGame, usePlayer} from "@empirica/core/player/classic/react";
 import { WarrantModal } from "../components/WarrantModal";
 import warrants from "../../data.json"
 import { PayoffMatrix } from "../components/PayoffMatrix";
-
-// import { Button } from "../components/Button";  // @shahabhishek1729
-
-function ProductQualitySelector({ selectedQuality, onSelectQuality, player }) {
-  const highQualityImg = "/graphics/PremiumToothpasteAI.png";
-  const lowQualityImg = "/graphics/StandardToothpasteAI.png";
-  //Should maybe game. variables or factors in the future
-  const lowQualityProductionCost = 1
-  const highQualityProductionCost = 2
-
-  const qualityOptions = [
-    { quality: "low", label: "Low Quality 🏭⭐", productCost: lowQualityProductionCost, imageSrc: lowQualityImg },
-    { quality: "high", label: "High Quality 🏭⭐⭐⭐", productCost: highQualityProductionCost, imageSrc: highQualityImg },
-  ];
-
-
-  return (
-    <div>
-      <h1><b>Choose what quality to produce</b></h1>
-      <br />
-      {qualityOptions.map((option) => (
-        <QualityOption
-          key={option.quality}
-          {...option}
-          selectedQuality={selectedQuality}
-          onSelectQuality={onSelectQuality}
-        />
-      ))}
-    </div>
-  );
-}
-
-// function QualityOption({ quality, selectedQuality, onSelectQuality, label, productCost, imageSrc }) {
-//   return (
-//     <div style={styles.choice}>
-//       <label style={styles.label}>
-//         <input
-//           type="radio"
-//           name="productQuality"
-//           value={quality}
-//           checked={selectedQuality === quality}
-//           onChange={() => onSelectQuality(quality)}
-//         />
-//         {label}
-//       </label>
-//       <p>Production cost: ${productCost}</p>
-//       <img src={imageSrc} alt={`${quality} Quality Product`} style={styles.image} />
-//     </div>
-//   );
-// }
-
-function AdQualitySelector({ selectedQuality, onSelectQuality }) {
-  const highQualityImg = "/graphics/PremiumToothpasteAI.png";
-  const lowQualityImg = "/graphics/StandardToothpasteAI.png";
-  const lowQualityProductPrice = 3
-  const highQualityProductPrice = 7
-
-  return (
-    <div>
-      <h1><b>Choose how you want to advertise your product</b></h1>
-      <br />
-      <div style={styles.choicesContainer}>
-        <AdOption
-          quality="low"
-          selectedQuality={selectedQuality}
-          onSelectQuality={onSelectQuality}
-          label="Advertise as Low Quality 📢⭐"
-          marketPrice={lowQualityProductPrice}
-          imageSrc={lowQualityImg}
-        />
-        <AdOption
-          quality="high"
-          selectedQuality={selectedQuality}
-          onSelectQuality={onSelectQuality}
-          label="Advertise as High Quality 📢⭐⭐⭐"
-          marketPrice={highQualityProductPrice}
-          imageSrc={highQualityImg}
-        />
-      </div>
-    </div>
-  );
-}
+import {SellQualityOption} from "../components/OptionButton";
 
 function WarrantSelector({ player, warrantAdded, setWarrantAdded }) {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -214,25 +133,6 @@ function WarrantSelector({ player, warrantAdded, setWarrantAdded }) {
     </div>
   );
 }
-//
-// function AdOption({quality, selectedQuality, onSelectQuality, label, marketPrice, imageSrc}) {
-//     return (
-//         <div style={styles.choice}>
-//             <label style={styles.label}>
-//                 <input
-//                     type="radio"
-//                     name="advertisedQuality"
-//                     value={quality}
-//                     checked={selectedQuality === quality}
-//                     onChange={() => onSelectQuality(quality)}
-//                 />
-//                 {label}
-//             </label>
-//             <p>Sell for market price of ${marketPrice}</p>
-//             <img src={imageSrc} alt={`${quality} Quality Ad`} style={styles.image}/>
-//         </div>
-//     );
-// }
 
 function InfoDisplay({ player, capital, selectedIdx, warrantAdded }) {
   const capitalethisround = player.round.get("capital")
@@ -267,36 +167,6 @@ function InfoDisplay({ player, capital, selectedIdx, warrantAdded }) {
 
     </div>
   );
-}
-
-function QualityOption({ quality, imgUrl, selectedIdx, setSelectedIdx }) {
-  const qualityCapitalized = quality[0].toUpperCase() + quality.slice(1);
-  // TODO: Remove hardcoded prices: price = (cost + value) / 2
-  const price = quality === "low" ? "3" : "7";
-  const backgroundColor = quality === "low" ? "#FA6B84" : "#00CDBB";
-  const qualityIdx = quality === "low" ? 0 : 1;
-
-  return <div className="text-center flex flex-col justify-center items-center" style={{ cursor: "pointer" }} onClick={_ => setSelectedIdx(qualityIdx)}>
-    <div className="option" style={{
-      textAlign: "center", padding: "20px",
-      backgroundColor: backgroundColor,
-      color: "#FFF",
-      border: "none",
-      borderRadius: "15px",
-      outline: selectedIdx === qualityIdx ? `4px solid ${backgroundColor}` : "none",
-      outlineOffset: "3px",
-      fontSize: "16px",
-      marginRight: "10px",
-      width: "370px"
-    }}>
-      <h2 style={{ fontWeight: "bold", fontFamily: "Avenir", fontSize: "24px" }}>Advertise as {qualityCapitalized + " "}
-        Quality</h2>
-      <p style={{ fontWeight: "lighter", fontFamily: "Avenir" }}>This will sell for ${price} in the market</p>
-    </div>
-    <img className="mb-6"
-      style={{ height: "375px", marginTop: "25px", borderRadius: "20px", filter: "drop-shadow(5px 5px 10px rgba(0, 0, 0, 0.2))" }}
-      src={imgUrl} alt="Low quality toothpaste" />
-  </div>
 }
 
 export function ProfitMarginCalculator({ producerPlayer }) {
@@ -382,6 +252,7 @@ export function ClaimsStage(roundNumber) {
       console.log(productCost)
       // player.set(roundNumber.concat("_choices"),
       //     [
+      // TODO: Remove hardcoded values
             player.round.set("productPrice", selectedIdx === 0 ? 3 : 7),
             player.round.set("adQuality", selectedIdx === 0 ? "low" : "high"),
             player.round.set("warrantAdded", warrantAdded),
@@ -395,6 +266,7 @@ export function ClaimsStage(roundNumber) {
       // player.round.set("productPrice", selectedIdx === 0 ? 3 : 7)
       // const productCost = player.round.get("productCost");
       // const unitsCanProduce = Math.floor(capital / productCost);
+      // TODO: Remove hardcoded values
       const warrantPrice = warrantAdded ? 100 : 0;
       // player.round.set("adQuality", selectedIdx === 0 ? "low" : "high");
       // player.round.set("warrantAdded", warrantAdded);
@@ -427,6 +299,10 @@ export function ClaimsStage(roundNumber) {
     const lowQualityImg = "/graphics/StandardToothpasteAI.png";
     // const [selectedIdx, setSelectedIdx] = useState(-1);
 
+    const game = useGame();
+    const treatment = game.get("treatment");
+    const marketType = treatment["marketType"];
+
     return (
 
       <div className="flex flex-col -top-6 justify-center border-3 border-indigo-800 p-6 rounded-lg h-full shadow-md relative p-10 mt-32">
@@ -436,36 +312,24 @@ export function ClaimsStage(roundNumber) {
 
         {<InfoDisplay capital={capital} player={player} selectedIdx={selectedIdx} warrantAdded={warrantAdded} />}
 
-        {/*<ProductQualitySelector*/}
-        {/*    selectedQuality={productQuality}*/}
-        {/*    onSelectQuality={handleQualitySelection}*/}
-        {/*    player={player}*/}
-        {/*/>*/}
-
-        {/*<AdQualitySelector*/}
-        {/*    selectedQuality={advertisedQuality}*/}
-        {/*    onSelectQuality={handleAdStrategySelection}*/}
-        {/*/>*/}
-
         <div className="flex justify-center gap-10 items-center">
-          <QualityOption
+          <SellQualityOption
             quality="low"
             imgUrl={lowQualityImg}
             selectedIdx={selectedIdx}
             setSelectedIdx={setSelectedIdx} />
-          <QualityOption
+          <SellQualityOption
             quality="high"
             imgUrl={highQualityImg}
             selectedIdx={selectedIdx}
             setSelectedIdx={setSelectedIdx} />
         </div>
 
-        <WarrantSelector
+        {marketType === "coasian-market" ? <WarrantSelector
           player={player}
           warrantAdded={warrantAdded}
           setWarrantAdded={setWarrantAdded}
-        // onWarrantAddition={handleWarrantAddition}
-        />
+        /> : null}
 
         {/* <ProfitMarginCalculator producerPlayer={player}/> */}
         <div className="flex justify-center items-center">
