@@ -19,15 +19,38 @@ export function FeedbackStage() {
     const capital = player.round.get("capital")
     const unitsSold = player.round.get("unitsSold") || 0;
     const profit = unitsSold * (productPrice - productCost);
+    const challengeStatus = player.round.get("challengeStatus");
+    let warrantStatus; // Declare the variable first
+    let challengeResult;
+    let updatedCapital = capital;
+
+    if (challengeStatus === "Yes" && adQuality === "high" && productQuality === "low") { // Use '===' for comparison
+      challengeResult = "Succeeded";
+    } else if (challengeStatus === "No" ) {
+      challengeResult = "does not matter";
+    } else {
+      challengeResult = "Failed";
+    }
+
+    if (challengeResult === "Succeeded") { // Use '===' for comparison
+      warrantStatus = "Fined (-$100)";
+      updatedCapital -= 100;
+    } else {
+      warrantStatus = "Refunded (-$0)";
+    }
 
     return (
       <div style={styles.feedbackContainer}>
+        
         <h3><b>🌟 Producer Summary 🌟</b></h3>
         <p><span role="img" aria-label="factory">🏭</span> You produced a <b>{productQuality}</b> quality product and advertised it as <b>{adQuality}</b> quality.</p>
         <p><span role="img" aria-label="shopping-cart">🛒</span> Consumers bought <b>{unitsSold}</b> units of your product at <b>${productPrice}</b> each.</p>
         <p><span role="img" aria-label="money-bag">💰</span> This resulted in a total profit of: <b>${profit.toFixed(2)}</b>.</p>
         <br/>
-        <p><span role="img" aria-label="trophy">🏆</span> Your score this round is your profits (<b>${profit}</b>) plus any remaining capital (<b>${capital}</b>), for a total of <b>${capital + profit}</b>.</p>
+        <p>Your consumer's challenge status was: <b>{challengeStatus}</b>, which <b>{challengeResult}</b>.</p>
+        <p>So your warrant deposit was: <b>{warrantStatus}</b>.</p>
+        <br/>
+        <p><span role="img" aria-label="trophy">🏆</span> Your score this round is your profits (<b>${profit}</b>) plus any remaining capital (<b>${updatedCapital}</b>), for a total of <b>${updatedCapital + profit}</b>.</p>
       </div>
     );
 };
@@ -35,6 +58,7 @@ export function FeedbackStage() {
   // Consumer-specific feedback
   const renderConsumerFeedback = () => {
     const basket = player.round.get("basket") || {};
+    
   
     return (
       <div style={styles.feedbackContainer}>
@@ -50,14 +74,45 @@ export function FeedbackStage() {
             
             const adQuality = producer.round.get("adQuality");
             const actualQuality = producer.round.get("productQuality");
+            const challengeStatus = producer.round.get("challengeStatus");
             const emoji = getQualityMatchEmoji(adQuality, actualQuality);
+            const capital = player.round.get("capital")
+            const wallet = player.round.get("wallet")
+            const productPrice = player.round.get("productPrice")
+            
+            let warrantStatus; // Declare the variable first
+            let challengeResult;
+            let updatedCapital = capital;
+            let compensation;
+
+            if (challengeStatus === "Yes" && adQuality === "high" && actualQuality === "low") { // Use '===' for comparison
+              challengeResult = "Succeeded";
+            } else if (challengeStatus === "No" ) {
+              challengeResult = "does not matter";
+            } else {
+              challengeResult = "Failed";
+            }
+        
+            if (challengeResult === "Succeeded") { // Use '===' for comparison
+              warrantStatus = "Fined (-$100)";
+              updatedCapital -= 100;
+              compensation = 20;
+            } else {
+              warrantStatus = "Refunded (-$0)";
+              compensation = 0;
+            }
 
             return (
               <li key={index}>
                 <p><b>Producer:</b> {producerId} ({producer.round.get("producerName")})</p>
                 <p><b>Units Bought:</b> {quantity}</p>
                 <p><b>Advertised quality was:</b> {adQuality} </p>
-                <p><b>Real product quality was:</b> {producer.round.get("productQuality")} {emoji}</p>
+                <p><b>Real product quality was:</b> {producer.round.get("productQuality")} {emoji}</p> 
+                <p><b>Remaining capital in wallet:</b> {20-productPrice* quantity} </p> 
+                <br/>
+                <p><b>Your challenge status was:</b> {challengeStatus}, <b>which</b> {challengeResult}.</p>
+                <p><span role="img" aria-label="money-bag">💰</span> <b>This resulted in a total compensation of:</b> ${compensation}.</p><br/>
+                <p><span role="img" aria-label="trophy">🏆</span> Your score this round is your compensation (<b>${compensation}</b>) plus any remaining capital (<b>${20-productPrice* quantity}</b>), for a total of <b>${compensation+20-productPrice* quantity}</b>.</p>
               </li>
             );
           })}
