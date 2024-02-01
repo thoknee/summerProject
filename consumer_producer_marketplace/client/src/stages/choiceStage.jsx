@@ -1,8 +1,10 @@
 import React, { useState, useEffect } from "react";
 import { usePlayer, usePlayers } from "@empirica/core/player/classic/react";
 
-function ConsumerProductCard({ producer, index, handlePurchase, wallet, setWallet }) {
+
+function ConsumerProductCard({ producer, index, handlePurchase, wallet, setWallet, handleChallenge }) {
   const [stock, setStock] = useState(producer.round.get("stock") || 999);
+  const [challengeStatus, setChallengeStatus] = useState(producer.round.get("challengeStatus") || "No");
   const adQuality = producer.round.get("adQuality");
   const warrantAdded = producer.round.get("warrantAdded");
   const warrantPrice = producer.round.get("warrantPrice");
@@ -33,60 +35,60 @@ function ConsumerProductCard({ producer, index, handlePurchase, wallet, setWalle
   }
 
   return (
-      <div className="product-card" style={styles.productCard}>
-          {warrantAdded ? (
-              <div
-                  className="warrant-banner"
-                  style={{
-                      backgroundColor: "#4287f5",
-                      transform: "rotate(30deg)",
-                      width: "200px",
-                      position: "absolute",
-                      right: "0",
-                      marginRight: "-45px",
-                      marginTop: "-10px",
-                  }}
-              >
-                  <b style={{color: "white", fontFamily: "Avenir"}}>WARRANTED</b>
-              </div>
-          ) : (
-              <></>
-          )}
-          <h3>{`Ad # ${index + 1}`}</h3>
-          <h4>Seller: {producer.id}</h4>
-          <h3>{producer.round.get("producerName")}</h3>
-          <img
-              src={productImage}
-              alt={`Product ${index + 1}`}
-              style={styles.productImage}
-          />
-          <p>Quality: {adQuality}</p>
-          <p>Price: ${price}</p>
-          {warrantAdded ? <p>Warranted for: ${warrantPrice}</p> : <></>}
-          <p>
-              In stock: <b>{stock}</b>
-          </p>
-          {/* <button style = {styles.buyButton} onClick={() => handlePurchase(price, `Product ${index + 1}`)} disabled={wallet < price}>Buy</button> */}
-          <div className={"mt-4"}>
-              <button style={styles.minusButton} onClick={decrementQuantity}>–</button>
-              <span style={{marginLeft: "6px", marginRight: "6px"}}>{quantity}</span>
-              <button style={styles.plusButton} onClick={incrementQuantity}>+</button>
-          </div>
+    <div className="product-card" style={styles.productCard}>
+      {warrantAdded ? (
+        <div
+          className="warrant-banner"
+          style={{
+            backgroundColor: "#4287f5",
+            transform: "rotate(30deg)",
+            width: "200px",
+            position: "absolute",
+            right: "0",
+            marginRight: "-45px",
+            marginTop: "-10px",
+          }}
+        >
+          <b style={{ color: "white", fontFamily: "Avenir" }}>WARRANTED</b>
+        </div>
+      ) : (
+        <></>
+      )}
+      <h3>{`Ad # ${index + 1}`}</h3>
+      <h4>Seller: {producer.id}</h4>
+      <h3>{producer.round.get("producerName")}</h3>
+      <img
+        src={productImage}
+        alt={`Product ${index + 1}`}
+        style={styles.productImage}
+      />
+      <p>Quality: {adQuality}</p>
+      <p>Price: ${price}</p>
+      {warrantAdded ? <p>Warranted for: ${warrantPrice}</p> : <></>}
+      <p>
+        In stock: <b>{stock}</b>
+      </p>
 
-          {/*<button*/}
-          {/*    style={styles.buyButton}*/}
-          {/*    onClick={() => {*/}
-          {/*        handlePurchase(wallet, producer.id, stock, quantity)*/}
-                  {/*// handlePurchase(price, producer.id);*/}
-                  {/*// console.log(`Stock : ${producer.round.get("stock")}`);*/}
-                  {/*// setStock(producer.round.get("stock"));*/}
-              {/*// }}*/}
-              {/*// disabled={wallet < price}*/}
-          {/*>*/}
-              {/*Checkout <b>{quantity}</b> item{quantity !== 1 ? "s" : ""}*/}
-          {/*</button>*/}
-
+      <div className={"mt-4"}>
+          <button style={styles.minusButton} onClick={decrementQuantity}>–</button>
+          <span style={{marginLeft: "6px", marginRight: "6px"}}>{quantity}</span>
+          <button style={styles.plusButton} onClick={incrementQuantity}>+</button>
       </div>
+      <p>
+        Challenge status: <b>{challengeStatus}</b>
+      </p>
+      <button
+        style={styles.buyButton}
+        onClick={() => {
+          handleChallenge(challengeStatus, producer.id);
+          console.log(`challengeStatus : ${producer.round.get("challengeStatus")}`);
+          setChallengeStatus(producer.round.get("challengeStatus"));
+        }}
+        disabled={!warrantAdded}
+      >
+        Challenge
+      </button>
+    </div>
   );
 }
 
@@ -142,11 +144,20 @@ export function ChoiceStage() {
       let basket = player.round.get("basket") || {};
       basket[producerId] = quantity;
       console.log("player basket updates", player.round.get("basket"));
+      console.log("player wallet updates", player.round.get("wallet"));
       player.round.set("basket", basket);
 
       const prod = players.find((item) => item.id === producerId);
       prod.round.set("stock", stock);
   };
+
+  const handleChallenge = (challengeStatus, producerId) => {
+    console.log("Consumer attempts to challenge");
+    const newStatus = challengeStatus === "No" ? "Yes" : "No";
+    //setChallengeStatus(newStatus); 
+    const prod = players.find((item) => item.id === producerId);
+    prod.round.set("challengeStatus", newStatus);
+  }
 
   const renderProductFeed = () => {
     return players
@@ -156,7 +167,9 @@ export function ChoiceStage() {
           key={index}
           producer={producer}
           index={index}
-          handlePurchase={handlePurchase}
+
+          handlePurchase={(cost) => handlePurchase(cost, producer.id)}
+          handleChallenge={(challengeStatus) => handleChallenge(challengeStatus, producer.id)}
           wallet={wallet}
           setWallet={setWallet}
         />
@@ -259,7 +272,7 @@ const styles = {
     cursor: "pointer", // Cursor to pointer
     boxShadow: "0 3px #005f73", // Shadow effect for depth
     transition: "all 0.2s ease", // Smooth transition for hover effects
-    margin: "10px 0", // Margin top and bottom
+    margin: "10px 10px", // Margin top and bottom
 
     ":hover": {
       backgroundColor: "#0077b6", // Slightly lighter blue when hovered
