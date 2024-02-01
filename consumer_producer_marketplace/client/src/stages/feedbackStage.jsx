@@ -58,8 +58,7 @@ export function FeedbackStage() {
   // Consumer-specific feedback
   const renderConsumerFeedback = () => {
     const basket = player.round.get("basket") || {};
-    
-  
+
     return (
       <div style={styles.feedbackContainer}>
         <h3><b>🛒 Your Consumer Summary</b></h3>
@@ -67,8 +66,11 @@ export function FeedbackStage() {
           {Object.entries(basket).map(([producerId, quantity], index) => {
             const producers = players.filter(p => p.get("role") === "producer");
             const producer = producers.find(p => p.id === producerId);
-  
-            if (!producer) {
+            const productQuality = producer.round.get("productQuality");
+            const productPrice = producer.round.get("productPrice")
+
+
+              if (!producer) {
               return <li key={index}>Producer data not found for ID: {producerId}</li>;
             }
             
@@ -78,8 +80,7 @@ export function FeedbackStage() {
             const emoji = getQualityMatchEmoji(adQuality, actualQuality);
             const capital = player.round.get("capital")
             const wallet = player.round.get("wallet")
-            const productPrice = player.round.get("productPrice")
-            
+
             let warrantStatus; // Declare the variable first
             let challengeResult;
             let updatedCapital = capital;
@@ -108,11 +109,11 @@ export function FeedbackStage() {
                 <p><b>Units Bought:</b> {quantity}</p>
                 <p><b>Advertised quality was:</b> {adQuality} </p>
                 <p><b>Real product quality was:</b> {producer.round.get("productQuality")} {emoji}</p> 
-                <p><b>Remaining capital in wallet:</b> {20-productPrice* quantity} </p> 
+                <p><b>Remaining capital in wallet:</b> {wallet - productPrice* quantity} </p>
                 <br/>
                 <p><b>Your challenge status was:</b> {challengeStatus}, <b>which</b> {challengeResult}.</p>
                 <p><span role="img" aria-label="money-bag">💰</span> <b>This resulted in a total compensation of:</b> ${compensation}.</p><br/>
-                <p><span role="img" aria-label="trophy">🏆</span> Your score this round is your compensation (<b>${compensation}</b>) plus any remaining capital (<b>${20-productPrice* quantity}</b>), for a total of <b>${compensation+20-productPrice* quantity}</b>.</p>
+                <p><span role="img" aria-label="trophy">🏆</span> Your non-utility score this round is your compensation (<b>${compensation}</b>) plus any remaining capital (<b>${20-productPrice* quantity}</b>), for a total of <b>${compensation+20-productPrice* quantity}</b>.</p>
               </li>
             );
           })}
