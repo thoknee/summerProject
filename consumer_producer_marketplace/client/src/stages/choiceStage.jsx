@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from "react";
 import { usePlayer, usePlayers } from "@empirica/core/player/classic/react";
 
-function ConsumerProductCard({ producer, index, handlePurchase, wallet }) {
+function ConsumerProductCard({ producer, index, handlePurchase, wallet, handleChallenge }) {
   const [stock, setStock] = useState(producer.round.get("stock") || 999);
+  const [challengeStatus, setChallengeStatus] = useState(producer.round.get("challengeStatus") || "No");
   const adQuality = producer.round.get("adQuality");
   const warrantAdded = producer.round.get("warrantAdded");
   const warrantPrice = producer.round.get("warrantPrice");
@@ -46,6 +47,9 @@ function ConsumerProductCard({ producer, index, handlePurchase, wallet }) {
       <p>
         In stock: <b>{stock}</b>
       </p>
+      <p>
+        Challenge status: <b>{challengeStatus}</b>
+      </p>
       {/* <button style = {styles.buyButton} onClick={() => handlePurchase(price, `Product ${index + 1}`)} disabled={wallet < price}>Buy</button> */}
       <button
         style={styles.buyButton}
@@ -57,6 +61,17 @@ function ConsumerProductCard({ producer, index, handlePurchase, wallet }) {
         disabled={wallet < price}
       >
         Buy
+      </button>
+      <button
+        style={styles.buyButton}
+        onClick={() => {
+          handleChallenge(challengeStatus, producer.id);
+          console.log(`challengeStatus : ${producer.round.get("challengeStatus")}`);
+          setChallengeStatus(producer.round.get("challengeStatus"));
+        }}
+        disabled={!warrantAdded}
+      >
+        Challenge
       </button>
     </div>
   );
@@ -100,6 +115,7 @@ export function ChoiceStage() {
         basket[producerId] = 1; // Add new product with quantity 1
       }
       console.log("player basket updates", player.round.get("basket"));
+      console.log("player wallet updates", player.round.get("wallet"));
       player.round.set("basket", basket);
 
       const prod = players.find((item) => item.id === producerId);
@@ -108,6 +124,14 @@ export function ChoiceStage() {
       alert("Not enough funds to complete this purchase.");
     }
   };
+
+  const handleChallenge = (challengeStatus, producerId) => {
+    console.log("Consumer attempts to challenge");
+    const newStatus = challengeStatus === "No" ? "Yes" : "No";
+    //setChallengeStatus(newStatus); 
+    const prod = players.find((item) => item.id === producerId);
+    prod.round.set("challengeStatus", newStatus);
+  }
 
   const renderProductFeed = () => {
     return players
@@ -118,6 +142,7 @@ export function ChoiceStage() {
           producer={producer}
           index={index}
           handlePurchase={(cost) => handlePurchase(cost, producer.id)}
+          handleChallenge={(challengeStatus) => handleChallenge(challengeStatus, producer.id)}
           wallet={wallet}
         />
       ));
@@ -219,7 +244,7 @@ const styles = {
     cursor: "pointer", // Cursor to pointer
     boxShadow: "0 3px #005f73", // Shadow effect for depth
     transition: "all 0.2s ease", // Smooth transition for hover effects
-    margin: "10px 0", // Margin top and bottom
+    margin: "10px 10px", // Margin top and bottom
 
     ":hover": {
       backgroundColor: "#0077b6", // Slightly lighter blue when hovered
