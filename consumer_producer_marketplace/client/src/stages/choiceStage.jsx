@@ -168,7 +168,7 @@ export function ChoiceStage() {
           producer={producer}
           index={index}
 
-          handlePurchase={(cost) => handlePurchase(cost, producer.id)}
+          handlePurchase={handlePurchase}
           handleChallenge={(challengeStatus) => handleChallenge(challengeStatus, producer.id)}
           wallet={wallet}
           setWallet={setWallet}
