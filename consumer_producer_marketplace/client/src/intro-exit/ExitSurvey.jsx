@@ -30,7 +30,7 @@ export function ExitSurvey({ next }) {
     setSubmitted(true);
     setTimeout(() => {
       window.open(
-        "https://bostonu.qualtrics.com/jfe/form/SV_6xjGAQv9CyGi6yO",
+        "https://bostonu.qualtrics.com/jfe/form/SV_bKv1fR9YmYvmpnw",
         "_blank"
       );
       next();
@@ -67,7 +67,7 @@ export function ExitSurvey({ next }) {
               </p>
               <div className="mt-4">
                 <a
-                  href="https://bostonu.qualtrics.com/jfe/form/SV_6xjGAQv9CyGi6yO"
+                  href="https://bostonu.qualtrics.com/jfe/form/SV_bKv1fR9YmYvmpnw"
                   target="_blank"
                 >
                   <p className="survey-link">Click here to continue</p>
