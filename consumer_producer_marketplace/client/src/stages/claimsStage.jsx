@@ -11,19 +11,24 @@ function WarrantSelector({ player, warrantAdded, setWarrantAdded }) {
   const [selectedWarrant, setSelectedWarrant] = useState(null);
   const [isSelected, setIsSelected] = useState("");
 
+  const productPrice = player.round.get('productPrice')
+  const productCost = player.round.get('productCost')
+  const profit = productPrice - productCost
+
   const onWarrantAddition = () => {
     setIsModalOpen(true);
   };
 
-  const onWarrantSelection = (e, price, description) => {
+  const onWarrantSelection = (e, multiplier, description) => {
     if (warrantAdded) {
       player.round.set("warrantDesc", description);
-      player.round.set("warrantPrice", price);
+      player.round.set("warrantPrice", profit + profit*multiplier); // Warrant price logic is mainly here
       console.log("Description", description);
       setIsSelected(description);
       setSelectedWarrant(description);
     }
   };
+
   const onWarrantDeselection = () => {
     player.round.set("warrantDesc", "");
     player.round.set("warrantPrice", 0);
@@ -90,7 +95,7 @@ function WarrantSelector({ player, warrantAdded, setWarrantAdded }) {
             )}
           </div>
           <p style={{ fontWeight: "normal" }}>This will cost
-            you <b>$100</b><br />Potential customers can see if you have chosen to warrant your advertisement or not, and a warrant can
+            you <b>${profit + profit*0.5}</b><br />Potential customers can see if you have chosen to warrant your advertisement or not, and a warrant can
             boost your credibility in the marketplace. If your ad is not found to be false, the money spent on your warrant will be fully refunded. However, if your warrant is challenged and your ad is found
             to be false, the money spent on the warrant will be lost to the challenger – anyone in the market,
             including a competitor, may challenge this warrant.</p>
@@ -117,12 +122,12 @@ function WarrantSelector({ player, warrantAdded, setWarrantAdded }) {
                         if (isSelected === warrant.description) {
                           onWarrantDeselection();
                         }
-                        onWarrantSelection(e, warrant.price, warrant.description, warrantAdded);
+                        onWarrantSelection(e, warrant.multiplier, warrant.description, warrantAdded);
                       }}
                     >
                       <img src={warrant.icon} alt="icon" className="mb-2 max-w-full h-auto rounded-lg" />
                       <h1 className="font-bold text-center mb-4">{warrant.description}</h1>
-                      <h1 className="font-semibold text-xl text-center"><span style={{ color: "green" }}>${warrant.price}</span></h1>
+                      <h1 className="font-semibold text-xl text-center"><span style={{ color: "green" }}>${profit + profit*warrant.multiplier}</span></h1>
                     </div>
                   );
                 })}
@@ -141,6 +146,9 @@ function InfoDisplay({ player, capital, selectedIdx, warrantAdded }) {
   const adQuality = selectedIdx === 0 ? "low" : "high";
   const productPrice = selectedIdx === 0 ? "3" : "9";
   const profit = productPrice - player.round.get("productCost")
+
+  player.round.set(`productPrice`, productPrice) // Needed to set this here so other fucntions have access for dynamic warrant price updates
+
   return (
     <div style={styles.infoBox}>
       <b>Choices summary</b> <br />
@@ -217,6 +225,7 @@ export function ClaimsStage(roundNumber) {
       : adjNeg[Math.floor(Math.random() * adjNeg.length)];
     return `${baseProducerName} ${chosenAdj}'s toothpaste`;
   }
+
   const handleQualitySelection = (quality) => {
     setProductQuality(quality);
     const cost = quality === "high" ? 2 : 1;
@@ -266,11 +275,11 @@ export function ClaimsStage(roundNumber) {
       // player.round.set("productPrice", selectedIdx === 0 ? 3 : 7)
       // const productCost = player.round.get("productCost");
       // const unitsCanProduce = Math.floor(capital / productCost);
-      // TODO: Remove hardcoded values
-      const warrantPrice = warrantAdded ? 100 : 0;
+      const warrantPrice = warrantAdded ? player.round.get("warrantPrice") : 0; //Unsure if this is needed?
       // player.round.set("adQuality", selectedIdx === 0 ? "low" : "high");
       // player.round.set("warrantAdded", warrantAdded);
-      player.round.set("warrantPrice", warrantPrice); // For now, the warrant price is hard-coded to 100
+      player.round.set("warrantPrice", warrantPrice);
+      console.log(`Warrant price is: ${warrantPrice}`)
       // player.round.set("stock", unitsCanProduce);
       // player.round.set("capital", capital - unitsCanProduce * productCost); // Deduct the production cost from capital
       // player.round.set("producerName", adjSelector(player.round.get("adQuality")));
