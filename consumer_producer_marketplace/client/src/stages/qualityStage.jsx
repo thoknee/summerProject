@@ -3,6 +3,7 @@ import { Button } from "../components/Button";
 import React, { useState, useEffect } from "react";
 import { PayoffMatrix } from "../components/PayoffMatrix";
 import { MakeQualityOption } from "../components/OptionButton";
+import { cost_hi, cost_lo, price_hi, price_lo, value_hi, value_lo } from "../../constants";
 
 export function QualityStage() {
     const highQualityImg = "/graphics/PremiumToothpasteAI.png";
@@ -15,7 +16,7 @@ export function QualityStage() {
             player.stage.set("submit", true);
             // TODO: Remove hardcoded values
             player.round.set("productQuality", selectedIdx === 0 ? "low" : "high");
-            player.round.set("productCost", selectedIdx === 0 ? "1" : "2");
+            player.round.set("productCost", selectedIdx === 0 ? "2" : "6");
         }
     }
 
@@ -44,22 +45,22 @@ export function QualityStage() {
             <h1 className="flex justify-center mt-2 mb-6">You are a producer of toothpaste, and you may choose what quality you would like to produce.</h1>
 
             <div className="flex justify-center gap-10 items-center">
-            <MakeQualityOption
-                quality={"low"}
-                imgUrl={lowQualityImg}
-                selectedIdx={selectedIdx}
-                setSelectedIdx={setSelectedIdx} />
+                <MakeQualityOption
+                    quality={"low"}
+                    imgUrl={lowQualityImg}
+                    selectedIdx={selectedIdx}
+                    setSelectedIdx={setSelectedIdx} />
 
-            <MakeQualityOption
-                quality={"high"}
-                imgUrl={highQualityImg}
-                selectedIdx={selectedIdx}
-                setSelectedIdx={setSelectedIdx} />
+                <MakeQualityOption
+                    quality={"high"}
+                    imgUrl={highQualityImg}
+                    selectedIdx={selectedIdx}
+                    setSelectedIdx={setSelectedIdx} />
             </div>
 
             <div className="flex justify-center items-center">
                 <Button handleClick={handleSubmit} style={{ width: "200px" }}>
-                Next Page →
+                    Next Page →
                 </Button>
             </div>
         </div>
@@ -80,7 +81,7 @@ function ConsumerWaitingMessage() {
             <p>For convenience, the table below represents how many points you would gain/lose for each possible
                 combination of the quality you pay for and the quality you actually receive:</p>
             {/* TODO: Remove hardcoded costs and values */}
-            <PayoffMatrix cost_hi={2} cost_lo={1} value_hi={12} value_lo={5} role={"consumer"}/>
+            <PayoffMatrix role={"consumer"} />
             <br />
             <p>Get ready to make smart choices and find the best products! 🧠🎯</p>
             <div style={styles.emoji}>🛒🌟</div>

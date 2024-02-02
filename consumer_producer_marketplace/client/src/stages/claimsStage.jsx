@@ -1,17 +1,21 @@
 import React, { useState, useEffect } from "react";
-import {useGame, usePlayer} from "@empirica/core/player/classic/react";
+import { useGame, usePlayer } from "@empirica/core/player/classic/react";
 import { WarrantModal } from "../components/WarrantModal";
 import warrants from "../../data.json"
 import { PayoffMatrix } from "../components/PayoffMatrix";
-import {SellQualityOption} from "../components/OptionButton";
+import { SellQualityOption } from "../components/OptionButton";
+import { cost_hi, cost_lo, price_hi, price_lo, value_hi, value_lo } from "../../constants";
 
-function WarrantSelector({ player, warrantAdded, setWarrantAdded }) {
+console.log(cost_hi, cost_lo, price_hi, price_lo, value_hi, value_lo);
+
+function WarrantSelector({ player, warrantAdded, setWarrantAdded, selectedIdx }) {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isCheckboxSelected, setIsCheckboxSelected] = useState(false);
   const [selectedWarrant, setSelectedWarrant] = useState(null);
   const [isSelected, setIsSelected] = useState("");
 
-  const productPrice = player.round.get('productPrice')
+  // const productPrice = player.round.get('productPrice')
+  const productPrice = selectedIdx === 0 ? "5" : "10";
   const productCost = player.round.get('productCost')
   const profit = productPrice - productCost
 
@@ -22,7 +26,7 @@ function WarrantSelector({ player, warrantAdded, setWarrantAdded }) {
   const onWarrantSelection = (e, multiplier, description) => {
     if (warrantAdded) {
       player.round.set("warrantDesc", description);
-      player.round.set("warrantPrice", profit*multiplier); // Warrant price calculation
+      player.round.set("warrantPrice", profit * multiplier); // Warrant price calculation
       console.log("Description", description);
       setIsSelected(description);
       setSelectedWarrant(description);
@@ -65,7 +69,7 @@ function WarrantSelector({ player, warrantAdded, setWarrantAdded }) {
         borderRadius: "15px",
       }}>
         <input
-        className="rounded-full cursor-pointer"
+          className="rounded-full cursor-pointer"
           type="checkbox"
           id="addWarrant"
           checked={isCheckboxSelected}
@@ -95,7 +99,7 @@ function WarrantSelector({ player, warrantAdded, setWarrantAdded }) {
             )}
           </div>
           <p style={{ fontWeight: "normal" }}>This will cost
-            you <b>${profit*4}</b><br />Potential customers can see if you have chosen to warrant your advertisement or not, and a warrant can
+            you <b>${profit * 4}</b><br />Potential customers can see if you have chosen to warrant your advertisement or not, and a warrant can
             boost your credibility in the marketplace. If your ad is not found to be false, the money spent on your warrant will be fully refunded. However, if your warrant is challenged and your ad is found
             to be false, the money spent on the warrant will be lost to the challenger – anyone in the market,
             including a competitor, may challenge this warrant.</p>
@@ -127,7 +131,7 @@ function WarrantSelector({ player, warrantAdded, setWarrantAdded }) {
                     >
                       <img src={warrant.icon} alt="icon" className="mb-2 max-w-full h-auto rounded-lg" />
                       <h1 className="font-bold text-center mb-4">{warrant.description}</h1>
-                      <h1 className="font-semibold text-xl text-center"><span style={{ color: "green" }}>${profit*warrant.multiplier}</span></h1>
+                      <h1 className="font-semibold text-xl text-center"><span style={{ color: "green" }}>${profit * warrant.multiplier}</span></h1>
                     </div>
                   );
                 })}
@@ -145,10 +149,8 @@ function InfoDisplay({ player, capital, selectedIdx, warrantAdded }) {
   const quality = player.round.get("productQuality")
   console.log(quality)
   const adQuality = selectedIdx === 0 ? "low" : "high";
-  const productPrice = selectedIdx === 0 ? "3" : "9";
+  const productPrice = selectedIdx === 0 ? "5" : "10";
   const profit = productPrice - player.round.get("productCost")
-
-  player.round.set(`productPrice`, productPrice) // Needed to set this here so other fucntions have access for dynamic warrant price updates
 
   return (
     <div style={styles.infoBox}>
@@ -173,7 +175,7 @@ function InfoDisplay({ player, capital, selectedIdx, warrantAdded }) {
       { /* Don't factor in warrant in total profit calculation, because it may be fully refunded */}
       <span role="img" aria-label="units">💰 </span>
       Profit if you sell everything: <b>${profit * unitsAmount ? profit * unitsAmount : "..."}</b>
-
+      <PayoffMatrix role={"producer"} />
     </div>
   );
 }
@@ -204,17 +206,17 @@ export function ClaimsStage(roundNumber) {
   const [warrantAdded, setWarrantAdded] = useState(false);
   const capital = player.round.get("capital")
 
-//   // Default values for player, to avoid read error for later stages
-//   player.round.set("productCost", 2);
-//   player.round.set("productionQuality", "high");
-//   player.round.set("adQuality", "high");
-//   player.round.set("productPrice", 7);
+  //   // Default values for player, to avoid read error for later stages
+  //   player.round.set("productCost", 2);
+  //   player.round.set("productionQuality", "high");
+  //   player.round.set("adQuality", "high");
+  //   player.round.set("productPrice", 7);
 
-    useEffect(() => {
-      if (role === "consumer") {
-        player.stage.set("submit", true);
-      }
-    }, [player, role]);
+  useEffect(() => {
+    if (role === "consumer") {
+      player.stage.set("submit", true);
+    }
+  }, [player, role]);
 
   function adjSelector(quality) {
     // Returns an descriptive adj dependent on player ad quality
@@ -229,7 +231,7 @@ export function ClaimsStage(roundNumber) {
 
   const handleQualitySelection = (quality) => {
     setProductQuality(quality);
-    const cost = quality === "high" ? 2 : 1;
+    const cost = quality === "high" ? 6 : 2;
     player.round.set("productCost", cost);
     player.round.set("productQuality", quality)
   };
@@ -255,23 +257,23 @@ export function ClaimsStage(roundNumber) {
         return;
       }
       const productCost = player.round.get("productCost");
-      console.log("product cost: ",productCost);
-      console.log("capital: ",capital)
+      console.log("product cost: ", productCost);
+      console.log("capital: ", capital)
       const unitsCanProduce = Math.floor(capital / productCost);
       console.log(unitsCanProduce);
       console.log(productCost)
       // player.set(roundNumber.concat("_choices"),
       //     [
       // TODO: Remove hardcoded values
-            player.round.set("productPrice", selectedIdx === 0 ? 3 : 7),
-            player.round.set("adQuality", selectedIdx === 0 ? "low" : "high"),
-            player.round.set("warrantAdded", warrantAdded),
-            player.round.set("stock", unitsCanProduce),
-            player.round.set("capital", capital - unitsCanProduce * productCost), // Deduct the production cost from capital
-            player.round.set("producerName", adjSelector(player.round.get("adQuality")))
-            let productPricez = player.round.get("productPrice")
-            console.log("Product Price: ", productPricez);
-          // ])
+      player.round.set("productPrice", selectedIdx === 0 ? 5 : 10),
+        player.round.set("adQuality", selectedIdx === 0 ? "low" : "high"),
+        player.round.set("warrantAdded", warrantAdded),
+        player.round.set("stock", unitsCanProduce),
+        player.round.set("capital", capital - unitsCanProduce * productCost), // Deduct the production cost from capital
+        player.round.set("producerName", adjSelector(player.round.get("adQuality")))
+      let productPricez = player.round.get("productPrice")
+      console.log("Product Price: ", productPricez);
+      // ])
       // console.log("Prod price in handle: ", player.round.get("_choices")[4]);
       // player.round.set("productPrice", selectedIdx === 0 ? 3 : 7)
       // const productCost = player.round.get("productCost");
@@ -336,6 +338,7 @@ export function ClaimsStage(roundNumber) {
         </div>
 
         {marketType === "coasian-market" ? <WarrantSelector
+          selectedIdx={selectedIdx}
           player={player}
           warrantAdded={warrantAdded}
           setWarrantAdded={setWarrantAdded}
@@ -368,7 +371,7 @@ function ConsumerWaitingMessage() {
 
       <p>For convenience, the table below represents how many points you would gain/lose for each possible combination of the quality you pay for and the quality you actually receive:</p>
       {/* TODO: Remove hardcoded costs and values */}
-      <PayoffMatrix cost_hi={2} cost_lo={1} value_hi={12} value_lo={5} role={"consumer"}/>
+      <PayoffMatrix role={"consumer"} />
 
       <br />
 

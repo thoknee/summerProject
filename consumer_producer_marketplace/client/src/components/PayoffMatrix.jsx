@@ -1,4 +1,5 @@
 import React from 'react';
+import { cost_hi, cost_lo, price_hi, price_lo, value_hi, value_lo } from "../../constants";
 
 function getColor(name) {
     if (name.toLowerCase().includes("low")) {
@@ -16,6 +17,10 @@ function PayoffTable({ data }) {
     // and each subsequent array represents a row with the first element as the row name
     const columnNames = data[0];
     const rows = data.slice(1);
+
+    console.log(columnNames);
+    console.log(rows);
+
 
     return (
         <table style={{ borderCollapse: 'collapse', width: '100%' }}>
@@ -50,22 +55,22 @@ function PayoffTable({ data }) {
     );
 }
 
-export function PayoffMatrix({ cost_lo, value_lo, cost_hi, value_hi, role }) {
-    const price_lo = 0.5 * (cost_lo + value_lo);
-    const price_hi = 0.5 * (cost_hi + value_hi);
+export function PayoffMatrix({ role }) {
+    // const price_lo = 0.5 * (cost_lo + value_lo);
+    // const price_hi = 0.5 * (cost_hi + value_hi);
     let data;
 
     if (role == "consumer") {
         data = [
             ['', 'Advertised Quality - Low', 'Advertised Qulaity - High'],
-            ['Actual Quality - Low', value_lo - price_lo, value_lo - price_hi],
-            ['Actual Quality - High', value_hi - price_lo, value_hi - price_hi],
+            ['Actual Quality - Low', value_lo - price_hi, value_lo - price_lo],
+            ['Actual Quality - High', value_hi - price_hi, value_hi - price_lo],
         ];
-    } else {
+    } else if (role == "producer") {
         data = [
             ['', 'Advertised As - Low', 'Advertised As - High'],
-            ['Produced Quality - Low', price_lo - cost_lo, price_lo - cost_hi],
-            ['Produced Quality - High', price_hi - cost_lo, price_hi - cost_hi],
+            ['Produced Quality - Low', price_hi - cost_lo, price_lo - cost_lo],
+            ['Produced Quality - High', price_hi - cost_hi, price_lo - cost_hi],
             // Add more rows as needed
         ];
     }
