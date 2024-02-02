@@ -22,7 +22,7 @@ function WarrantSelector({ player, warrantAdded, setWarrantAdded }) {
   const onWarrantSelection = (e, multiplier, description) => {
     if (warrantAdded) {
       player.round.set("warrantDesc", description);
-      player.round.set("warrantPrice", profit + profit*multiplier); // Warrant price logic is mainly here
+      player.round.set("warrantPrice", profit*multiplier); // Warrant price calculation
       console.log("Description", description);
       setIsSelected(description);
       setSelectedWarrant(description);
@@ -95,7 +95,7 @@ function WarrantSelector({ player, warrantAdded, setWarrantAdded }) {
             )}
           </div>
           <p style={{ fontWeight: "normal" }}>This will cost
-            you <b>${profit + profit*0.5}</b><br />Potential customers can see if you have chosen to warrant your advertisement or not, and a warrant can
+            you <b>${profit*4}</b><br />Potential customers can see if you have chosen to warrant your advertisement or not, and a warrant can
             boost your credibility in the marketplace. If your ad is not found to be false, the money spent on your warrant will be fully refunded. However, if your warrant is challenged and your ad is found
             to be false, the money spent on the warrant will be lost to the challenger – anyone in the market,
             including a competitor, may challenge this warrant.</p>
@@ -127,7 +127,7 @@ function WarrantSelector({ player, warrantAdded, setWarrantAdded }) {
                     >
                       <img src={warrant.icon} alt="icon" className="mb-2 max-w-full h-auto rounded-lg" />
                       <h1 className="font-bold text-center mb-4">{warrant.description}</h1>
-                      <h1 className="font-semibold text-xl text-center"><span style={{ color: "green" }}>${profit + profit*warrant.multiplier}</span></h1>
+                      <h1 className="font-semibold text-xl text-center"><span style={{ color: "green" }}>${profit*warrant.multiplier}</span></h1>
                     </div>
                   );
                 })}
