@@ -14,7 +14,7 @@ async function updateConsumerScores(game) {
         const productQuality = producer.round.get("productQuality");
         const productPrice = producer.round.get("productPrice");
         // TODO: Remove hardcoded values
-        const points = productQuality === "high" ? 10 : 5;
+        const points = productQuality === "high" ? 12 : 5;
         score += quantity * (points - productPrice);
       }
     });
