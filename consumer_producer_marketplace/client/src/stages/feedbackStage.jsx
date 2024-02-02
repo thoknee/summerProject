@@ -1,10 +1,26 @@
-import React from "react";
-import { usePlayer, usePlayers } from "@empirica/core/player/classic/react";
+import React, { useState, useEffect } from "react";
+import { usePlayer, usePlayers} from "@empirica/core/player/classic/react";
 
 export function FeedbackStage() {
   const player = usePlayer();
   const players = usePlayers();
   const role = player.get("role");
+  
+
+  const [challengeStatuses, setChallengeStatuses] = useState({});
+  useEffect(() => {
+    const initialStatuses = players.filter(p => p.get("role") === "producer")
+                                     .reduce((acc, producer) => {
+                                       acc[producer.id] = producer.round.get("challengeStatus") || "No";
+                                       return acc;
+                                     }, {});
+    setChallengeStatuses(initialStatuses);
+  }, [players]);
+
+  const handleChallenge = (producerId) => {
+    const newStatuses = { ...challengeStatuses, [producerId]: challengeStatuses[producerId] === "No" ? "Yes" : "No" };
+    setChallengeStatuses(newStatuses);
+  };
 
   const handleProceed = () => {
     player.stage.set("submit", true);
@@ -19,25 +35,7 @@ export function FeedbackStage() {
     const capital = player.round.get("capital")
     const unitsSold = player.round.get("unitsSold") || 0;
     const profit = unitsSold * (productPrice - productCost);
-    const challengeStatus = player.round.get("challengeStatus");
-    let warrantStatus; // Declare the variable first
-    let challengeResult;
-    let updatedCapital = capital;
 
-    if (challengeStatus === "Yes" && adQuality === "high" && productQuality === "low") { // Use '===' for comparison
-      challengeResult = "Succeeded";
-    } else if (challengeStatus === "No" ) {
-      challengeResult = "does not matter";
-    } else {
-      challengeResult = "Failed";
-    }
-
-    if (challengeResult === "Succeeded") { // Use '===' for comparison
-      warrantStatus = "Fined (-$100)";
-      updatedCapital -= 100;
-    } else {
-      warrantStatus = "Refunded (-$0)";
-    }
 
     return (
       <div style={styles.feedbackContainer}>
@@ -46,61 +44,52 @@ export function FeedbackStage() {
         <p><span role="img" aria-label="factory">🏭</span> You produced a <b>{productQuality}</b> quality product and advertised it as <b>{adQuality}</b> quality.</p>
         <p><span role="img" aria-label="shopping-cart">🛒</span> Consumers bought <b>{unitsSold}</b> units of your product at <b>${productPrice}</b> each.</p>
         <p><span role="img" aria-label="money-bag">💰</span> This resulted in a total profit of: <b>${profit.toFixed(2)}</b>.</p>
+
         <br/>
-        <p>Your consumer's challenge status was: <b>{challengeStatus}</b>, which <b>{challengeResult}</b>.</p>
-        <p>So your warrant deposit was: <b>{warrantStatus}</b>.</p>
-        <br/>
-        <p><span role="img" aria-label="trophy">🏆</span> Your score this round is your profits (<b>${profit}</b>) plus any remaining capital (<b>${updatedCapital}</b>), for a total of <b>${updatedCapital + profit}</b>.</p>
+        <p><span role="img" aria-label="trophy">🏆</span> Your score this round is your profits (<b>${profit}</b>).</p>
       </div>
     );
-};
+  };
 
   // Consumer-specific feedback
   const renderConsumerFeedback = () => {
     const basket = player.round.get("basket") || {};
-
-    return (
+    
+    return(
       <div style={styles.feedbackContainer}>
         <h3><b>🛒 Your Consumer Summary</b></h3>
+        {Object.getOwnPropertyNames(basket).length === 0 ? (
+          <h3> No Products bought in this round </h3>
+        ) : (
         <ul>
+
           {Object.entries(basket).map(([producerId, quantity], index) => {
             const producers = players.filter(p => p.get("role") === "producer");
             const producer = producers.find(p => p.id === producerId);
             const productQuality = producer.round.get("productQuality");
             const productPrice = producer.round.get("productPrice")
+            const warrantAdded = producer.round.get("warrantAdded");
 
-
-              if (!producer) {
+            if (!producer) {
               return <li key={index}>Producer data not found for ID: {producerId}</li>;
             }
             
             const adQuality = producer.round.get("adQuality");
             const actualQuality = producer.round.get("productQuality");
-            const challengeStatus = producer.round.get("challengeStatus");
             const emoji = getQualityMatchEmoji(adQuality, actualQuality);
+            const challengeStatus = challengeStatuses[producerId];
             const capital = player.round.get("capital")
-            const wallet = player.round.get("wallet")
-
-            let warrantStatus; // Declare the variable first
-            let challengeResult;
-            let updatedCapital = capital;
-            let compensation;
-
-            if (challengeStatus === "Yes" && adQuality === "high" && actualQuality === "low") { // Use '===' for comparison
-              challengeResult = "Succeeded";
-            } else if (challengeStatus === "No" ) {
-              challengeResult = "does not matter";
-            } else {
-              challengeResult = "Failed";
-            }
-        
-            if (challengeResult === "Succeeded") { // Use '===' for comparison
-              warrantStatus = "Fined (-$100)";
-              updatedCapital -= 100;
-              compensation = 20;
-            } else {
-              warrantStatus = "Refunded (-$0)";
-              compensation = 0;
+            const wallet = player.get("wallet")
+            
+            
+            let value_hi = 12;
+            let value_lo = 5;
+            let value_use;
+            
+            if (actualQuality == "high"){
+              value_use = value_hi;
+            }else{
+              value_use = value_lo;
             }
 
             return (
@@ -109,18 +98,32 @@ export function FeedbackStage() {
                 <p><b>Units Bought:</b> {quantity}</p>
                 <p><b>Advertised quality was:</b> {adQuality} </p>
                 <p><b>Real product quality was:</b> {producer.round.get("productQuality")} {emoji}</p> 
-                <p><b>Remaining capital in wallet:</b> {wallet - productPrice* quantity} </p>
+                <p><b>Remaining capital in wallet:</b> {wallet} </p>
                 <br/>
-                <p><b>Your challenge status was:</b> {challengeStatus}, <b>which</b> {challengeResult}.</p>
-                <p><span role="img" aria-label="money-bag">💰</span> <b>This resulted in a total compensation of:</b> ${compensation}.</p><br/>
-                <p><span role="img" aria-label="trophy">🏆</span> Your non-utility score this round is your compensation (<b>${compensation}</b>) plus any remaining capital (<b>${20-productPrice* quantity}</b>), for a total of <b>${compensation+20-productPrice* quantity}</b>.</p>
+                {warrantAdded ? (
+                  <>
+                    <p><b>Are you willing to challenge the producer?</b></p>
+                    <p><b>Your choice:</b> {challengeStatus}</p>
+                    <button
+                      style={styles.challengeButton}
+                      onClick={() => handleChallenge(producerId)}
+                      disabled={!warrantAdded}
+                    >
+                      Challenge
+                    </button>
+                  </>
+                ) : (
+                  <p>Since this product is not warranted, you are not able to challenge it.</p>
+                )}<br/>
+                <br/><p><span role="img" aria-label="trophy">🏆</span> Your current score is your remaining capital (<b>${wallet}</b>) + utility score(<b>${(value_use-productPrice)*quantity}</b>) = (<b>${wallet+(value_use-productPrice)*quantity}</b>).</p>
               </li>
             );
           })}
         </ul>
+      )}
       </div>
     );
-};
+  };
   
   
 
@@ -160,7 +163,7 @@ const styles = {
         borderRadius: '10px',
         boxShadow: '0 4px 8px rgba(0,0,0,0.2)',
         marginBottom: '20px'
-      },
+    },
     proceedButton: {
         backgroundColor: '#4CAF50', // Green background as in submitButton
         color: 'white', // White text
@@ -176,5 +179,28 @@ const styles = {
           backgroundColor: '#45a049', // Slightly lighter green when hovered
           boxShadow: '0 2px #2e7d32', // Adjust shadow for hover effect
         }
-}
+    },
+    challengeButton: {
+      backgroundColor: "#008CBA", // Blue background
+      color: "white", // White text
+      padding: "10px 20px", // Padding
+      fontSize: "14px", // Font size
+      borderRadius: "4px", // Rounded corners
+      border: "none", // Remove default border
+      cursor: "pointer", // Cursor to pointer
+      boxShadow: "0 3px #005f73", // Shadow effect for depth
+      transition: "all 0.2s ease", // Smooth transition for hover effects
+      margin: "10px 10px", // Margin top and bottom
+  
+      ":hover": {
+        backgroundColor: "#0077b6", // Slightly lighter blue when hovered
+        boxShadow: "0 2px #005f73", // Adjust shadow for hover effect
+      },
+  
+      ":disabled": {
+        backgroundColor: "#cccccc", // Disabled state color
+        cursor: "not-allowed", // Change cursor for disabled state
+        boxShadow: "none",
+      },
+    },
 };

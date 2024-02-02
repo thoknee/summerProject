@@ -2,45 +2,61 @@ import React, { useState, useEffect } from "react";
 import { usePlayer, usePlayers } from "@empirica/core/player/classic/react";
 
 
-function ConsumerProductCard({ producer, index, handlePurchase, wallet, setWallet, handleChallenge }) {
+function ConsumerProductCard({ producer, index, wallet, handleChallenge }) {
+  const players = usePlayers()
+  const player = usePlayer()
   const [stock, setStock] = useState(producer.round.get("stock") || 999);
   const [challengeStatus, setChallengeStatus] = useState(producer.round.get("challengeStatus") || "No");
   const adQuality = producer.round.get("adQuality");
   const warrantAdded = producer.round.get("warrantAdded");
   const warrantPrice = producer.round.get("warrantPrice");
   const price = producer.round.get("productPrice"); // Replace with actual logic to get price
+  //const [w, setW] = useState(wallet);
   // TODO: Remove hardcoded values
   const productImage =
     adQuality === "high"
       ? "graphics/PremiumToothpasteAI.png" // High-quality image path
       : "graphics/StandardToothpasteAI.png"; // Low-quality image path
-
   const [quantity, setQuantity] = useState(0);
-
   const decrementQuantity = () => {
       if (quantity > 0) {
           setQuantity(quantity - 1);
-          setWallet(wallet + price);
+          wallet = wallet + price;
           setStock(stock + 1);
           handlePurchase(wallet, producer.id, stock, quantity - 1);
+          console.log("w in cons", wallet);
       }
   }
   const incrementQuantity = () => {
       if (quantity < stock && price <= wallet) {
           setQuantity(quantity + 1);
-          setWallet(wallet - price);
+          wallet = wallet - price;
           setStock(stock - 1);
           handlePurchase(wallet, producer.id, stock, quantity + 1);
+          console.log("w in cons", wallet);
       }
   }
-
+  const handlePurchase = (wallet, producerId, stock, quantity) => {
+    
+    console.log("Consumer attempts to buy");
+      // Update wallet
+      player.set("wallet", wallet);
+      // Update basket for the consumer
+      let basket = player.round.get("basket") || {};
+      basket[producerId] = quantity;
+      console.log("player basket updates", player.round.get("basket"));
+      //console.log("player wallet updates", player.round.get("wallet"));
+      player.round.set("basket", basket);
+      const prod = players.find((item) => item.id === producerId);
+      prod.round.set("stock", stock);
+  };
   return (
     <div className="product-card" style={styles.productCard}>
       {warrantAdded ? (
         <div
           className="warrant-banner"
           style={{
-            backgroundColor: "#4287f5",
+            backgroundColor: "#4287F5",
             transform: "rotate(30deg)",
             width: "200px",
             position: "absolute",
@@ -67,17 +83,18 @@ function ConsumerProductCard({ producer, index, handlePurchase, wallet, setWalle
       {warrantAdded ? <p>Warranted for: ${warrantPrice}</p> : <></>}
       <p>
         In stock: <b>{stock}</b>
-      </p>
-
+      </p><br/>
+      <p>
+        The amount to purchase:</p>
       <div className={"mt-4"}>
           <button style={styles.minusButton} onClick={decrementQuantity}>–</button>
           <span style={{marginLeft: "6px", marginRight: "6px"}}>{quantity}</span>
           <button style={styles.plusButton} onClick={incrementQuantity}>+</button>
       </div>
-      <p>
+      {/*<p>
         Challenge status: <b>{challengeStatus}</b>
       </p>
-      <button
+       <button
         style={styles.buyButton}
         onClick={() => {
           handleChallenge(challengeStatus, producer.id);
@@ -87,7 +104,7 @@ function ConsumerProductCard({ producer, index, handlePurchase, wallet, setWalle
         disabled={!warrantAdded}
       >
         Challenge
-      </button>
+      </button> */}
     </div>
   );
 }
@@ -129,27 +146,27 @@ export function ChoiceStage() {
   const player = usePlayer();
   const players = usePlayers();
   const role = player.get("role");
-  const [wallet, setWallet] = useState(player.round.get("wallet") || 0);
+  const wallet = player.get("wallet");
 
   const handleProceed = () => {
     // if(role === "consumer" || role === "producer")
     player.stage.set("submit", true);
   };
 
-  const handlePurchase = (wallet, producerId, stock, quantity) => {
-    console.log("Consumer attempts to buy");
-      // Update wallet
-      player.set("wallet", wallet);
-      // Update basket for the consumer
-      let basket = player.round.get("basket") || {};
-      basket[producerId] = quantity;
-      console.log("player basket updates", player.round.get("basket"));
-      console.log("player wallet updates", player.round.get("wallet"));
-      player.round.set("basket", basket);
+  // const handlePurchase = (wallet, producerId, stock, quantity) => {
+  //   console.log("Consumer attempts to buy");
+  //     // Update wallet
+  //     player.set("wallet", wallet);
+  //     // Update basket for the consumer
+  //     let basket = player.round.get("basket") || {};
+  //     basket[producerId] = quantity;
+  //     console.log("player basket updates", player.round.get("basket"));
+  //     //console.log("player wallet updates", player.round.get("wallet"));
+  //     player.round.set("basket", basket);
 
-      const prod = players.find((item) => item.id === producerId);
-      prod.round.set("stock", stock);
-  };
+  //     const prod = players.find((item) => item.id === producerId);
+  //     prod.round.set("stock", stock);
+  // };
 
   const handleChallenge = (challengeStatus, producerId) => {
     console.log("Consumer attempts to challenge");
@@ -168,10 +185,9 @@ export function ChoiceStage() {
           producer={producer}
           index={index}
 
-          handlePurchase={handlePurchase}
+          //handlePurchase={handlePurchase}
           handleChallenge={(challengeStatus) => handleChallenge(challengeStatus, producer.id)}
           wallet={wallet}
-          setWallet={setWallet}
         />
       ));
   };

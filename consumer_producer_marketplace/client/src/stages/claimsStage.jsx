@@ -138,6 +138,7 @@ function InfoDisplay({ player, capital, selectedIdx, warrantAdded }) {
   const capitalethisround = player.round.get("capital")
   const unitsAmount = parseInt(capital / player.round.get("productCost"))
   const quality = player.round.get("productQuality")
+  console.log(quality)
   const adQuality = selectedIdx === 0 ? "low" : "high";
   const productPrice = selectedIdx === 0 ? "3" : "9";
   const profit = productPrice - player.round.get("productCost")

@@ -19,6 +19,7 @@ const Leaderboard = (props) => {
 
   const handleProceed = () => {
     player.stage.set("submit", true);
+    player.set("round", player.get("round") + 1)
   };
 
   useEffect(() => {
