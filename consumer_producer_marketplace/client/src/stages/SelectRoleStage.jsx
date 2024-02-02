@@ -54,8 +54,11 @@ export function SelectRolesStage() {
       }
       //Consumer initialization
       else if (player.get("role") === "consumer") {
-        if (player.round.get("wallet") === undefined) {
-          player.round.set("wallet", 20);
+        if (player.get("wallet") === undefined && player.get("round") === 1) {
+          player.set("wallet", 20);
+        }
+        if(player.get("round") > 1){
+          player.set("wallet", player.get("wallet")+10)
         }
         if (player.round.get("basket") === undefined) {
           player.round.set("basket", {});
