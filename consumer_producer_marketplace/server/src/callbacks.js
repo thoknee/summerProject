@@ -51,7 +51,7 @@ async function updateProducerScores(game, unitsSoldMap) {
     const productPrice = player.round.get("productPrice");
     const productCost = player.round.get("productCost");
     const profit = unitsSold * (productPrice - productCost);
-    const capital = player.round.get("capital");
+    const capital = player.get("capital");
     player.round.set("unitsSold", unitsSold);
     const originalScore = player.get("score") || 0;
     let score = originalScore;

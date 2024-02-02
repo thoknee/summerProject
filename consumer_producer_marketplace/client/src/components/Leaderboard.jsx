@@ -34,7 +34,7 @@ const Leaderboard = (props) => {
           backgroundColor: `${
             // A lighter shade of gray allows for score difference colors to be visible
             player.get("role") === `producer` ? `#DDDDDD` : `white`
-          }`,
+            }`,
         }}
       >
         <p>
@@ -43,7 +43,7 @@ const Leaderboard = (props) => {
         <p>
           <strong>{player.get("participantIdentifier")}</strong>
         </p>
-        <p style={{color: player.get("scoreDiff") > 0 ? "green" : "red"}}>{player.get("score")}, {player.get("scoreDiff") > 0 ? "+" : "-"}{Math.abs(player.get("scoreDiff"))}</p>
+        <p style={{ color: player.get("scoreDiff") > 0 ? "green" : "red" }}>{player.get("score")}, {player.get("scoreDiff") > 0 ? "+" : "-"}{Math.abs(player.get("scoreDiff"))}</p>
       </div>
     ));
     setScores(scoreElems);

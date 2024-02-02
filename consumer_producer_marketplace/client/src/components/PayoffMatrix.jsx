@@ -18,10 +18,6 @@ function PayoffTable({ data }) {
     const columnNames = data[0];
     const rows = data.slice(1);
 
-    console.log(columnNames);
-    console.log(rows);
-
-
     return (
         <table style={{ borderCollapse: 'collapse', width: '100%' }}>
             <thead>

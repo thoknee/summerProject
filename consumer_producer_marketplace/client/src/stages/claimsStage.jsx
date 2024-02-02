@@ -8,37 +8,58 @@ import { cost_hi, cost_lo, price_hi, price_lo, value_hi, value_lo } from "../../
 
 console.log(cost_hi, cost_lo, price_hi, price_lo, value_hi, value_lo);
 
-function WarrantSelector({ player, warrantAdded, setWarrantAdded, selectedIdx }) {
+function WarrantSelector({ player, warrantAdded, setWarrantAdded, selectedIdx, capital, setCapital }) {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isCheckboxSelected, setIsCheckboxSelected] = useState(false);
-  const [selectedWarrant, setSelectedWarrant] = useState(null);
+  const [selectedWarrant, setSelectedWarrant] = useState("");
   const [isSelected, setIsSelected] = useState("");
 
   // const productPrice = player.round.get('productPrice')
   const productPrice = selectedIdx === 0 ? "5" : "10";
   const productCost = player.round.get('productCost')
-  const profit = productPrice - productCost
+  // console.log("productPrice: ", productPrice);
+  // console.log("productCost", player.round.get("productCost"))
+  const profit = Math.abs(productPrice - productCost);
+  const [multiplier, setMultiplier] = useState(null);
+
+  // const capital = player.get("capital")
 
   const onWarrantAddition = () => {
     setIsModalOpen(true);
+    if (player.round.get("warrantPrice") !== undefined) {
+      setCapital(capital + player.round.get("warrantPrice"))
+    }
+
   };
 
   const onWarrantSelection = (e, multiplier, description) => {
     if (warrantAdded) {
+      // console.log("isSelected: ", isSelected)
+      // console.log("selectedWarrant: ", selectedWarrant)
+      // console.log("NOT THE INITIAL SELECTION :", player.round.get("warrantPrice"))
       player.round.set("warrantDesc", description);
       player.round.set("warrantPrice", profit * multiplier); // Warrant price calculation
-      console.log("Description", description);
+      // console.log("Description", description);
+
+      // console.log(capital)
       setIsSelected(description);
       setSelectedWarrant(description);
+      setMultiplier(multiplier);
+
     }
   };
 
-  const onWarrantDeselection = () => {
+
+  const onWarrantDeselection = (description) => {
+    // setCapital(capital + player.round.get("warrantPrice"))
     player.round.set("warrantDesc", "");
     player.round.set("warrantPrice", 0);
     setIsSelected("");
     setSelectedWarrant(null);
     console.log("Warrant deselected");
+    setMultiplier(null);
+
+
   };
   const removeWarrants = (warrantAdded) => {
     if (warrantAdded == false) {
@@ -72,13 +93,16 @@ function WarrantSelector({ player, warrantAdded, setWarrantAdded, selectedIdx })
           className="rounded-full cursor-pointer"
           type="checkbox"
           id="addWarrant"
+          disabled={capital <= profit * 5}
           checked={isCheckboxSelected}
           onClick={() => {
             setWarrantAdded(!isCheckboxSelected);
             setIsCheckboxSelected(!isCheckboxSelected);
             if (!isCheckboxSelected) {
-              setSelectedWarrant(null);
+              setSelectedWarrant("");
             }
+            setCapital(capital + player.round.get("warrantPrice"))
+            console.log("warrantPrice: ", player.round.get("warrantPrice"))
           }}
           readOnly={true}
         />
@@ -99,7 +123,7 @@ function WarrantSelector({ player, warrantAdded, setWarrantAdded, selectedIdx })
             )}
           </div>
           <p style={{ fontWeight: "normal" }}>This will cost
-            you <b>${profit * 4}</b><br />Potential customers can see if you have chosen to warrant your advertisement or not, and a warrant can
+            you <b>{multiplier ? profit * multiplier : "..."}</b><br />Potential customers can see if you have chosen to warrant your advertisement or not, and a warrant can
             boost your credibility in the marketplace. If your ad is not found to be false, the money spent on your warrant will be fully refunded. However, if your warrant is challenged and your ad is found
             to be false, the money spent on the warrant will be lost to the challenger – anyone in the market,
             including a competitor, may challenge this warrant.</p>
@@ -109,7 +133,7 @@ function WarrantSelector({ player, warrantAdded, setWarrantAdded, selectedIdx })
       <WarrantModal isOpen={isModalOpen}
         onClose={() => {
           setIsModalOpen(false);
-
+          setCapital(capital - player.round.get("warrantPrice"))
           // setSelectedCards(initialSelectedCards.map((_, index) => index));
         }}
         title="Warrant" children={
@@ -124,9 +148,37 @@ function WarrantSelector({ player, warrantAdded, setWarrantAdded, selectedIdx })
                       key={index}
                       onClick={(e) => {
                         if (isSelected === warrant.description) {
-                          onWarrantDeselection();
+                          console.log("YYOU ARE CHOSING THIS OPTION!  - 1")
+                          // setCapital(capital + player.round.get("warrantPrice"));
+                          onWarrantDeselection(warrant.description);
+                          console.log("WARRANT PRICE WHEN SAME THING")
                         }
-                        onWarrantSelection(e, warrant.multiplier, warrant.description, warrantAdded);
+                        else {
+                          console.log("YYOU ARE CHOSING THIS OPTION!  - 2")
+                          onWarrantSelection(e, warrant.multiplier, warrant.description, warrantAdded);
+                          // console.log("WARRANT PRICE FIRST TIME", player.round.get("warrantPrice"))
+                          // setCapital(capital - player.round.get("warrantPrice"));
+                        }
+                        // if (isSelected !== warrant.description && isSelected !== "") {
+                        //   console.log("3")
+                        //   console.log("YYOU ARE CHOSING THIS OPTION!  - 3")
+                        //   console.log("Warrant Price of old", player.round.get("warrantPrice"))
+                        //   // console.log("3")
+
+                        //   setCapital(parseInt(capital) + parseInt(player.round.get("warrantPrice")));
+                        //   console.log("ADDED OLD WARRANTPRICE BACK", capital)
+                        //   onWarrantSelection(e, warrant.multiplier, warrant.description, warrantAdded);
+                        //   console.log("SUBTRACTED NEW WARRANT PRICE", capital)
+                        //   console.log("Warrant Price of current new", player.round.get("warrantPrice"))
+
+                        //   // console.log("get", player.get('capital'))
+                        //   // setCapital(capital - player.round.get("warrantPrice"));
+                        // }
+                        // else {
+
+                        //   setCapital(capital - player.round.get("warrantPrice"));
+                        //   onWarrantSelection(e, warrant.multiplier, warrant.description, warrantAdded);
+                        // }
                       }}
                     >
                       <img src={warrant.icon} alt="icon" className="mb-2 max-w-full h-auto rounded-lg" />
@@ -143,11 +195,13 @@ function WarrantSelector({ player, warrantAdded, setWarrantAdded, selectedIdx })
   );
 }
 
-function InfoDisplay({ player, capital, selectedIdx, warrantAdded }) {
-  const capitalethisround = player.round.get("capital")
-  const unitsAmount = parseInt(capital / player.round.get("productCost"))
+function InfoDisplay({ player, capital, selectedIdx, warrantAdded, stock }) {
+  // const capitalethisround = player.get("capital")
+  // const
+  // const unitsAmount = parseInt(capital / player.round.get("productCost"))
+  const unitsAmount = stock;
   const quality = player.round.get("productQuality")
-  console.log(quality)
+  // console.log(quality)
   const adQuality = selectedIdx === 0 ? "low" : "high";
   const productPrice = selectedIdx === 0 ? "5" : "10";
   const profit = productPrice - player.round.get("productCost")
@@ -156,7 +210,7 @@ function InfoDisplay({ player, capital, selectedIdx, warrantAdded }) {
     <div style={styles.infoBox}>
       <b>Choices summary</b> <br />
       <span role="img" aria-label="capital">💵</span>
-      Disposable capital for production: <b>${capitalethisround}</b>
+      Disposable capital for production: <b>${capital}</b>
       <br />
       <span role="img" aria-label="units">🏭</span>
       Produce {unitsAmount ? unitsAmount : "..."} <b>{quality}</b> quality units
@@ -180,37 +234,40 @@ function InfoDisplay({ player, capital, selectedIdx, warrantAdded }) {
   );
 }
 
-export function ProfitMarginCalculator({ producerPlayer }) {
+// export function ProfitMarginCalculator({ producerPlayer }) {
 
-  return (
-    <div>
-      <div>You choose to produce a <b>{producerPlayer.round.get("productQuality")}</b> quality product
-        and advertise it as a <b>{producerPlayer.round.get("adQuality")}</b> quality product.
-        <br />
-        When you sell it at a price of <b>${producerPlayer.round.get("productPrice")}</b> and
-        it costs <b>${producerPlayer.round.get("productCost")}</b> to produce,
-        you will
-        earn <b>${producerPlayer.round.get("productPrice") - producerPlayer.round.get("productCost")}</b> profits
-        per unit sold.
+//   return (
+//     <div>
+//       <div>You choose to produce a <b>{producerPlayer.round.get("productQuality")}</b> quality product
+//         and advertise it as a <b>{producerPlayer.round.get("adQuality")}</b> quality product.
+//         <br />
+//         When you sell it at a price of <b>${producerPlayer.round.get("productPrice")}</b> and
+//         it costs <b>${producerPlayer.round.get("productCost")}</b> to produce,
+//         you will
+//         earn <b>${producerPlayer.round.get("productPrice") - producerPlayer.round.get("productCost")}</b> profits
+//         per unit sold.
 
-      </div>
-    </div>
+//       </div>
+//     </div>
 
-  )
-}
+//   )
+// }
 
 export function ClaimsStage(roundNumber) {
   const player = usePlayer();
   const role = player.get("role");
   const [selectedIdx, setSelectedIdx] = useState(-1);
   const [warrantAdded, setWarrantAdded] = useState(false);
-  const capital = player.round.get("capital")
-
+  const [capital, setCapital] = useState(player.get("capital"))
+  const [stock, setStock] = useState(player.round.get("quality") === "low" ? player.get("stocklow") : player.get("stockhigh"))
+  const pc = player.round.get("productCost")
   //   // Default values for player, to avoid read error for later stages
   //   player.round.set("productCost", 2);
   //   player.round.set("productionQuality", "high");
   //   player.round.set("adQuality", "high");
   //   player.round.set("productPrice", 7);
+
+
 
   useEffect(() => {
     if (role === "consumer") {
@@ -257,20 +314,28 @@ export function ClaimsStage(roundNumber) {
         return;
       }
       const productCost = player.round.get("productCost");
-      console.log("product cost: ", productCost);
-      console.log("capital: ", capital)
-      const unitsCanProduce = Math.floor(capital / productCost);
-      console.log(unitsCanProduce);
-      console.log(productCost)
+      const quality = player.round.get("productQuality");
+      // console.log("product cost: ", productCost);
+      // console.log("capital: ", capital)
+      // const unitsCanProduce = Math.floor(capital / productCost);
+      // console.log(unitsCanProduce);
+      // console.log(productCost)
       // player.set(roundNumber.concat("_choices"),
       //     [
       // TODO: Remove hardcoded values
-      player.round.set("productPrice", selectedIdx === 0 ? 5 : 10),
-        player.round.set("adQuality", selectedIdx === 0 ? "low" : "high"),
-        player.round.set("warrantAdded", warrantAdded),
-        player.round.set("stock", unitsCanProduce),
-        player.round.set("capital", capital - unitsCanProduce * productCost), // Deduct the production cost from capital
-        player.round.set("producerName", adjSelector(player.round.get("adQuality")))
+      player.round.set("productPrice", selectedIdx === 0 ? 5 : 10);
+      player.round.set("adQuality", selectedIdx === 0 ? "low" : "high");
+      player.round.set("warrantAdded", warrantAdded);
+      if (quality === "low") {
+        player.set("stocklow", stock)
+      }
+      else {
+        player.set("stockhigh", stock)
+      }
+      console.log('stocklow ', player.get("stocklow"))
+      console.log("stockhigh ", player.get("stockhigh"))
+      player.set("capital", capital) // Deduct the production cost from capital
+      player.round.set("producerName", adjSelector(player.round.get("adQuality")))
       let productPricez = player.round.get("productPrice")
       console.log("Product Price: ", productPricez);
       // ])
@@ -284,14 +349,26 @@ export function ClaimsStage(roundNumber) {
       player.round.set("warrantPrice", warrantPrice);
       console.log(`Warrant price is: ${warrantPrice}`)
       // player.round.set("stock", unitsCanProduce);
-      // player.round.set("capital", capital - unitsCanProduce * productCost); // Deduct the production cost from capital
       // player.round.set("producerName", adjSelector(player.round.get("adQuality")));
-      console.log("Stock of this player is", unitsCanProduce);
+      // console.log("Stock of this player is", unitsCanProduce);
       player.stage.set("submit", true);
     } else {
       alert("Please select the quality to advertise before proceeding.");
     }
   };
+
+  const decrementQuantity = () => {
+    if (stock > 0) {
+      setStock(stock - 1);
+      setCapital(parseInt(capital) + parseInt(pc));
+    }
+  }
+  const incrementQuantity = () => {
+    if (capital - pc >= 0) {
+      setStock(stock + 1);
+      setCapital(capital - pc)
+    }
+  }
 
   if (!role) {
     return <div>Loading...</div>;
@@ -317,12 +394,12 @@ export function ClaimsStage(roundNumber) {
 
     return (
 
-      <div className="flex flex-col -top-6 justify-center border-3 border-indigo-800 p-6 rounded-lg h-full shadow-md relative p-10 mt-32">
+      <div className="flex flex-col -top-6 justify-center items-center border-3 border-indigo-800 p-6 rounded-lg h-full shadow-md relative p-10 mt-32 w-10/12">
         <h1 className="absolute -top-5 left-1/2 transform -translate-x-1/2 bg-yellow-200 border-2 border-teal-600 pl-2 pr-2 rounded-lg text-lg mb-4" style={{ fontFamily: "'Archivo', sans-serif", whiteSpace: 'nowrap', textAlign: 'center' }}>
           <b>Choose how you want to Advertise</b>{" "}<br /> Note: Your goal is to maximize your profits.
         </h1>
 
-        {<InfoDisplay capital={capital} player={player} selectedIdx={selectedIdx} warrantAdded={warrantAdded} />}
+        {<InfoDisplay capital={capital} player={player} selectedIdx={selectedIdx} warrantAdded={warrantAdded} stock={stock} />}
 
         <div className="flex justify-center gap-10 items-center">
           <SellQualityOption
@@ -336,12 +413,18 @@ export function ClaimsStage(roundNumber) {
             selectedIdx={selectedIdx}
             setSelectedIdx={setSelectedIdx} />
         </div>
-
+        <div className={"mx-10"}>
+          <button style={styles.minusButton} onClick={decrementQuantity}>–</button>
+          <span style={{ marginLeft: "6px", marginRight: "6px" }}>{stock}</span>
+          <button style={styles.plusButton} onClick={incrementQuantity}>+</button>
+        </div>
         {marketType === "coasian-market" ? <WarrantSelector
           selectedIdx={selectedIdx}
           player={player}
           warrantAdded={warrantAdded}
           setWarrantAdded={setWarrantAdded}
+          capital={capital}
+          setCapital={setCapital}
         /> : null}
 
         {/* <ProfitMarginCalculator producerPlayer={player}/> */}
@@ -439,9 +522,12 @@ const styles = {
   },
   infoBox: {
     position: 'fixed',
-    bottom: '20px', // Position it 20px from the bottom
-    left: '80%', // Center horizontally
-    transform: 'translateX(-50%)', // Adjust for centering
+    left: "10px",
+    top: "200px",
+    width: "300px",
+    // bottom: '20px', // Position it 20px from the bottom
+    // left: '80%', // Center horizontally
+    // transform: 'translateX(-50%)', // Adjust for centering
     backgroundColor: 'white',
     padding: '10px',
     boxShadow: '0 4px 8px rgba(0,0,0,0.1)',
@@ -477,6 +563,22 @@ const styles = {
       backgroundColor: '#45a049', // Slightly lighter green when hovered
       boxShadow: '0 2px #2e7d32', // Adjust shadow for hover effect
     }
+  },
+  plusButton: {
+    color: "green",
+    border: "1px solid green",
+    borderRadius: "999px",
+    paddingRight: "7px",
+    paddingLeft: "7px",
+    backgroundColor: "white"
+  },
+  minusButton: {
+    color: "red",
+    border: "1px solid red",
+    borderRadius: "999px",
+    paddingRight: "8px",
+    paddingLeft: "8px",
+    backgroundColor: "white"
   },
   // ...other styles you might have
 };

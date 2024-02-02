@@ -5,7 +5,7 @@ import { usePlayer, usePlayers } from "@empirica/core/player/classic/react";
 function ConsumerProductCard({ producer, index, wallet, handleChallenge }) {
   const players = usePlayers()
   const player = usePlayer()
-  const [stock, setStock] = useState(producer.round.get("stock") || 999);
+  const [stock, setStock] = useState(producer.round.get("productQuality") === "low" ? producer.get("stocklow") : producer.get("stock"));
   const [challengeStatus, setChallengeStatus] = useState(producer.round.get("challengeStatus") || "No");
   const adQuality = producer.round.get("adQuality");
   const warrantAdded = producer.round.get("warrantAdded");
@@ -19,36 +19,36 @@ function ConsumerProductCard({ producer, index, wallet, handleChallenge }) {
       : "graphics/StandardToothpasteAI.png"; // Low-quality image path
   const [quantity, setQuantity] = useState(0);
   const decrementQuantity = () => {
-      if (quantity > 0) {
-          setQuantity(quantity - 1);
-          wallet = wallet + price;
-          setStock(stock + 1);
-          handlePurchase(wallet, producer.id, stock, quantity - 1);
-          console.log("w in cons", wallet);
-      }
+    if (quantity > 0) {
+      setQuantity(quantity - 1);
+      wallet = wallet + price;
+      setStock(stock + 1);
+      handlePurchase(wallet, producer.id, stock, quantity - 1);
+      console.log("w in cons", wallet);
+    }
   }
   const incrementQuantity = () => {
-      if (quantity < stock && price <= wallet) {
-          setQuantity(quantity + 1);
-          wallet = wallet - price;
-          setStock(stock - 1);
-          handlePurchase(wallet, producer.id, stock, quantity + 1);
-          console.log("w in cons", wallet);
-      }
+    if (quantity < stock && price <= wallet) {
+      setQuantity(quantity + 1);
+      wallet = wallet - price;
+      setStock(stock - 1);
+      handlePurchase(wallet, producer.id, stock, quantity + 1);
+      console.log("w in cons", wallet);
+    }
   }
   const handlePurchase = (wallet, producerId, stock, quantity) => {
-    
+
     console.log("Consumer attempts to buy");
-      // Update wallet
-      player.set("wallet", wallet);
-      // Update basket for the consumer
-      let basket = player.round.get("basket") || {};
-      basket[producerId] = quantity;
-      console.log("player basket updates", player.round.get("basket"));
-      //console.log("player wallet updates", player.round.get("wallet"));
-      player.round.set("basket", basket);
-      const prod = players.find((item) => item.id === producerId);
-      prod.round.set("stock", stock);
+    // Update wallet
+    player.set("wallet", wallet);
+    // Update basket for the consumer
+    let basket = player.round.get("basket") || {};
+    basket[producerId] = quantity;
+    console.log("player basket updates", player.round.get("basket"));
+    //console.log("player wallet updates", player.round.get("wallet"));
+    player.round.set("basket", basket);
+    const prod = players.find((item) => item.id === producerId);
+    prod.round.set("stock", stock);
   };
   return (
     <div className="product-card" style={styles.productCard}>
@@ -83,13 +83,13 @@ function ConsumerProductCard({ producer, index, wallet, handleChallenge }) {
       {warrantAdded ? <p>Warranted for: ${warrantPrice}</p> : <></>}
       <p>
         In stock: <b>{stock}</b>
-      </p><br/>
+      </p><br />
       <p>
         The amount to purchase:</p>
       <div className={"mt-4"}>
-          <button style={styles.minusButton} onClick={decrementQuantity}>–</button>
-          <span style={{marginLeft: "6px", marginRight: "6px"}}>{quantity}</span>
-          <button style={styles.plusButton} onClick={incrementQuantity}>+</button>
+        <button style={styles.minusButton} onClick={decrementQuantity}>–</button>
+        <span style={{ marginLeft: "6px", marginRight: "6px" }}>{quantity}</span>
+        <button style={styles.plusButton} onClick={incrementQuantity}>+</button>
       </div>
       {/*<p>
         Challenge status: <b>{challengeStatus}</b>
@@ -110,29 +110,29 @@ function ConsumerProductCard({ producer, index, wallet, handleChallenge }) {
 }
 
 function addItem(player, producerId) {
-    let basket = player.round.get("basket") || {};
-    if (basket[producerId]) {
-        basket[producerId] += 1; // Increment quantity if already bought
-    } else {
-        basket[producerId] = 1; // Add new product with quantity 1
-    }
-    console.log("player basket updates", player.round.get("basket"));
-    player.round.set("basket", basket);
+  let basket = player.round.get("basket") || {};
+  if (basket[producerId]) {
+    basket[producerId] += 1; // Increment quantity if already bought
+  } else {
+    basket[producerId] = 1; // Add new product with quantity 1
+  }
+  console.log("player basket updates", player.round.get("basket"));
+  player.round.set("basket", basket);
 }
 
 function removeItem(player, producerId) {
-    let basket = player.round.get("basket") || {};
-    if (basket[producerId]) {
-        basket[producerId] -= 1; // Decrement quantity if already bought
-    } else {
-        basket[producerId] = 0; // Add new product with quantity 0
-    }
-    console.log("player basket updates", player.round.get("basket"));
-    player.round.set("basket", basket);
+  let basket = player.round.get("basket") || {};
+  if (basket[producerId]) {
+    basket[producerId] -= 1; // Decrement quantity if already bought
+  } else {
+    basket[producerId] = 0; // Add new product with quantity 0
+  }
+  console.log("player basket updates", player.round.get("basket"));
+  player.round.set("basket", basket);
 }
 
-function WalletDisplay({wallet}) {
-    return (
+function WalletDisplay({ wallet }) {
+  return (
     <div style={styles.walletBox}>
       <span role="img" aria-label="wallet">
         💰
@@ -192,18 +192,18 @@ export function ChoiceStage() {
       ));
   };
 
-    // useEffect(() => {
-    //   if (role === "producer") {
-    //     player.stage.set("submit", true);
-    //   }
-    // }, [player, role]);
+  // useEffect(() => {
+  //   if (role === "producer") {
+  //     player.stage.set("submit", true);
+  //   }
+  // }, [player, role]);
 
   if (!role) {
     return <div>Loading...</div>;
   }
 
   if (role === "producer") {
-    let unitsSold = player.round.get("unitsSold");
+    // let unitsSold = player.round.get("unitsSold");
     return (
       <div style={styles.waitingScreen}>
         <ProducerWaitingMessage />
@@ -332,20 +332,20 @@ const styles = {
     marginTop: "20px",
   },
   plusButton: {
-      color: "green",
-      border: "1px solid green",
-      borderRadius: "999px",
-      paddingRight: "7px",
-      paddingLeft: "7px",
-      backgroundColor: "white"
+    color: "green",
+    border: "1px solid green",
+    borderRadius: "999px",
+    paddingRight: "7px",
+    paddingLeft: "7px",
+    backgroundColor: "white"
   },
   minusButton: {
-      color: "red",
-      border: "1px solid red",
-      borderRadius: "999px",
-      paddingRight: "8px",
-      paddingLeft: "8px",
-      backgroundColor: "white"
+    color: "red",
+    border: "1px solid red",
+    borderRadius: "999px",
+    paddingRight: "8px",
+    paddingLeft: "8px",
+    backgroundColor: "white"
   },
 };
 
