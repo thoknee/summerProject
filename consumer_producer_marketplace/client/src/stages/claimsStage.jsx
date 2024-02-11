@@ -48,7 +48,7 @@ export function ClaimsStage() {
 
     let [profit, setProfit] = useState(0);
     // let productIdentifier = "";
-
+    let [iniStock, setIniStock] = useState(0);
     let stock = player.get("stock") || [];
     let [updatedStock, setUpdatedStock] = useState({
       // producerID: player.id,
@@ -169,6 +169,7 @@ export function ClaimsStage() {
               round: round.get("name"),
             });
             setTempStock(product.remainingStock);
+            setIniStock(product.remainingStock);
             console.log("1st Use eff 1st if", capital);
           } else {
             setUpdatedStock({
@@ -186,6 +187,7 @@ export function ClaimsStage() {
               round: round.get("name")
             });
             setTempStock(0);
+            setIniStock(0);
             console.log("1st Use eff 1st else", capital);
   
           }
@@ -207,7 +209,7 @@ export function ClaimsStage() {
           round: round.get("name")
         });
         setTempStock(0);
-        
+        setIniStock(0);
         console.log("1st Use eff 1st else", capital);
       }
     }
@@ -337,16 +339,20 @@ export function ClaimsStage() {
         isCheckboxSelected == true && updateWarrants.warrantDesc === "") {
         toast.error("Select a warrant from the options!");
       } else {
-        warrants = [...warrants, updateWarrants];;
-        setUpdatedStock({
-          ...updatedStock,
-          productIdentifier: adjSelector(),
-          initialStock: tempStock,
-        })
-        stock = [...stock, updatedStock];
-        player.set("warrants", warrants);
-        player.set("stock", stock);
-        player.stage.set("submit", true);
+        warrants = [...warrants, updateWarrants];
+        // setUpdatedStock({
+        //   ...updatedStock,
+        //   productIdentifier: adjSelector(),
+        // })
+        const wrap = ()=> {
+          stock = [...stock, updatedStock]
+          player.set("warrants", warrants);
+          player.set("stock", stock);
+          player.stage.set("submit", true);
+        }
+        setTimeout(()=> {
+          wrap()
+        }, 3000)
       }
     };
 
@@ -367,9 +373,18 @@ export function ClaimsStage() {
       /*
       This function decrements the stock of the player by 1 and increments the capital by the product cost
       */
-      if (tempStock >= updatedStock.initialStock) {
+      if (tempStock >= iniStock) {
         setUpdatedStock({
           ...updatedStock,
+          producerID: player.id,
+          productID: productID,
+          productIdentifier: adjSelector(),
+          productQuality: productQuality,
+          productAdQuality: productAdQuality,
+          productCost: productCost,
+          productPrice: productPrice,
+          productAdImage: productAdImage,
+          initialStock: tempStock -1,
           remainingStock: tempStock - 1,
         });
         setTempStock(tempStock - 1);
@@ -385,7 +400,17 @@ export function ClaimsStage() {
       if (capital - productCost >= 0) {
         console.log("Updated Stock: ", updatedStock)
         setUpdatedStock({
+          
           ...updatedStock,
+          producerID: player.id,
+          productID: productID,
+          productIdentifier: adjSelector(),
+          productQuality: productQuality,
+          productAdQuality: productAdQuality,
+          productCost: productCost,
+          productPrice: productPrice,
+          productAdImage: productAdImage,
+          initialStock: updatedStock.remainingStock + 1,
           remainingStock: updatedStock.remainingStock + 1,
         });
         setTempStock(tempStock + 1);
@@ -731,7 +756,7 @@ export function ClaimsStage() {
             // disabled={tempStock >= updatedStock.initialStock}
             className="text-red-500 border-solid border-2 rounded-full border-red-500 px-1.5 bg-white"
             onClick={() => {
-              if (updatedStock.initialStock - tempStock == 0) {
+              if (iniStock - tempStock == 0) {
                 toast.error("You cannot reduce the stock any further!");
               }
               else if(updatedStock.initialStock == undefined){

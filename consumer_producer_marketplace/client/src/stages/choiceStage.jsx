@@ -78,8 +78,10 @@ export function ChoiceStage() {
                 if (item.round === round) {
                     return item
                 }
+                return 1
             })
             // const [updateStock, setUpdateStock] = useState(tempStock);
+            console.log(tempStock)
             const productID = tempStock.productID;
             const productQuality = tempStock.productQuality;
             const productAdQuality = tempStock.productAdQuality;
