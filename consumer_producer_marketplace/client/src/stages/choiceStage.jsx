@@ -148,6 +148,7 @@ export function ChoiceStage() {
                 });
                 // Set the updated basket array
                 setBasket(trialBasket);
+                console.log(basket)
             }
 
             const updateDecrementBasket = () => {
@@ -180,7 +181,9 @@ export function ChoiceStage() {
                 // Set the updated stock array
                 setStock(trialStock); // [{}]
                 setRemStock(remStock - 1);
+                console.log("RemStock", remStock);
                 setQuantity(quantity + 1);
+                console.log("Quantity", quantity);
             };
 
             const decrementQuantity = () => {
