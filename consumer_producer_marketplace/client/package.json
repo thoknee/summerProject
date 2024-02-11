@@ -3,7 +3,8 @@
     "@empirica/core": "1.8.4",
     "esbuild": "0.17.15",
     "react": "18.2.0",
-    "react-dom": "18.2.0"
+    "react-dom": "18.2.0",
+    "react-toastify": "^10.0.4"
   },
   "devDependencies": {
     "@types/react": "18.0.14",

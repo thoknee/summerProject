@@ -5,34 +5,35 @@ export function FeedbackStage() {
   const player = usePlayer();
   const players = usePlayers();
   const role = player.get("role");
+  console.log("inside feed")
 
+  const [challengeStatus, setChallengeStatus] = useState("No");
+  // useEffect(() => {
+  //   const initialStatuses = players.filter(p => p.get("role") === "producer")
+  //     .reduce((acc, producer) => {
+  //       acc[producer.id] = producer.round.get("challengeStatus") || "No";
+  //       return acc;
+  //     }, {});
+  //   setChallengeStatuses(initialStatuses);
+  // }, [players]);
 
-  const [challengeStatuses, setChallengeStatuses] = useState({});
-  useEffect(() => {
-    const initialStatuses = players.filter(p => p.get("role") === "producer")
-      .reduce((acc, producer) => {
-        acc[producer.id] = producer.round.get("challengeStatus") || "No";
-        return acc;
-      }, {});
-    setChallengeStatuses(initialStatuses);
-  }, [players]);
-
-  const handleChallenge = (producerId) => {
-    const newStatuses = { ...challengeStatuses, [producerId]: challengeStatuses[producerId] === "No" ? "Yes" : "No" };
-    setChallengeStatuses(newStatuses);
-  };
 
   const handleProceed = () => {
     player.stage.set("submit", true);
   };
 
+  const handleSubmit = () => {
+    player.round.set("challengeStatus", challengeStatus)
+    player.stage.set("submit", true);
+
+  }
   // Producer-specific feedback
   const renderProducerFeedback = () => {
     const productQuality = player.round.get("productQuality");
     const adQuality = player.round.get("adQuality")
     const productPrice = player.round.get("productPrice")
     const productCost = player.round.get("productCost")
-    const capital = player.round.get("capital")
+    const capital = player.get("capital")
     const unitsSold = player.round.get("unitsSold") || 0;
     const profit = unitsSold * (productPrice - productCost);
 
@@ -47,6 +48,8 @@ export function FeedbackStage() {
 
         <br />
         <p><span role="img" aria-label="trophy">🏆</span> Your score this round is your profits (<b>${profit}</b>).</p>
+        <br/>
+        <p>Your remaining capital for this round is : ${capital}</p>
       </div>
     );
   };
@@ -54,7 +57,22 @@ export function FeedbackStage() {
   // Consumer-specific feedback
   const renderConsumerFeedback = () => {
     const basket = player.round.get("basket") || {};
-
+    const [wallet,setWallet] = useState(player.get("wallet"))
+    const handleChallenge = (producer) => {
+      if(producer.round.get("challengedClaim") == undefined || producer.round.get("challengedClaim") == "No"){
+        producer.round.set("challengedClaim", "Yes")
+        setChallengeStatus("Yes")
+        setWallet(wallet - parseInt(producer.round.get("warrantPrice")/10))
+        player.set("wallet",wallet);
+      }
+      else{
+        producer.round.set("challengedClaim", "No")
+        setChallengeStatus("No")
+        setWallet(wallet + parseInt(producer.round.get("warrantPrice")/10))
+        player.set("wallet",wallet);
+      }
+      
+    };
     return (
       <div style={styles.feedbackContainer}>
         <h3><b>🛒 Your Consumer Summary</b></h3>
@@ -77,13 +95,12 @@ export function FeedbackStage() {
               const adQuality = producer.round.get("adQuality");
               const actualQuality = producer.round.get("productQuality");
               const emoji = getQualityMatchEmoji(adQuality, actualQuality);
-              const challengeStatus = challengeStatuses[producerId];
-              const capital = player.round.get("capital")
-              const wallet = player.get("wallet")
+              // const challengeStatus = challengeStatuses[producerId];
+              // const wallet = player.get("wallet")
+              
 
-
-              let value_hi = 12;
-              let value_lo = 5;
+              let value_hi = 15;
+              let value_lo = 8;
               let value_use;
 
               if (actualQuality == "high") {
@@ -102,11 +119,21 @@ export function FeedbackStage() {
                   <br />
                   {warrantAdded ? (
                     <>
-                      <p><b>Are you willing to challenge the producer?</b></p>
+                      <p><b>Are you willing to challenge the producer's warrant?</b></p>
+                      <p><b>Warrant: {producer.round.get("warrantDesc")}</b></p>
+                      <p><b>Challenge Amount: {parseInt(producer.round.get("warrantPrice") / 10)}</b></p>
                       <p><b>Your choice:</b> {challengeStatus}</p>
                       <button
                         style={styles.challengeButton}
-                        onClick={() => handleChallenge(producerId)}
+                        onClick={() => {
+                          if(wallet >= parseInt(producer.round.get("warrantPrice") / 10)){
+                            handleChallenge(producer)
+                          }
+                          
+                          else{
+                            alert("Not enough money in your wallet to challenge")
+                          }
+                        }}
                         disabled={!warrantAdded}
                       >
                         Challenge
@@ -139,7 +166,8 @@ export function FeedbackStage() {
       {role === "producer" && renderProducerFeedback()}
       {role === "consumer" && renderConsumerFeedback()}
       <br />
-      <button style={styles.proceedButton} onClick={handleProceed}>Proceed to next round</button>
+      {role === "producer" ? <button style={styles.proceedButton} onClick={handleProceed}>Proceed to next round</button> : <button style={styles.proceedButton} onClick={handleSubmit}>Proceed to next round</button>}
+      
     </div>
   );
 }

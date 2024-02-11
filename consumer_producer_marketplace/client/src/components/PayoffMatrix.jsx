@@ -59,14 +59,14 @@ export function PayoffMatrix({ role }) {
     if (role == "consumer") {
         data = [
             ['', 'Advertised Quality - Low', 'Advertised Qulaity - High'],
-            ['Actual Quality - Low', value_lo - price_hi, value_lo - price_lo],
-            ['Actual Quality - High', value_hi - price_hi, value_hi - price_lo],
+            ['Actual Quality - Low', value_lo - price_lo, value_lo - price_hi],
+            ['Actual Quality - High', value_hi - price_lo, value_hi - price_hi],
         ];
     } else if (role == "producer") {
         data = [
             ['', 'Advertised As - Low', 'Advertised As - High'],
-            ['Produced Quality - Low', price_hi - cost_lo, price_lo - cost_lo],
-            ['Produced Quality - High', price_hi - cost_hi, price_lo - cost_hi],
+            ['Produced Quality - Low', price_lo - cost_hi, price_lo - cost_lo],
+            ['Produced Quality - High', price_hi - cost_hi, price_hi - cost_lo],
             // Add more rows as needed
         ];
     }

@@ -5,22 +5,24 @@ import React, { useEffect } from "react";
 import { Game } from "./Game";
 import { ExitSurvey } from "./intro-exit/ExitSurvey";
 import { Introduction } from "./intro-exit/Introduction";
+import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 export default function App() {
   // DOM-Render_FIX / cc: @Neel
-  useEffect(() => {
-    window.addEventListener('error', () => {
-      alert('Something went wrong. This page should reload in 3 secs else please refresh the page.');
-      setTimeout (() => {
-        window.location.reload();
-      }, 3000);
-    });
-    return () => {
-      window.removeEventListener('error', () => {
-        alert('Something went wrong. This page should reload in 3 secs else please refresh the page.');
-      });
-    };
-  }, []);
+  // useEffect(() => {
+  //   window.addEventListener('error', () => {
+  //     alert('Something went wrong. This page should reload in 3 secs else please refresh the page.');
+  //     setTimeout (() => {
+  //       window.location.reload();
+  //     }, 3000);
+  //   });
+  //   return () => {
+  //     window.removeEventListener('error', () => {
+  //       alert('Something went wrong. This page should reload in 3 secs else please refresh the page.');
+  //     });
+  //   };
+  // }, []);
 
   const urlParams = new URLSearchParams(window.location.search);
   const playerKey = urlParams.get("participantKey") || "";
@@ -42,6 +44,7 @@ export default function App() {
         <EmpiricaMenu position="bottom-left" />
         <div className="h-full overflow-auto">
           <EmpiricaContext introSteps={introSteps} exitSteps={exitSteps}>
+            <ToastContainer />
             <Game />
           </EmpiricaContext>
         </div>

@@ -1,365 +1,377 @@
+
 import React, { useState, useEffect } from "react";
-import { usePlayer, usePlayers } from "@empirica/core/player/classic/react";
-
-
-function ConsumerProductCard({ producer, index, wallet, handleChallenge }) {
-  const players = usePlayers()
-  const player = usePlayer()
-  const [stock, setStock] = useState(producer.round.get("productQuality") === "low" ? producer.get("stocklow") : producer.get("stock"));
-  const [challengeStatus, setChallengeStatus] = useState(producer.round.get("challengeStatus") || "No");
-  const adQuality = producer.round.get("adQuality");
-  const warrantAdded = producer.round.get("warrantAdded");
-  const warrantPrice = producer.round.get("warrantPrice");
-  const price = producer.round.get("productPrice"); // Replace with actual logic to get price
-  //const [w, setW] = useState(wallet);
-  // TODO: Remove hardcoded values
-  const productImage =
-    adQuality === "high"
-      ? "graphics/PremiumToothpasteAI.png" // High-quality image path
-      : "graphics/StandardToothpasteAI.png"; // Low-quality image path
-  const [quantity, setQuantity] = useState(0);
-  const decrementQuantity = () => {
-    if (quantity > 0) {
-      setQuantity(quantity - 1);
-      wallet = wallet + price;
-      setStock(stock + 1);
-      handlePurchase(wallet, producer.id, stock, quantity - 1);
-      console.log("w in cons", wallet);
-    }
-  }
-  const incrementQuantity = () => {
-    if (quantity < stock && price <= wallet) {
-      setQuantity(quantity + 1);
-      wallet = wallet - price;
-      setStock(stock - 1);
-      handlePurchase(wallet, producer.id, stock, quantity + 1);
-      console.log("w in cons", wallet);
-    }
-  }
-  const handlePurchase = (wallet, producerId, stock, quantity) => {
-
-    console.log("Consumer attempts to buy");
-    // Update wallet
-    player.set("wallet", wallet);
-    // Update basket for the consumer
-    let basket = player.round.get("basket") || {};
-    basket[producerId] = quantity;
-    console.log("player basket updates", player.round.get("basket"));
-    //console.log("player wallet updates", player.round.get("wallet"));
-    player.round.set("basket", basket);
-    const prod = players.find((item) => item.id === producerId);
-    prod.round.set("stock", stock);
-  };
-  return (
-    <div className="product-card" style={styles.productCard}>
-      {warrantAdded ? (
-        <div
-          className="warrant-banner"
-          style={{
-            backgroundColor: "#4287F5",
-            transform: "rotate(30deg)",
-            width: "200px",
-            position: "absolute",
-            right: "0",
-            marginRight: "-45px",
-            marginTop: "-10px",
-          }}
-        >
-          <b style={{ color: "white", fontFamily: "Avenir" }}>WARRANTED</b>
-        </div>
-      ) : (
-        <></>
-      )}
-      <h3>{`Ad # ${index + 1}`}</h3>
-      <h4>Seller: {producer.id}</h4>
-      <h3>{producer.round.get("producerName")}</h3>
-      <img
-        src={productImage}
-        alt={`Product ${index + 1}`}
-        style={styles.productImage}
-      />
-      <p>Quality: {adQuality}</p>
-      <p>Price: ${price}</p>
-      {warrantAdded ? <p>Warranted for: ${warrantPrice}</p> : <></>}
-      <p>
-        In stock: <b>{stock}</b>
-      </p><br />
-      <p>
-        The amount to purchase:</p>
-      <div className={"mt-4"}>
-        <button style={styles.minusButton} onClick={decrementQuantity}>–</button>
-        <span style={{ marginLeft: "6px", marginRight: "6px" }}>{quantity}</span>
-        <button style={styles.plusButton} onClick={incrementQuantity}>+</button>
-      </div>
-      {/*<p>
-        Challenge status: <b>{challengeStatus}</b>
-      </p>
-       <button
-        style={styles.buyButton}
-        onClick={() => {
-          handleChallenge(challengeStatus, producer.id);
-          console.log(`challengeStatus : ${producer.round.get("challengeStatus")}`);
-          setChallengeStatus(producer.round.get("challengeStatus"));
-        }}
-        disabled={!warrantAdded}
-      >
-        Challenge
-      </button> */}
-    </div>
-  );
-}
-
-function addItem(player, producerId) {
-  let basket = player.round.get("basket") || {};
-  if (basket[producerId]) {
-    basket[producerId] += 1; // Increment quantity if already bought
-  } else {
-    basket[producerId] = 1; // Add new product with quantity 1
-  }
-  console.log("player basket updates", player.round.get("basket"));
-  player.round.set("basket", basket);
-}
-
-function removeItem(player, producerId) {
-  let basket = player.round.get("basket") || {};
-  if (basket[producerId]) {
-    basket[producerId] -= 1; // Decrement quantity if already bought
-  } else {
-    basket[producerId] = 0; // Add new product with quantity 0
-  }
-  console.log("player basket updates", player.round.get("basket"));
-  player.round.set("basket", basket);
-}
-
-function WalletDisplay({ wallet }) {
-  return (
-    <div style={styles.walletBox}>
-      <span role="img" aria-label="wallet">
-        💰
-      </span>
-      Wallet: ${wallet.toFixed(2)}
-    </div>
-  );
-}
+import { usePlayer, usePlayers, useRound } from "@empirica/core/player/classic/react";
+import { toast } from "react-toastify";
 
 export function ChoiceStage() {
-  const player = usePlayer();
-  const players = usePlayers();
-  const role = player.get("role");
-  const wallet = player.get("wallet");
+    const player = usePlayer();
+    const players = usePlayers();
+    const role = player.get("role");
+    const roundHook = useRound()
+    const round = roundHook.get("name");
 
-  const handleProceed = () => {
-    // if(role === "consumer" || role === "producer")
-    player.stage.set("submit", true);
-  };
+    // Check Box state
 
-  // const handlePurchase = (wallet, producerId, stock, quantity) => {
-  //   console.log("Consumer attempts to buy");
-  //     // Update wallet
-  //     player.set("wallet", wallet);
-  //     // Update basket for the consumer
-  //     let basket = player.round.get("basket") || {};
-  //     basket[producerId] = quantity;
-  //     console.log("player basket updates", player.round.get("basket"));
-  //     //console.log("player wallet updates", player.round.get("wallet"));
-  //     player.round.set("basket", basket);
+    const producerCount = players.filter((player) => player.get("role") === "producer").length;
 
-  //     const prod = players.find((item) => item.id === producerId);
-  //     prod.round.set("stock", stock);
-  // };
+    const [productSelections, setProductSelections] = useState(Array(producerCount).fill(false));
 
-  const handleChallenge = (challengeStatus, producerId) => {
-    console.log("Consumer attempts to challenge");
-    const newStatus = challengeStatus === "No" ? "Yes" : "No";
-    //setChallengeStatus(newStatus); 
-    const prod = players.find((item) => item.id === producerId);
-    prod.round.set("challengeStatus", newStatus);
-  }
+    const handleCheckboxChange = (index) => {
+        const newSelections = [...productSelections];
+        newSelections[index] = !newSelections[index];
+        setProductSelections(newSelections);
+    };
 
-  const renderProductFeed = () => {
-    return players
-      .filter((p) => p.get("role") === "producer")
-      .map((producer, index) => (
-        <ConsumerProductCard
-          key={index}
-          producer={producer}
-          index={index}
+    const allProductsSelected = productSelections.every((isSelected) => isSelected);
 
-          //handlePurchase={handlePurchase}
-          handleChallenge={(challengeStatus) => handleChallenge(challengeStatus, producer.id)}
-          wallet={wallet}
-        />
-      ));
-  };
+    const handleProceed = () => {
+        if (allProductsSelected) {
+            player.set("wallet", wallet);
+            player.stage.set("submit", true);
+        } else {
+            toast.error("Please select all checboxes for the products before proceeding.");
+        }
+    };
 
-  // useEffect(() => {
-  //   if (role === "producer") {
-  //     player.stage.set("submit", true);
-  //   }
-  // }, [player, role]);
+    // [
+    //   {productId: ""}, {productId: ""}, {productId: ""}
+    // ]
 
-  if (!role) {
-    return <div>Loading...</div>;
-  }
+    if (role === "consumer") {
+        let [wallet, setWallet] = useState(player.get("wallet"));
+        let [basket, setBasket] = useState(player.get("basket") || [])
 
-  if (role === "producer") {
-    // let unitsSold = player.round.get("unitsSold");
-    return (
-      <div style={styles.waitingScreen}>
-        <ProducerWaitingMessage />
-        <button onClick={handleProceed} style={styles.proceedButton}>
-          Proceed to next round
-        </button>
-      </div>
-    );
-  }
+        useEffect(() => {
+            const handleBasket = () => {
+                const putBasket = players
+                    .filter((player) => player.get("role") === "producer")
+                    .map((producer, index) => ({
+                        producerID: producer.id,
+                        productID: index,
+                        productQuality: "",
+                        productAdQuality: "",
+                        productPrice: -1,
+                        quantity: 0,
+                        round: round,
+                    }));
+    
+                setBasket((prevBasket) => [...prevBasket, ...putBasket]);
+                console.log("basket", basket);
+                // player.set("basket", basket);
+            };
+            handleBasket()
+        },[])
+        
 
-  if (role === "consumer") {
-    return (
-      <div>
-        <br />
-        <h2 style={{ fontWeight: "bold" }}>Advertisements</h2>
-        <h3>You can only buy if you have enough money in your wallet.</h3>
-        <WalletDisplay wallet={wallet} />
-        <div style={styles.productFeed}>{renderProductFeed()}</div>
-        <br />
-        <br />
-        <button onClick={handleProceed} style={styles.proceedButton}>
-          Proceed to next round
-        </button>
-        <br />
-        <br />
-        <br />
-        <br />
-      </div>
-    );
-  }
 
-  return <div>Unknown role</div>;
-}
+        // const handleProceed = () => {
+        //     // if(role === "consumer" || role === "producer")
+        //     player.set("basket", basket);
+        //     player.set("wallet", wallet);
+        //     player.stage.set("submit", true);
+        // };
 
-const styles = {
-  walletDisplay: {
-    // Styles for wallet display
-  },
-  productFeed: {
-    // Styles for the product feed
-  },
-  productCard: {
-    // Styles for the product card
-    border: "1px solid #ddd",
-    boxShadow: "0 4px 8px rgba(0,0,0,0.1)",
-    padding: "30px",
-    borderRadius: "8px",
-    width: "325px",
-    textAlign: "center",
-    backgroundColor: "#fff",
-    margin: "0 auto",
-    position: "relative",
-    overflow: "hidden",
-  },
-  productImage: {
-    maxWidth: "100%", // Limits the width, scales down if necessary
-    maxHeight: "20rem", // Adjust this value as needed
-    height: "auto", // Maintains the aspect ratio
-    display: "block", // Ensures the image is a block-level element
-    margin: "0 auto", // Centers the image if it's smaller than the container
-    marginBottom: "10px",
-  },
+        const ConsumerProductCard = ({ producer, index }) => {
+            const [stock, setStock] = useState(producer.get("stock"));
+            console.log(stock)
+            const tempStock = stock.find((item) => {
+                if (item.round === round) {
+                    return item
+                }
+            })
+            // const [updateStock, setUpdateStock] = useState(tempStock);
+            const productID = tempStock.productID;
+            const productQuality = tempStock.productQuality;
+            const productAdQuality = tempStock.productAdQuality;
+            const productPrice = tempStock.productPrice;
+            const productIdentifier = tempStock.productIdentifier;
+            const productAdImage = tempStock.productAdImage;
+            const initialStock = tempStock.initialStock;
+            const [remStock, setRemStock] = useState(tempStock.initialStock);
+            const warrants = producer.get("warrants");
+            const tempWarrant = warrants.find((item) => {
+                if (item.round === round) {
+                    return item
+                }
+            })
+            const warrant = tempWarrant;
+            const warrantAdded = warrant.warrantAdded;
+            const warrantPrice = warrant.warrantPrice;
+            const warrantDesc = warrant.warrantDesc;
+            const [quantity, setQuantity] = useState(0);
+            // const tempBasket = basket.find((item) => {
+            //     if (item.round === round && item.producerID === producer.id) {
+            //         return item
+            //     }
+            // })
+            // let [updatedBasket, setUpdatedBasket] = useState(tempBasket);
+            // setUpdatedBasket({
+            //     ...updatedBasket,
+            //     producerID: producer.id,
+            //     productID: productID,
+            //     productQuality: productQuality,
+            //     productAdQuality: productAdQuality,  
+            //     productPrice: productPrice,
+            // });
 
-  // Add other styles as needed
-  walletBox: {
-    position: "fixed",
-    top: "25%",
-    left: "20px",
-    backgroundColor: "white",
-    padding: "10px",
-    boxShadow: "0 4px 8px rgba(0,0,0,0.1)",
-    borderRadius: "8px",
-    zIndex: 1000,
-  },
-  buyButton: {
-    backgroundColor: "#008CBA", // Blue background
-    color: "white", // White text
-    padding: "10px 20px", // Padding
-    fontSize: "14px", // Font size
-    borderRadius: "4px", // Rounded corners
-    border: "none", // Remove default border
-    cursor: "pointer", // Cursor to pointer
-    boxShadow: "0 3px #005f73", // Shadow effect for depth
-    transition: "all 0.2s ease", // Smooth transition for hover effects
-    margin: "10px 10px", // Margin top and bottom
+            const updateIncrementStock = () => {
+                const trialStock = stock.map((item) => {
+                    return item.round === round
+                        ? {
+                            ...item,
+                            remainingStock: item.remainingStock - 1,
+                            soldStock: item.soldStock + 1,
+                            // You can add other attributes here if needed
+                        }
+                        : item;
+                });
+                // Set the updated stock array
+                setStock(trialStock); // [{}]
+                setRemStock(remStock + 1);
+                setQuantity(quantity - 1);
+            };
 
-    ":hover": {
-      backgroundColor: "#0077b6", // Slightly lighter blue when hovered
-      boxShadow: "0 2px #005f73", // Adjust shadow for hover effect
-    },
+            const updateIncrementBasket = () => {
+                const trialBasket = basket.map((item) => {
+                    return item.round === round && item.producerID === producer.id
+                        ? {
+                            ...item,
+                            productID: productID,
+                            productQuality: productQuality,
+                            productAdQuality: productAdQuality,
+                            productPrice: productPrice,
+                            quantity: item.quantity + 1,
+                        }
+                        : item;
+                });
+                // Set the updated basket array
+                setBasket(trialBasket);
+            }
 
-    ":disabled": {
-      backgroundColor: "#cccccc", // Disabled state color
-      cursor: "not-allowed", // Change cursor for disabled state
-      boxShadow: "none",
-    },
-  },
+            const updateDecrementBasket = () => {
+                const trialBasket = basket.map((item) => {
+                    return item.round === round && item.producerID === producer.id
+                        ? {
+                            ...item,
+                            productID: productID,
+                            productQuality: productQuality,
+                            productAdQuality: productAdQuality,
+                            productPrice: productPrice,
+                            quantity: item.quantity - 1,
+                        }
+                        : item;
+                });
+                // Set the updated basket array
+                setBasket(trialBasket);
+            }
 
-  proceedButton: {
-    backgroundColor: "#4CAF50", // Green background as in submitButton
-    color: "white", // White text
-    padding: "12px 24px", // Generous padding for better touch area
-    fontSize: "16px", // Slightly larger font size
-    borderRadius: "5px", // Rounded corners
-    border: "none", // Remove default border
-    cursor: "pointer", // Cursor changes to pointer to indicate it's clickable
-    boxShadow: "0 4px #2e7d32", // Shadow effect for depth, darker than background
-    transition: "all 0.2s ease-in-out", // Smooth transition for hover effects
+            const updateDecrementStock = () => {
+                const trialStock = stock.map((item) => {
+                    return item.round === round
+                        ? {
+                            ...item,
+                            remainingStock: item.remainingStock - 1,
+                            soldStock: item.soldStock + 1,
+                        }
+                        : item;
+                });
+                // Set the updated stock array
+                setStock(trialStock); // [{}]
+                setRemStock(remStock - 1);
+                setQuantity(quantity + 1);
+            };
 
-    ":hover": {
-      backgroundColor: "#45a049", // Slightly lighter green when hovered
-      boxShadow: "0 2px #2e7d32", // Adjust shadow for hover effect
-    },
-  },
-  waitingScreen: {
-    textAlign: "center",
-    padding: "20px",
-    backgroundColor: "#f0f0f0",
-    borderRadius: "8px",
-    boxShadow: "0 4px 8px rgba(0,0,0,0.2)",
-    maxWidth: "500px",
-    margin: "20px auto",
-  },
-  emoji: {
-    fontSize: "2rem",
-    marginTop: "20px",
-  },
-  plusButton: {
-    color: "green",
-    border: "1px solid green",
-    borderRadius: "999px",
-    paddingRight: "7px",
-    paddingLeft: "7px",
-    backgroundColor: "white"
-  },
-  minusButton: {
-    color: "red",
-    border: "1px solid red",
-    borderRadius: "999px",
-    paddingRight: "8px",
-    paddingLeft: "8px",
-    backgroundColor: "white"
-  },
-};
+            const decrementQuantity = () => {
+                if (quantity > 0 && initialStock > remStock) {
+                    setWallet(wallet + productPrice);
+                    updateIncrementStock();
+                    updateDecrementBasket();
+                }
+                else {
+                    toast.error("You cannot decrease the quantity further")
+                }
+            }
+            const incrementQuantity = () => {
+                if (quantity < remStock && productPrice <= wallet) {
+                    setWallet(wallet - productPrice);
+                    updateDecrementStock();
+                    updateIncrementBasket();
+                }
+                else {
+                    toast.error("You don't have enough money in your wallet or the stock is not available")
+                }
+            }
+            // const handlePurchase = (wallet, producerID, stock, quantity) => {
 
-function ProducerWaitingMessage() {
-  return (
-    <div style={styles.waitingScreen}>
-      <h2>🕒 Waiting Room 🕒</h2>
-      <p>While you wait: </p>
-      <ul>
-        <li>"How many will buy your product? 🤔🛒"</li>
-        <li>"What moves are your competitors making? 🚀🕵️‍♂️"</li>
-      </ul>
-      <p>Keep an eye on the market trends and plan your next steps! 💡📈</p>
-      <div style={styles.emoji}>🏭🌟</div>
-    </div>
-  );
+            //     console.log("Consumer attempts to buy");
+            //     // Update wallet
+            //     player.set("wallet", wallet);
+            //     // Update basket for the consumer
+            //     let basket = player.round.get("basket") || {};
+            //     basket[producerID] = quantity;
+            //     console.log("player basket updates", player.round.get("basket"));
+            //     //console.log("player wallet updates", player.round.get("wallet"));
+            //     player.round.set("basket", basket);
+            //     const prod = players.find((item) => item.id === producerID);
+            //     if (prod.round.get("productQuality") == "low") {
+            //         prod.round.set("stocklow", stock);
+            //     }
+            //     else {
+            //         prod.round.set("stockhigh", stock);
+            //     }
+
+            // };
+            return (
+                <div className="product-card border border-gray-300 shadow-md p-8 rounded-lg w-[325px] text-center bg-white mx-auto relative overflow-hidden">
+                    {warrantAdded ? (
+                        <div
+                            className="warrant-banner bg-blue-500 transform rotate-30 w-[200px] absolute right-0 mr-neg-45 -mt-[10px]"
+                        >
+                            <b className="text-white" style={{ fontFamily: "Avenir" }}>WARRANTED</b>
+                        </div>
+                    ) : (
+                        <></>
+                    )}
+                    <h3>{`Ad # ${index + 1}`}</h3>
+                    <h4>Seller: {producer.id}</h4>
+                    <h3>{productIdentifier}</h3>
+                    <img
+                        className="max-w-full max-h-[20rem] h-auto w-auto block mx-auto mb-10"
+                        src={productAdImage}
+                        alt={`Product ${index + 1}`}
+                    />
+                    <p>Quality: {productAdQuality}</p>
+                    <p>Price: ${productPrice}</p>
+                    {warrantAdded ? <><p>Warrant Description: {warrantDesc}</p><p>Warranted for: ${warrantPrice}</p></> : <></>}
+                    <p>
+                        In stock: <b>{remStock}</b>
+                    </p><br />
+                    <p>
+                        The amount to purchase:</p>
+                    <div className={"mt-4"}>
+                        <button className="text-red-500 border border-red-500 rounded-full px-4 bg-white" onClick={decrementQuantity}>–</button>
+                        <span className="mx-1.5">{quantity}</span>
+                        <button className="text-green-500 border border-green-500 rounded-full px-3 bg-white" onClick={incrementQuantity}>+</button>
+                    </div>
+
+                    <input
+                        type="checkbox"
+                        checked={productSelections[index]}
+                        onChange={() => {
+                            if(productSelections[index] === true){
+                                handleCheckboxChange(index)
+                            }
+                            else{
+                                handleCheckboxChange(index)
+                                producer.set("stock", stock)
+                                player.set("basket", basket)
+                            }
+                        }}
+                    />
+                    {/*<p>
+                Challenge status: <b>{challengeStatus}</b>
+              </p>
+               <button
+               className="bg-blue-500 text-white py-2 px-4 text-sm rounded-md border-none cursor-pointer shadow-md transition-all duration-200 ease-in-out mt-2 mb-2 hover:bg-blue-700 disabled:bg-gray-400 disabled:cursor-not-allowed disabled:shadow-none"
+                onClick={() => {
+                  handleChallenge(challengeStatus, producer.id);
+                  console.log(challengeStatus : ${producer.round.get("challengeStatus")});
+                  setChallengeStatus(producer.round.get("challengeStatus"));
+                }}
+                disabled={!warrantAdded}
+              >
+                Challenge
+              </button> */}
+                </div>
+            );
+        }
+
+        const WalletDisplay = () => {
+            return (
+                <div className="fixed top-1/4 left-[20px] bg-white p-4 shadow-md rounded-lg z-10">
+                    <span role="img" aria-label="wallet">
+                        💰
+                    </span>
+                    Wallet: ${wallet.toFixed(2)}
+                </div>
+            );
+        }
+
+        const renderProductFeed = () => {
+            // handleBasket();
+            // console.log("basket", basket);
+            return players
+                .filter((p) => p.get("role") === "producer")
+                .map((producer, index) => {
+                    // 
+                    return (
+                        <ConsumerProductCard
+                            key={index}
+                            producer={producer}
+                            index={index}
+                        />
+                    )
+                });
+        };
+
+        return (
+            <div>
+                <br />
+                <h2 className="font-bold">Advertisements</h2>
+                <h3>You can only buy if you have enough money in your wallet.</h3>
+                <WalletDisplay />
+                {/* <button onClick={renderProductFeed}>Are you ready?</button> */}
+                <div>{renderProductFeed()}</div>
+                <br />
+                <br />
+                <button onClick={handleProceed} className="bg-green-500 text-white py-3 px-6 text-lg rounded-md border-none cursor-pointer shadow-md transition-all duration-200 ease-in-out hover:bg-green-700">
+                    Proceed to next round
+                </button>
+                <br />
+                <br />
+                <br />
+                <br />
+            </div>
+        );
+    }
+
+    else if (role === "producer") {
+        const handleProceed = () => {
+            player.stage.set("submit", true);
+        };
+        // let unitsSold = player.round.get("unitsSold");
+        function ProducerWaitingMessage() {
+            /* 
+            This fuction will be used to display the waiting message for the producer
+            */
+            return (
+                <div className="text-center p-4 bg-gray-200 rounded-lg shadow-md max-w-[500px] mx-auto my-4">
+                    <h2>🕒 Waiting Room 🕒</h2>
+                    <p>While you wait: </p>
+                    <ul>
+                        <li>"How many will buy your product? 🤔🛒"</li>
+                        <li>"What moves are your competitors making? 🚀🕵‍♂"</li>
+                    </ul>
+                    <p>Keep an eye on the market trends and plan your next steps! 💡📈</p>
+                    <div className="text-2xl mt-5">🏭🌟</div>
+                </div>
+            );
+        }
+        return (
+            <div className="text-center p-4 bg-gray-200 rounded-lg shadow-md max-w-[500px] mx-auto my-4">
+                <ProducerWaitingMessage />
+                <button onClick={handleProceed} className="bg-green-500 text-white py-3 px-6 text-lg rounded-md border-none cursor-pointer shadow-md transition-all duration-200 ease-in-out hover:bg-green-700">
+                    Proceed to next round
+                </button>
+            </div>
+        );
+    }
+
+    else if (!role) {
+        return <div>Loading...</div>;
+    }
+
+    else {
+        return <div>Unknown role</div>;
+    }
 }
