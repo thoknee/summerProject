@@ -338,21 +338,19 @@ export function ClaimsStage() {
       } else if (
         isCheckboxSelected == true && updateWarrants.warrantDesc === "") {
         toast.error("Select a warrant from the options!");
-      } else {
+      } else if ( tempStock == 0){
+        toast.error("You cannot submit without any stock!");
+      
+      }else {
         warrants = [...warrants, updateWarrants];
         // setUpdatedStock({
         //   ...updatedStock,
         //   productIdentifier: adjSelector(),
         // })
-        const wrap = ()=> {
           stock = [...stock, updatedStock]
           player.set("warrants", warrants);
           player.set("stock", stock);
           player.stage.set("submit", true);
-        }
-        setTimeout(()=> {
-          wrap()
-        }, 3000)
       }
     };
 

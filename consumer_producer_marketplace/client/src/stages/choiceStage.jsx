@@ -255,22 +255,58 @@ export function ChoiceStage() {
 
     useEffect(() => {
         const handleBasket = () => {
-            const findProduct = (producer,entity) => {
-                producer.get("stock").find((item) => {
+            const findproductID = (producer) => {
+                const st = producer.get("stock")
+                let prodID = st.find((item) => {
                     if (item.round === round) {
-                        return item[entity]
+                        return item.productID
                     }
                     return -1
                 })
+                return prodID.productID
             }
+            const findproductQuality = (producer) => {
+                const st = producer.get("stock")
+                let prodQual = st.find((item) => {
+                    if (item.round === round) {
+                        return item.productQuality
+                    }
+                    return -1
+                })
+                return prodQual.productQuality
+            }
+            const findproductAdQuality = (producer) => {
+                const st = producer.get("stock")
+
+                let prodAdQual = st.find((item) => {
+                    if (item.round === round) {
+                        return item.productAdQuality
+                    }
+                    return -1
+                })
+                return prodAdQual.productAdQuality
+            }
+            const findproductPrice = (producer) => {
+                const st = producer.get("stock")
+                console.log("stock in findprod", st)
+                let prodPrice = st.find((item) => {
+                    if (item.round === round) {
+                        // console.log("item in:",item.productPrice)
+                        return item.productPrice
+                    }
+                    return -1
+                })
+                return prodPrice.productPrice
+            }
+            
             const putBasket = players
                 .filter((player) => player.get("role") === "producer")
                 .map((producer, index) => ({
                     producerID: producer.id,
-                    productID: findProduct(producer=producer,entity="productID"),
-                    productQuality: findProduct(producer=producer,entity="productQuality"),
-                    productAdQuality: findProduct(producer=producer,entity="productAdQuality"),
-                    productPrice: findProduct(producer=producer,entity="productPrice"),
+                    productID: findproductID(producer),
+                    productQuality: findproductQuality(producer),
+                    productAdQuality: findproductAdQuality(producer),
+                    productPrice: findproductPrice(producer),
                     quantity: 0,
                     round: round,
                 }));

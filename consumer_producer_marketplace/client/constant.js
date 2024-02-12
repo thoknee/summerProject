@@ -1,9 +1,9 @@
 const products = [
     {
       id: 1,
-      category: "Oil",
+      category: "toothpaste",
       low: {
-        productName: "Ayurdevic Low Quality Oil",
+        productName: "Low Quality Toothpaste",
         productQuality: "low",
         productPrice: 5,
         productCost: 2,
@@ -11,7 +11,7 @@ const products = [
         productImage: "/graphics/StandardToothpasteAI.png"
       },
       high: {
-        productName: "Ayurvdeic High Quality Oil",
+        productName: "High Quality Toothpaste",
         productQuality: "high",
         productPrice: 10,
         productCost: 6,
