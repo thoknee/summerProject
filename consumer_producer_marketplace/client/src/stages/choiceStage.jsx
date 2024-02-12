@@ -4,7 +4,7 @@ import { usePlayer, usePlayers, useRound } from "@empirica/core/player/classic/r
 import { toast } from "react-toastify";
 
 
-const ConsumerProductCard = ({ producer, index, round, productSelections, wallet, setWallet, setBasket, basket }) => {
+const ConsumerProductCard = ({ producer, index, round, productSelections, wallet, setWallet, setBasket, basket, handleCheckboxChange, player }) => {
     const [stock, setStock] = useState(producer.get("stock"));
     // console.log(stock);
     const tempStock = stock.find((item) => {
@@ -22,16 +22,16 @@ const ConsumerProductCard = ({ producer, index, round, productSelections, wallet
     const productIdentifier = tempStock.productIdentifier;
     const productAdImage = tempStock.productAdImage;
     const initialStock = tempStock.initialStock;
-    const [remStock, setRemStock] = useState(tempStock.initialStock);
+    const [remStock, setRemStock] = useState(tempStock.remainingStock);
     const warrants = producer.get("warrants");
     const tempWarrant = warrants.find((item) => {
         if (item.round === round) {
             return item
         }
     })
-    useEffect(() => {
-        console.log("RemStock", remStock)
-    }, [remStock])
+    // useEffect(() => {
+    //     console.log("RemStock in ref", remStock)
+    // }, [remStock])
     const warrant = tempWarrant;
     const warrantAdded = warrant.warrantAdded;
     const warrantPrice = warrant.warrantPrice;
@@ -84,6 +84,7 @@ const ConsumerProductCard = ({ producer, index, round, productSelections, wallet
         });
         // Set the updated basket array
         setBasket(trialBasket);
+        console.log("basket in ", basket)
         // console.log(basket)
     }
 
@@ -117,12 +118,13 @@ const ConsumerProductCard = ({ producer, index, round, productSelections, wallet
         // Set the updated stock array
         setStock(trialStock); // [{}]
         setRemStock(remStock - 1);
-        console.log("RemStock", remStock);
+        // console.log("RemStock", remStock);
         setQuantity(quantity + 1);
-        console.log("Quantity", quantity);
+        // console.log("Quantity", quantity);
     };
 
     const decrementQuantity = () => {
+        if(productSelections[index] === false){
         if (quantity > 0 && initialStock > remStock) {
             setWallet(wallet + productPrice);
             updateIncrementStock();
@@ -132,8 +134,13 @@ const ConsumerProductCard = ({ producer, index, round, productSelections, wallet
             toast.error("You cannot decrease the quantity further")
         }
     }
+    else{
+        toast.error("Please uncheck the checkbox to change the quantity")
+    }
+}
     const incrementQuantity = () => {
-        if (quantity < remStock && productPrice <= wallet) {
+        if(productSelections[index] === false){
+        if (remStock > 0 && productPrice <= wallet) {
             setWallet(wallet - productPrice);
             updateDecrementStock();
             updateIncrementBasket();
@@ -144,6 +151,10 @@ const ConsumerProductCard = ({ producer, index, round, productSelections, wallet
             toast.error("You don't have enough money in your wallet or the stock is not available")
         }
     }
+    else{
+        toast.error("Please uncheck the checkbox to change the quantity")
+    }
+}
     // const handlePurchase = (wallet, producerID, stock, quantity) => {
 
     //     console.log("Consumer attempts to buy");
@@ -208,6 +219,8 @@ const ConsumerProductCard = ({ producer, index, round, productSelections, wallet
                         handleCheckboxChange(index)
                         producer.set("stock", stock)
                         player.set("basket", basket)
+                        console.log("basket in check", player.get("basket"))
+                        console.log("stock in check", producer.get("stock"))
                     }
                 }}
             />
@@ -238,6 +251,30 @@ export function ChoiceStage() {
     const roundHook = useRound()
     const round = roundHook.get("name");
 
+    let [basket, setBasket] = useState(player.get('role') == "consumer" && (player.get("basket") || []))
+
+    useEffect(() => {
+        const handleBasket = () => {
+            const putBasket = players
+                .filter((player) => player.get("role") === "producer")
+                .map((producer, index) => ({
+                    producerID: producer.id,
+                    productID: index,
+                    productQuality: "",
+                    productAdQuality: "",
+                    productPrice: -1,
+                    quantity: 0,
+                    round: round,
+                }));
+                if(role === "consumer"){
+                    setBasket((prevBasket) => [...prevBasket, ...putBasket]);
+                    console.log("basket", basket);
+
+                }
+            // player.set("basket", basket);
+        };
+        handleBasket()
+    }, [])
     // Check Box state
 
     const producerCount = players.filter((player) => player.get("role") === "producer").length;
@@ -269,28 +306,9 @@ export function ChoiceStage() {
 
 
         let [wallet, setWallet] = useState(player.get("wallet"));
-        let [basket, setBasket] = useState(player.get("basket") || [])
+        // let [basket, setBasket] = useState(player.get("basket") || [])
 
-        useEffect(() => {
-            const handleBasket = () => {
-                const putBasket = players
-                    .filter((player) => player.get("role") === "producer")
-                    .map((producer, index) => ({
-                        producerID: producer.id,
-                        productID: index,
-                        productQuality: "",
-                        productAdQuality: "",
-                        productPrice: -1,
-                        quantity: 0,
-                        round: round,
-                    }));
-
-                setBasket((prevBasket) => [...prevBasket, ...putBasket]);
-                console.log("basket", basket);
-                // player.set("basket", basket);
-            };
-            handleBasket()
-        }, [])
+        
 
 
 
@@ -332,6 +350,8 @@ export function ChoiceStage() {
                             setWallet={setWallet}
                             basket={basket}
                             setBasket={setBasket}
+                            handleCheckboxChange={handleCheckboxChange}
+                            player={player}
                         />
                     )
                 });
