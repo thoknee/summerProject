@@ -57,8 +57,8 @@ const ConsumerProductCard = ({ producer, index, round, productSelections, wallet
             return item.round === round
                 ? {
                     ...item,
-                    remainingStock: item.remainingStock - 1,
-                    soldStock: item.soldStock + 1,
+                    remainingStock: item.remainingStock + 1,
+                    soldStock: item.soldStock - 1,
                     // You can add other attributes here if needed
                 }
                 : item;
@@ -124,37 +124,37 @@ const ConsumerProductCard = ({ producer, index, round, productSelections, wallet
     };
 
     const decrementQuantity = () => {
-        if(productSelections[index] === false){
-        if (quantity > 0 && initialStock > remStock) {
-            setWallet(wallet + productPrice);
-            updateIncrementStock();
-            updateDecrementBasket();
+        if (productSelections[index] === false) {
+            if (quantity > 0 && initialStock > remStock) {
+                setWallet(wallet + productPrice);
+                updateIncrementStock();
+                updateDecrementBasket();
+            }
+            else {
+                toast.error("You cannot decrease the quantity further")
+            }
         }
         else {
-            toast.error("You cannot decrease the quantity further")
+            toast.error("Please uncheck the checkbox to change the quantity")
         }
     }
-    else{
-        toast.error("Please uncheck the checkbox to change the quantity")
-    }
-}
     const incrementQuantity = () => {
-        if(productSelections[index] === false){
-        if (remStock > 0 && productPrice <= wallet) {
-            setWallet(wallet - productPrice);
-            updateDecrementStock();
-            updateIncrementBasket();
-            // console.log("RemStock", remStock);
-            // console.log("Quantity", quantity);
+        if (productSelections[index] === false) {
+            if (remStock > 0 && productPrice <= wallet) {
+                setWallet(wallet - productPrice);
+                updateDecrementStock();
+                updateIncrementBasket();
+                // console.log("RemStock", remStock);
+                // console.log("Quantity", quantity);
+            }
+            else {
+                toast.error("You don't have enough money in your wallet or the stock is not available")
+            }
         }
         else {
-            toast.error("You don't have enough money in your wallet or the stock is not available")
+            toast.error("Please uncheck the checkbox to change the quantity")
         }
     }
-    else{
-        toast.error("Please uncheck the checkbox to change the quantity")
-    }
-}
     // const handlePurchase = (wallet, producerID, stock, quantity) => {
 
     //     console.log("Consumer attempts to buy");
@@ -255,22 +255,30 @@ export function ChoiceStage() {
 
     useEffect(() => {
         const handleBasket = () => {
+            const findProduct = (producer,entity) => {
+                producer.get("stock").find((item) => {
+                    if (item.round === round) {
+                        return item[entity]
+                    }
+                    return -1
+                })
+            }
             const putBasket = players
                 .filter((player) => player.get("role") === "producer")
                 .map((producer, index) => ({
                     producerID: producer.id,
-                    productID: index,
-                    productQuality: "",
-                    productAdQuality: "",
-                    productPrice: -1,
+                    productID: findProduct(producer=producer,entity="productID"),
+                    productQuality: findProduct(producer=producer,entity="productQuality"),
+                    productAdQuality: findProduct(producer=producer,entity="productAdQuality"),
+                    productPrice: findProduct(producer=producer,entity="productPrice"),
                     quantity: 0,
                     round: round,
                 }));
-                if(role === "consumer"){
-                    setBasket((prevBasket) => [...prevBasket, ...putBasket]);
-                    console.log("basket", basket);
+            if (role === "consumer") {
+                setBasket((prevBasket) => [...prevBasket, ...putBasket]);
+                console.log("basket", basket);
 
-                }
+            }
             // player.set("basket", basket);
         };
         handleBasket()
@@ -308,7 +316,7 @@ export function ChoiceStage() {
         let [wallet, setWallet] = useState(player.get("wallet"));
         // let [basket, setBasket] = useState(player.get("basket") || [])
 
-        
+
 
 
 
