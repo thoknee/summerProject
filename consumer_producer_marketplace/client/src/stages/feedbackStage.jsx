@@ -5,9 +5,8 @@ export function FeedbackStage() {
   const player = usePlayer();
   const players = usePlayers();
   const role = player.get("role");
-  console.log("inside feed")
-
   const [challengeStatus, setChallengeStatus] = useState("No");
+  
   // useEffect(() => {
   //   const initialStatuses = players.filter(p => p.get("role") === "producer")
   //     .reduce((acc, producer) => {
@@ -16,7 +15,6 @@ export function FeedbackStage() {
   //     }, {});
   //   setChallengeStatuses(initialStatuses);
   // }, [players]);
-
 
   const handleProceed = () => {
     player.stage.set("submit", true);
@@ -38,8 +36,8 @@ export function FeedbackStage() {
     const profit = unitsSold * (productPrice - productCost);
 
 
-    return (
-      <div style={styles.feedbackContainer}>
+    eturn (
+      <div className="bg-gray-300 p-4 rounded-lg shadow-md mb-8">
 
         <h3><b>🌟 Producer Summary 🌟</b></h3>
         <p><span role="img" aria-label="factory">🏭</span> You produced a <b>{productQuality}</b> quality product and advertised it as <b>{adQuality}</b> quality.</p>
@@ -48,7 +46,7 @@ export function FeedbackStage() {
 
         <br />
         <p><span role="img" aria-label="trophy">🏆</span> Your score this round is your profits (<b>${profit}</b>).</p>
-        <br/>
+        <br />
         <p>Your remaining capital for this round is : ${capital}</p>
       </div>
     );
@@ -57,24 +55,24 @@ export function FeedbackStage() {
   // Consumer-specific feedback
   const renderConsumerFeedback = () => {
     const basket = player.round.get("basket") || {};
-    const [wallet,setWallet] = useState(player.get("wallet"))
+    const [wallet, setWallet] = useState(player.get("wallet"))
     const handleChallenge = (producer) => {
-      if(producer.round.get("challengedClaim") == undefined || producer.round.get("challengedClaim") == "No"){
+      if (producer.round.get("challengedClaim") == undefined || producer.round.get("challengedClaim") == "No") {
         producer.round.set("challengedClaim", "Yes")
         setChallengeStatus("Yes")
-        setWallet(wallet - parseInt(producer.round.get("warrantPrice")/10))
-        player.set("wallet",wallet);
+        setWallet(wallet - parseInt(producer.round.get("warrantPrice") / 10))
+        player.set("wallet", wallet);
       }
-      else{
+      else {
         producer.round.set("challengedClaim", "No")
         setChallengeStatus("No")
-        setWallet(wallet + parseInt(producer.round.get("warrantPrice")/10))
-        player.set("wallet",wallet);
+        setWallet(wallet + parseInt(producer.round.get("warrantPrice") / 10))
+        player.set("wallet", wallet);
       }
-      
+
     };
     return (
-      <div style={styles.feedbackContainer}>
+      <div className="bg-gray-300 p-4 rounded-lg shadow-md mb-8">
         <h3><b>🛒 Your Consumer Summary</b></h3>
         {Object.getOwnPropertyNames(basket).length === 0 ? (
           <h3> No Products bought in this round </h3>
@@ -97,7 +95,7 @@ export function FeedbackStage() {
               const emoji = getQualityMatchEmoji(adQuality, actualQuality);
               // const challengeStatus = challengeStatuses[producerId];
               // const wallet = player.get("wallet")
-              
+
 
               let value_hi = 15;
               let value_lo = 8;
@@ -124,13 +122,13 @@ export function FeedbackStage() {
                       <p><b>Challenge Amount: {parseInt(producer.round.get("warrantPrice") / 10)}</b></p>
                       <p><b>Your choice:</b> {challengeStatus}</p>
                       <button
-                        style={styles.challengeButton}
+                        className="bg-blue-600 text-white py-2 px-4 text-sm rounded-md border-none cursor-pointer shadow-md transition-all duration-200 ease-in-out hover:bg-blue-700 hover:shadow-md m-2.5 disabled:bg-gray-400 disabled:cursor-not-allowed disabled:shadow-none"
                         onClick={() => {
-                          if(wallet >= parseInt(producer.round.get("warrantPrice") / 10)){
+                          if (wallet >= parseInt(producer.round.get("warrantPrice") / 10)) {
                             handleChallenge(producer)
                           }
-                          
-                          else{
+
+                          else {
                             alert("Not enough money in your wallet to challenge")
                           }
                         }}
@@ -152,22 +150,18 @@ export function FeedbackStage() {
     );
   };
 
-
-
   if (!role) {
     return <div>Loading...</div>;
   }
 
-
-
   return (
-    <div style={styles.feedbackContainer}>
+    <div className="bg-gray-300 p-4 rounded-lg shadow-md mb-8">
       <br />
       {role === "producer" && renderProducerFeedback()}
       {role === "consumer" && renderConsumerFeedback()}
       <br />
-      {role === "producer" ? <button style={styles.proceedButton} onClick={handleProceed}>Proceed to next round</button> : <button style={styles.proceedButton} onClick={handleSubmit}>Proceed to next round</button>}
-      
+      <button className="bg-green-500 text-white py-3 px-6 text-lg rounded-md border-none cursor-pointer shadow-md transition-all duration-200 ease-in-out hover:bg-green-700 hover:shadow-md" onClick={role === "producer" ? handleProceed : handleSubmit}>Proceed to next round</button>
+
     </div>
   );
 }
@@ -182,53 +176,4 @@ const getQualityMatchEmoji = (advertisedQuality, actualQuality) => {
   } else {
     return '❓'; // Question mark for any other case
   }
-};
-
-const styles = {
-  feedbackContainer: {
-    backgroundColor: '#f3f3f3', // Light grey background for the container
-    padding: '15px',
-    borderRadius: '10px',
-    boxShadow: '0 4px 8px rgba(0,0,0,0.2)',
-    marginBottom: '20px'
-  },
-  proceedButton: {
-    backgroundColor: '#4CAF50', // Green background as in submitButton
-    color: 'white', // White text
-    padding: '12px 24px', // Generous padding for better touch area
-    fontSize: '16px', // Slightly larger font size
-    borderRadius: '5px', // Rounded corners
-    border: 'none', // Remove default border
-    cursor: 'pointer', // Cursor changes to pointer to indicate it's clickable
-    boxShadow: '0 4px #2e7d32', // Shadow effect for depth, darker than background
-    transition: 'all 0.2s ease-in-out', // Smooth transition for hover effects
-
-    ':hover': {
-      backgroundColor: '#45a049', // Slightly lighter green when hovered
-      boxShadow: '0 2px #2e7d32', // Adjust shadow for hover effect
-    }
-  },
-  challengeButton: {
-    backgroundColor: "#008CBA", // Blue background
-    color: "white", // White text
-    padding: "10px 20px", // Padding
-    fontSize: "14px", // Font size
-    borderRadius: "4px", // Rounded corners
-    border: "none", // Remove default border
-    cursor: "pointer", // Cursor to pointer
-    boxShadow: "0 3px #005f73", // Shadow effect for depth
-    transition: "all 0.2s ease", // Smooth transition for hover effects
-    margin: "10px 10px", // Margin top and bottom
-
-    ":hover": {
-      backgroundColor: "#0077b6", // Slightly lighter blue when hovered
-      boxShadow: "0 2px #005f73", // Adjust shadow for hover effect
-    },
-
-    ":disabled": {
-      backgroundColor: "#cccccc", // Disabled state color
-      cursor: "not-allowed", // Change cursor for disabled state
-      boxShadow: "none",
-    },
-  },
 };
