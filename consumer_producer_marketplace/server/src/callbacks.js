@@ -3,6 +3,69 @@ import { ClassicListenersCollector } from "@empirica/core/admin/classic";
 
 export const Empirica = new ClassicListenersCollector();
 
+async function updateProducerClaimScores(game) {
+  await game.players.forEach(async (player) => {
+    if (player.get("role") !== "producer") return;
+    const claims = player.get("claims");
+    const round = player.round.get("round")
+    const currentClaims = claims.find((item) => item.round === round);
+    // const originalScore = player.get("score") || 0;
+    let capital = player.get("capital");
+    const warrants = player.get("warrants")
+    const currentWarrants = warrants.find((item) => item.round === round);
+    const warrantAdded = currentWarrants.warrantAdded;
+    const warrantPrice = currentWarrants.warrantPrice;
+    console.log("warrantPrice in callbacks", warrantPrice);
+    // let score = player.get("score") || 0;
+    if(warrantAdded == true && currentClaims.status === true && currentClaims.claim === false){
+      capital += warrantPrice;
+      player.set("capital", capital);
+      return
+    }
+    else if(warrantAdded == true && currentClaims.status === true && currentClaims.claim === true){
+      
+      return;
+    }
+    else if(warrantAdded == true && currentClaims.status === false){
+      capital += warrantPrice;
+      player.set("capital", capital);
+      return;
+    }
+    else {
+      return;
+    }
+  });
+}
+
+async function updateConsumerClaimScores(game) {
+  await game.players.forEach(async (player) => {
+    if (player.get("role") !== "consumer") return;
+    const challenges = player.get("challenges");
+    const round = player.round.get("round")
+    // const warrantAdded = player.round.get("warrantAdded");
+    const warrantPrice = player.round.get("warrantPrice");
+    const currentChallenges = challenges.find((item) => item.round === round);
+    // const originalScore = player.get("score") || 0;
+    let wallet = player.get("wallet");
+    // let score = player.get("score") || 0;
+    if(currentChallenges.status === true && currentChallenges.challenge === true){
+      wallet += warrantPrice;
+      player.set("wallet", wallet);
+      return
+    }
+    else if(currentChallenges.status === true && currentChallenges.challenge === false){
+      return;
+    }
+    else if(currentChallenges.status === false){
+      return;
+    }
+    else {
+      return;
+    }
+  });
+}
+    
+
 // Function to update the score of consumers
 async function updateConsumerScores(game) {
   // const roundHook = useRound();
@@ -69,11 +132,7 @@ async function updateProducerScores(game) {
     const stock = player.get("stock");
     const capital = player.get("capital");
     const round = player.round.get("round")
-    const currentStock = stock.find((item) => {
-      if (item.round === round) {
-        return item;
-      }
-    });
+    const currentStock = stock.find((item) => item.round === round);
     const soldStock = currentStock.soldStock;
     const productPrice = currentStock.productPrice;
     const productCost = currentStock.productCost;
@@ -128,6 +187,10 @@ Empirica.onStageEnded(({ stage }) => {
     // const unitsSoldMap = processConsumerBaskets(stage.currentGame);
     updateProducerScores(stage.currentGame);
     updateConsumerScores(stage.currentGame);
+  }
+  if(stage.get("name") === "feedbackStage") {
+    updateProducerClaimScores(stage.currentGame);
+    updateConsumerClaimScores(stage.currentGame);
   }
 });
 

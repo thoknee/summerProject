@@ -171,6 +171,7 @@ export function ClaimsStage() {
             setTempStock(product.remainingStock);
             setIniStock(product.remainingStock);
             console.log("1st Use eff 1st if", capital);
+            console.log("old stock retained: ", updatedStock)
             return true
           } else {
             setUpdatedStock({

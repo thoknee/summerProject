@@ -14,7 +14,7 @@ function ConsumerFeedbackCard({ producer, player, index, basket, round, wallet, 
 
     const warrants = producer.get("warrants")
     const warrantAdded = warrants.find((item) => item.round === round).warrantAdded;
-    // const warrantPrice = warrants.find((item) => item.round === round).warrantPrice;
+    const warrantPrice = warrants.find((item) => item.round === round).warrantPrice;
     const warrantDesc = warrants.find((item) => item.round === round).warrantDesc;
     const challengeAmount = warrants.find((item) => item.round === round).challengeAmount;
     const tempChallenge = challenges.find((item) => item.round === round && item.producerID === producer.id);
@@ -111,6 +111,9 @@ function ConsumerFeedbackCard({ producer, player, index, basket, round, wallet, 
                                 handleButtonClick(index)
                                 producer.set("claims", claims)
                                 player.set("challenges", challenges)
+                                player.round.set("warrantPrice", warrantPrice)
+                                player.round.set("warrantAdded", warrantAdded)
+                                player.round.set("challengeAmount", challengeAmount)
                                 console.log("claims in submit", claims)
                                 console.log("challenges in submit", challenges)
                             }
