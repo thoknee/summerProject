@@ -17,15 +17,15 @@ import Leaderboard from "./components/Leaderboard";
 export function Stage() {
   const player = usePlayer();
   const players = usePlayers();
-  const round = useRound();
   const stage = useStage();
 
   if (!stage.get("name") === "selectRoleStage" && player.stage.get("submit") == undefined) {
+    player.stage.set("submit", true);
     window.location.reload(true);
     return <>Hello!</>
   }
-
-  else if (player.stage.get("submit") == true) {
+  else
+  if (player.stage.get("submit") == true) {
     if (players.length === 1) {
       return <Loading />;
     }
@@ -43,7 +43,7 @@ export function Stage() {
     case "qualityStage":
       return <QualityStage />;
     case "claimsStage":
-      return <ClaimsStage round={round} />;
+      return <ClaimsStage />;
     case "deliberateStage":
       return <DeliberateStage />;
     case "choiceStage":
