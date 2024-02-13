@@ -225,7 +225,7 @@ const ConsumerProductCard = ({ producer, index, round, productSelections, wallet
             </p><br />
             <p>
                 The amount to purchase:</p>
-            <div className={"mt-4"}>
+            <div className={"my-4"}>
                 <button className="text-red-500 border border-red-500 rounded-full px-4 bg-white" onClick={decrementQuantity}>–</button>
                 <span className="mx-1.5">{quantity}</span>
                 <button className="text-green-500 border border-green-500 rounded-full px-3 bg-white" onClick={incrementQuantity}>+</button>
@@ -247,7 +247,7 @@ const ConsumerProductCard = ({ producer, index, round, productSelections, wallet
                         console.log("stock in check", producer.get("stock"))
                     }
                 }}
-                className={`bg-${productSelections[index] ? "green-500" : "white"} text-black py-2 px-4 rounded-full`}
+                className={`bg-${productSelections[index] ? "green-500" : "white"} text-black py-2 px-4 rounded-full border border-green-300 cursor-pointer shadow-md`}
             >
                 {productSelections[index] ? "Added to Cart" : "Add to Cart"}
             </button>
@@ -385,7 +385,7 @@ export function ChoiceStage() {
             player.set("wallet", wallet);
             player.stage.set("submit", true);
         } else {
-            toast.error("Please select all checkboxes for the products before proceeding.");
+            toast.error("Please add your products to the cart before proceeding!");
         }
     };
 

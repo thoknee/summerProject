@@ -14,21 +14,29 @@ async function updateProducerClaimScores(game) {
     const warrants = player.get("warrants")
     const currentWarrants = warrants.find((item) => item.round === round);
     const warrantAdded = currentWarrants.warrantAdded;
+    let scoreDiff = player.get("scoreDiff")
+    let score = player.get("score")
+    let oldScore = player.get("score")
     const warrantPrice = currentWarrants.warrantPrice;
     console.log("warrantPrice in callbacks", warrantPrice);
     // let score = player.get("score") || 0;
-    if(warrantAdded == true && currentClaims.status === true && currentClaims.claim === false){
-      capital += warrantPrice;
-      player.set("capital", capital);
+    if (warrantAdded == true && currentClaims.status === true && currentClaims.claim === false) {
       return
     }
-    else if(warrantAdded == true && currentClaims.status === true && currentClaims.claim === true){
-      
-      return;
-    }
-    else if(warrantAdded == true && currentClaims.status === false){
+    else if (warrantAdded == true && currentClaims.status === true && currentClaims.claim === true) {
+      score += warrantPrice
       capital += warrantPrice;
       player.set("capital", capital);
+      player.set("score", score)
+      player.set("scoreDiff", scoreDiff + score - oldScore)
+      return;
+    }
+    else if (warrantAdded == true && currentClaims.status === false) {
+      score += warrantPrice
+      capital += warrantPrice;
+      player.set("capital", capital);
+      player.set("score", score)
+      player.set("scoreDiff", scoreDiff + score - oldScore)
       return;
     }
     else {
@@ -45,18 +53,24 @@ async function updateConsumerClaimScores(game) {
     // const warrantAdded = player.round.get("warrantAdded");
     const warrantPrice = player.round.get("warrantPrice");
     const currentChallenges = challenges.find((item) => item.round === round);
-    // const originalScore = player.get("score") || 0;
+    // let oldScore = player.get("score") || 0;
+    let scoreDiff = player.get("scoreDiff")
+    let score = player.get("score")
+    let oldScore = player.get("score")
     let wallet = player.get("wallet");
     // let score = player.get("score") || 0;
-    if(currentChallenges.status === true && currentChallenges.challenge === true){
+    if (currentChallenges.status === true && currentChallenges.challenge === true) {
       wallet += warrantPrice;
+      score += warrantPrice;
+      player.set("score", score)
+      player.set("scoreDiff", scoreDiff + score - oldScore)
       player.set("wallet", wallet);
       return
     }
-    else if(currentChallenges.status === true && currentChallenges.challenge === false){
+    else if (currentChallenges.status === true && currentChallenges.challenge === false) {
       return;
     }
-    else if(currentChallenges.status === false){
+    else if (currentChallenges.status === false) {
       return;
     }
     else {
@@ -64,7 +78,7 @@ async function updateConsumerClaimScores(game) {
     }
   });
 }
-    
+
 
 // Function to update the score of consumers
 async function updateConsumerScores(game) {
@@ -188,7 +202,7 @@ Empirica.onStageEnded(({ stage }) => {
     updateProducerScores(stage.currentGame);
     updateConsumerScores(stage.currentGame);
   }
-  if(stage.get("name") === "feedbackStage") {
+  if (stage.get("name") === "feedbackStage") {
     updateProducerClaimScores(stage.currentGame);
     updateConsumerClaimScores(stage.currentGame);
   }

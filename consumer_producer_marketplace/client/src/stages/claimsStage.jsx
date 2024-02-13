@@ -153,21 +153,31 @@ export function ClaimsStage() {
     // }
     // }, [productAdQuality]);
 
-    const updateStock = ({ price, imgUrl, quality, name, value }) => {
+    const updateStock = ({ quality, imgUrl, price, name, value }) => {
       if (stock.length != 0) {
         stock.find((product) => {
           if (
             product.productID === productID &&
             product.productQuality === productQuality &&
-            product.productAdQuality === productAdQuality
+            product.productAdQuality === quality
           ) {
+            // ...prev => [...prev, ...]
             setUpdatedStock(product);
-            setUpdatedStock({
-              ...updatedStock,
+            setUpdatedStock(prevState => ({
+              ...prevState,
               initialStock: product.remainingStock,
               remainingStock: product.remainingStock,
               round: round.get("name"),
-            });
+            }));
+            // setUpdatedStock({
+            //   ...product,
+            //   ...updatedStock,
+            //   initialStock: product.remainingStock,
+            //   remainingStock: product.remainingStock,
+            //   round: round.get("name"),
+            // });
+
+            setCapital(capital + tempStock * productCost)
             setTempStock(product.remainingStock);
             setIniStock(product.remainingStock);
             console.log("1st Use eff 1st if", capital);
@@ -189,9 +199,11 @@ export function ClaimsStage() {
               soldStock: 0,
               round: round.get("name")
             });
+            setCapital(capital + tempStock * productCost)
             setTempStock(0);
             setIniStock(0);
-            console.log("1st Use eff 1st else", capital);
+            console.log("didnt find old stock after 1 round", capital);
+            console.log("didnt find after 1 round", updatedStock);
             return true
 
           }
@@ -213,19 +225,63 @@ export function ClaimsStage() {
           soldStock: 0,
           round: round.get("name")
         });
+        setCapital(capital + tempStock * productCost)
         setTempStock(0);
         setIniStock(0);
-        console.log("1st Use eff 1st else", capital);
+        console.log("didnt have no stock objects in first round", capital);
       }
     }
+    // const updateStock = ({ price, imgUrl, quality, name, value }) => {
+    //   const existingProduct = stock.find((product) => (
+    //     product.productID === productID &&
+    //     product.productQuality === productQuality &&
+    //     product.productAdQuality === quality
+    //   ));
 
-    const updateWarrant = () => {
+    //   if (existingProduct) {
+    //     setUpdatedStock((prevProduct) => ({
+    //       ...prevProduct,
+    //       initialStock: existingProduct.remainingStock,
+    //       remainingStock: existingProduct.remainingStock,
+    //       round: round.get("name"),
+    //     }));
+    //     console.log("inside existing product")
+    //   } else {
+    //     const newProduct = {
+    //       producerID: player.id,
+    //       productID: productID,
+    //       productIdentifier: name,
+    //       productQuality: productQuality,
+    //       productAdQuality: quality,
+    //       productCost: productCost,
+    //       productPrice: price,
+    //       productAdImage: imgUrl,
+    //       value: value,
+    //       initialStock: 0,
+    //       remainingStock: 0,
+    //       soldStock: 0,
+    //       round: round.get("name"),
+    //     };
+    //     setUpdatedStock(newProduct);
+    //     console.log("in the newproduct else")
+    //   }
+
+    //   setCapital(capital + tempStock * productCost);
+    //   setTempStock(existingProduct ? existingProduct.remainingStock : 0);
+    //   setIniStock(existingProduct ? existingProduct.remainingStock : 0);
+
+    //   console.log("Updated Stock:", updatedStock);
+    //   console.log("Capital:", capital);
+    // };
+
+
+    const updateWarrant = ({ quality, imgUrl, price, name, value }) => {
       if (warrants.length != 0) {
         warrants.find((warrant) => {
           if (
             warrant.productID === productID &&
             warrant.productQuality === productQuality &&
-            warrant.productAdQuality === productAdQuality
+            warrant.productAdQuality === quality
           ) {
             setUpdateWarrants(warrant);
             setUpdateWarrants({
@@ -240,7 +296,7 @@ export function ClaimsStage() {
               producerID: player.id,
               productID: productID,
               productQuality: productQuality,
-              productAdQuality: productAdQuality,
+              productAdQuality: quality,
               warrantAdded: false,
               warrantPrice: 0,
               warrantDesc: "",
@@ -259,7 +315,7 @@ export function ClaimsStage() {
           producerID: player.id,
           productID: productID,
           productQuality: productQuality,
-          productAdQuality: productAdQuality,
+          productAdQuality: quality,
           warrantAdded: false,
           warrantPrice: 0,
           warrantDesc: "",
@@ -270,6 +326,42 @@ export function ClaimsStage() {
         console.log("1st Use eff 2nd else", capital);
       }
     }
+
+    // const updateWarrant = () => {
+    //   const existingWarrant = warrants.find((warrant) => (
+    //     warrant.productID === productID &&
+    //     warrant.productQuality === productQuality &&
+    //     warrant.productAdQuality === productAdQuality
+    //   ));
+
+    //   if (existingWarrant) {
+    //     setUpdateWarrants((prevWarrant) => ({
+    //       ...prevWarrant,
+    //       round: round.get("name"),
+    //     }));
+    //     setIsCheckboxSelected(true);
+    //     console.log("Updated Warrant:", updateWarrants);
+    //     console.log("1st Use eff 2nd if", capital);
+    //   } else {
+    //     const newWarrant = {
+    //       producerID: player.id,
+    //       productID: productID,
+    //       productQuality: productQuality,
+    //       productAdQuality: productAdQuality,
+    //       warrantAdded: false,
+    //       warrantPrice: 0,
+    //       warrantDesc: "",
+    //       challengeAmount: 0,
+    //       round: round.get("name"),
+    //     };
+
+    //     setUpdateWarrants(newWarrant);
+    //     setIsCheckboxSelected(false);
+    //     console.log("Updated Warrant:", updateWarrants);
+    //     console.log("1st Use eff 2nd else", capital);
+    //   }
+    // };
+
 
     useEffect(() => {
       if (isCheckboxSelected == true) {
@@ -458,6 +550,7 @@ export function ClaimsStage() {
     //   }
     // };
     function SellQualityOption({ quality, imgUrl, price, name, value }) {
+      console.log("quality, imgUrl, price, name, value", quality, imgUrl, price, name, value)
       const qualityCapitalized = quality[0].toUpperCase() + quality.slice(1);
       const backgroundColor = quality === "low" ? "#FA6B84" : "#00CDBB";
       console.log("Product Ad Quality: ", productAdQuality)
@@ -475,7 +568,8 @@ export function ClaimsStage() {
             setProductAdQuality(quality);
             setValue(value);
             updateStock(quality, imgUrl, price, name, value);
-            updateWarrant();
+            updateWarrant(quality, imgUrl, price, name, value);
+            console.log("quality here in onClick is: ", quality)
             toast.warn('You also have the ability to warrant your product!');
           }}
         >

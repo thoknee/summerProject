@@ -65,10 +65,16 @@ function ConsumerFeedbackCard({ producer, player, index, basket, round, wallet, 
         }
     };
 
-
+    const funcHandle = () => {
+        handleButtonClick(index)
+        producer.set("claims", claims)
+        player.round.set("warrantPrice", warrantPrice)
+        player.round.set("warrantAdded", warrantAdded)
+        player.round.set("challengeAmount", challengeAmount)
+    }
     const emoji = getQualityMatchEmoji(productAdQuality, productQuality);
     return (
-        <div>
+        <div className="text-lg font-base">
             <p><b>Producer:</b> {producer.id}</p>
             <p><b>Units Bought:</b> {quantity}</p>
             <p><b>Advertised quality was:</b> {productAdQuality} </p>
@@ -80,11 +86,14 @@ function ConsumerFeedbackCard({ producer, player, index, basket, round, wallet, 
                     <p><b>Are you willing to challenge the producer's warrant?</b></p>
                     <p><b>Warrant: {warrantDesc}</b></p>
                     <p><b>Challenge Amount: {challengeAmount}</b></p>
-                    <p><b>Your choice:</b> {challengeStatus}</p>
+                    {/* <p><b>Challenge Status: </b> {challengeStatus}</p> */}
                     <button
                         className="bg-blue-600 text-white py-2 px-4 text-sm rounded-md border-none cursor-pointer shadow-md transition-all duration-200 ease-in-out hover:bg-blue-700 hover:shadow-md m-2.5 disabled:bg-gray-400 disabled:cursor-not-allowed disabled:shadow-none"
                         onClick={() => {
-                            if (wallet >= parseInt(challengeAmount) && challengeStatus == false) {
+                            if (claimSelections[index] == true) {
+                                toast.error("Please unconfirm your decision first!")
+                            }
+                            else if (wallet >= parseInt(challengeAmount) && challengeStatus == false) {
                                 setWallet(wallet - challengeAmount)
                                 changeChallenge()
                                 changeClaims()
@@ -98,9 +107,8 @@ function ConsumerFeedbackCard({ producer, player, index, basket, round, wallet, 
                                 alert("Not enough money in your wallet to challenge")
                             }
                         }}
-                    // disabled={!warrantAdded}
                     >
-                        Challenge
+                        {challengeStatus == true ? <>Challenged!</> : <>Challenge?</>}
                     </button>
                     <button
                         onClick={() => {
@@ -114,6 +122,7 @@ function ConsumerFeedbackCard({ producer, player, index, basket, round, wallet, 
                                 player.round.set("warrantPrice", warrantPrice)
                                 player.round.set("warrantAdded", warrantAdded)
                                 player.round.set("challengeAmount", challengeAmount)
+                                player.set("wallet", wallet)
                                 console.log("claims in submit", claims)
                                 console.log("challenges in submit", challenges)
                             }
@@ -126,7 +135,13 @@ function ConsumerFeedbackCard({ producer, player, index, basket, round, wallet, 
             ) : warrantAdded && quantity == 0 ? (
                 <p>Since you didnt buy any units for this product, you cannot challenge it!.</p>
             ) : (
-                <p>Since this product is not warranted, you are not able to challenge it</p>
+                <>
+                    <p>Since this product is not warranted, you are not able to challenge it</p>
+                    <button
+                        className={`bg-${claimSelections[index] ? "green-500" : "white"} text-black py-2 px-4 rounded-full`}
+                        onClick={() => funcHandle()}
+                    >{claimSelections[index] == true ? <>Reviewed!</> : <>Reviewed the Summary?</>}</button>
+                </>
             )}<br />
             {/* <br /><p><span role="img" aria-label="trophy">🏆</span> Your current score is your remaining wallet (<b>${wallet}</b>) + utility score(<b>${(value_use - productPrice) * quantity}</b>) = (<b>${wallet + (value_use - productPrice) * quantity}</b>).</p> */}
             <p><span role="img" aria-label="trophy">🏆</span> Your current score is your remaining wallet + utility score = (<b>${player.get("score")}</b>).</p>
@@ -231,6 +246,7 @@ export function FeedbackStage() {
     if (role === "consumer") {
         // const [challengeStatus, setChallengeStatus] = useState("No");
         const [wallet, setWallet] = useState(player.get("wallet"));
+        const [clicked, setClicked] = useState(false);
         // useEffect(() => {
         //   const initialStatuses = players.filter(p => p.get("role") === "producer")
         //     .reduce((acc, producer) => {
@@ -250,7 +266,7 @@ export function FeedbackStage() {
                 player.stage.set("submit", true);
             }
             else {
-                toast.error("Please select all checkboxes for the products before proceeding.");
+                toast.error("Review the summary or confirm your challenge to make more profits in the next round!");
             }
 
         }
@@ -278,66 +294,29 @@ export function FeedbackStage() {
             return uniqueItems;
         };
 
-
         const basket = getAllUniqueItems(player.get("basket"));
 
         console.log("basket", basket)
         console.log("challenges in export function", challenges)
-        const [clicked, setClicked] = useState(false)
 
-
-        // const renderConsumerFeedback = () => {
-
-        //     // This function renders the feedback for the consumer
-
-        //     // const challengeStatu
-        //     // const [wallet, setWallet] = useState(player.get("wallet"))
-        //     // const handleChallenge = (producer) => {
-        //     //     if (producer.round.get("challengedClaim") == undefined || producer.round.get("challengedClaim") == "No") {
-        //     //         producer.round.set("challengedClaim", "Yes")
-        //     //         setChallengeStatus("Yes")
-        //     //         setWallet(wallet - parseInt(producer.round.get("warrantPrice") / 10))
-        //     //         player.set("wallet", wallet);
-        //     //     }
-        //     //     else {
-        //     //         producer.round.set("challengedClaim", "No")
-        //     //         setChallengeStatus("No")
-        //     //         setWallet(wallet + parseInt(producer.round.get("warrantPrice") / 10))
-        //     //         player.set("wallet", wallet);
-        //     //     }
-
-        //     // };
-
-        //     return players
-        //         .filter((p) => p.get("role") === "producer")
-        //         .map((producer, index) => {
-        //             <ConsumerFeedbackCard
-        //                 producer={producer}
-        //                 player={player}
-        //                 index={index}
-        //                 basket={basket}
-        //                 round={round}
-        //                 wallet={wallet}
-        //                 setWallet={setWallet}
-        //                 challenges={challenges}
-        //                 setChallenges={setChallenges}
-        //                 claims={claims}
-        //                 setClaims={setClaims}
-        //                 handleButtonClick={handleButtonClick}
-        //             />
-        //         });
-        // }
 
         return (
-            <div className="bg-gray-300 p-4 rounded-lg shadow-md mb-8">
-                <h3><b>🛒 Your Consumer Summary</b></h3>
-                {/* {renderConsumerFeedback()} */}
-                {/* <renderConsumerFeedback /> */}
-                <button onClick={() => {
-                    handleClaims()
-                    handleChallenges()
-                    setClicked(!clicked)
-                }}>Click here</button>
+            <div className="bg-gray-300 p-4 rounded-lg shadow-md mb-8 flex justify-center items-center flex flex-col text-center">
+                <h2 className="text-xl font-bold py-6"><b>🛒 Your Consumer Summary</b></h2>
+                <div className={clicked ? `hidden` : `bg-gray-200 shadow-md text-center mx-auto my-auto w-full h-full p-8`}>
+                    <h2>Get ready to review your purchase summary for the products you've bought this round. Take a moment to check your order details. If you have any concerns or need to challenge a warrant on any product, click below to get started!.</h2>
+                    <button
+                        className="bg-blue-500 text-white py-3 px-6 text-lg rounded-md border-none cursor-pointer shadow-md transition-all duration-200 ease-in-out hover:bg-blue-700 hover:shadow-md disabled:opacity-100 disabled:cursor-not-allowed"
+                        onClick={() => {
+                            handleClaims()
+                            handleChallenges()
+                            setClicked(!clicked)
+                        }}
+                        disabled={clicked}
+                    >
+                        Are You Ready!
+                    </button>
+                </div>
 
                 {clicked && players.filter((p) => p.get("role") === "producer").map((producer, index) => {
                     return <ConsumerFeedbackCard
@@ -359,7 +338,15 @@ export function FeedbackStage() {
                 })}
 
                 <br />
-                <button className="bg-green-500 text-white py-3 px-6 text-lg rounded-md border-none cursor-pointer shadow-md transition-all duration-200 ease-in-out hover:bg-green-700 hover:shadow-md" onClick={() => handleSubmit(basket)}>Proceed to next round</button>
+                {allClaimsSelected && (
+                <button
+                    className="bg-green-500 text-white py-3 px-6 text-lg rounded-md border-none cursor-pointer shadow-md transition-all duration-200 ease-in-out hover:bg-green-700 hover:shadow-md"
+                    onClick={() => handleSubmit(basket)}
+                >
+                    Proceed to next round
+                </button>
+                )}
+
             </div>
         );
     }
