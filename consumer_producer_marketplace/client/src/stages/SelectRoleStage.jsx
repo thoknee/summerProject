@@ -33,7 +33,6 @@ export function SelectRolesStage() {
 
             if (round.get("name") == "Round1") {
                 player.set("capital", 100);
-                console.log("capital set to 100", player.get("capital"))
             }
             if (round.get("name") != "Round1") {
                 player.set("capital", player.get("capital") + 20)

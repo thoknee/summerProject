@@ -18,24 +18,15 @@ export function ClaimsStage() {
   const game = useGame();
   const treatment = game.get("treatment");
   const marketType = treatment["marketType"];
-  // useEffect(() => {
-  //   if (role === "consumer") {
-  //     player.stage.set("submit", true);
-  //   }
-  // }, [player, role]);
 
   if (role === "producer") {
     const productCost = player.round.get("productCost");
     let selectedProduct = player.round.get("selectedProduct");
-    console.log("Selected Product: ", selectedProduct);
     const { low, high, category, productWarrants } = selectedProduct;
-    console.log(low.productPrice, high.productPrice);
     let productID = player.round.get("productID");
     let brandName = player.round.get("brandName");
     let productQuality = player.round.get("productQuality");
-    // let [warrantAdded, setWarrantAdded] = useState(false);
     let [capital, setCapital] = useState(player.get("capital"));
-    console.log("Capital current: ", capital)
     let [productPrice, setProductPrice] = useState(0);
     let [productAdQuality, setProductAdQuality] = useState("");
     let [productAdImage, setProductAdImage] = useState("");
@@ -43,325 +34,15 @@ export function ClaimsStage() {
     let [value, setValue] = useState(0)
     let [isModalOpen, setIsModalOpen] = useState(false);
     let [isCheckboxSelected, setIsCheckboxSelected] = useState(false);
-    // let [selectedWarrant, setSelectedWarrant] = useState("");
-    // let [isSelected, setIsSelected] = useState("");
 
     let [profit, setProfit] = useState(0);
-    // let productIdentifier = "";
     let [iniStock, setIniStock] = useState(0);
     let stock = player.get("stock") || [];
-    let [updatedStock, setUpdatedStock] = useState({
-      // producerID: player.id,
-      // productID: productID,
-      // productIdentifier: "",
-      // productQuality: productQuality,
-      // productAdQuality: productAdQuality,
-      // productCost: productCost,
-      // productPrice: productPrice,
-      // productAdImage: productAdImage,
-      // initialStock: 0,
-      // remainingStock: 0,
-      // soldStock: 0,
-      // round: round.get("name")
-
-    });
+    let [updatedStock, setUpdatedStock] = useState({});
     let warrants = player.get("warrants") || [];
     let [updateWarrants, setUpdateWarrants] = useState({
-      // producerID: player.id,
-      // productID: productID,
-      // productQuality: productQuality,
-      // productAdQuality: "",
-      // warrantAdded: false,
-      // warrantPrice: 0,
-      // warrantDesc: "",
-      // challengeAmount: 0,
-      // round: round.get("name")
     });
     let [tempStock, setTempStock] = useState(0);
-
-    // useEffect(() => {
-    //   console.log("Use eff 1st", productAdQuality);
-    //   if(stock.length != 0){
-    //   stock.find((product) => {
-    //     if (
-    //       product.productID === productID &&
-    //       product.productQuality === productQuality &&
-    //       product.productAdQuality === productAdQuality
-    //     ) {
-    //       setUpdatedStock(product);
-    //       setUpdatedStock({
-    //         ...updatedStock,
-    //         initialStock: product.remainingStock,
-    //         remainingStock: product.remainingStock,
-    //         round: round.get("name"),
-    //       });
-    //       setTempStock(product.remainingStock);
-    //       console.log("1st Use eff 1st if", capital);
-    //     } else {
-    //       setUpdatedStock({
-    //         producerID: player.id,
-    //         productID: productID,
-    //         productIdentifier: "",
-    //         productQuality: productQuality,
-    //         productAdQuality: productAdQuality,
-    //         productCost: productCost,
-    //         productPrice: productPrice,
-    //         productAdImage: productAdImage,
-    //         initialStock: 0,
-    //         remainingStock: 0,
-    //         soldStock: 0,
-    //         round: round.get("name")
-    //       });
-    //       setTempStock(0);
-    //       console.log("1st Use eff 1st else", capital);
-
-    //     }
-    //   });
-    // }
-
-    //   if(warrants.length != 0){
-    //   warrants.find((warrant) => {
-    //     if (
-    //       warrant.productID === productID &&
-    //       warrant.productQuality === productQuality &&
-    //       warrant.productAdQuality === productAdQuality
-    //     ) {
-    //       setUpdateWarrants(warrant);
-    //       setUpdateWarrants({
-    //         ...updateWarrants,
-    //         round: round.get("name"),
-    //       });
-    //       setIsCheckboxSelected(true);
-    //       console.log("1st Use eff 2nd if", capital);
-    //     } else {
-    //       setUpdateWarrants({
-    //         producerID: player.id,
-    //         productID: productID,
-    //         productQuality: productQuality,
-    //         productAdQuality: productAdQuality,
-    //         warrantAdded: false,
-    //         warrantPrice: 0,
-    //         warrantDesc: "",
-    //         challengeAmount: 0,
-    //         round: round.get("name")
-    //       });
-    //       setIsCheckboxSelected(false);
-    //       console.log("1st Use eff 2nd else", capital);
-
-    //     }
-    //   });
-    // }
-    // }, [productAdQuality]);
-
-    const updateStock = ({ quality, imgUrl, price, name, value }) => {
-      if (stock.length != 0) {
-        stock.find((product) => {
-          if (
-            product.productID === productID &&
-            product.productQuality === productQuality &&
-            product.productAdQuality === quality
-          ) {
-            // ...prev => [...prev, ...]
-            setUpdatedStock(product);
-            setUpdatedStock(prevState => ({
-              ...prevState,
-              initialStock: product.remainingStock,
-              remainingStock: product.remainingStock,
-              round: round.get("name"),
-            }));
-            // setUpdatedStock({
-            //   ...product,
-            //   ...updatedStock,
-            //   initialStock: product.remainingStock,
-            //   remainingStock: product.remainingStock,
-            //   round: round.get("name"),
-            // });
-
-            setCapital(capital + tempStock * productCost)
-            setTempStock(product.remainingStock);
-            setIniStock(product.remainingStock);
-            console.log("1st Use eff 1st if", capital);
-            console.log("old stock retained: ", updatedStock)
-            return true
-          } else {
-            setUpdatedStock({
-              producerID: player.id,
-              productID: productID,
-              productIdentifier: name,
-              productQuality: productQuality,
-              productAdQuality: quality,
-              productCost: productCost,
-              productPrice: price,
-              productAdImage: imgUrl,
-              value: value,
-              initialStock: 0,
-              remainingStock: 0,
-              soldStock: 0,
-              round: round.get("name")
-            });
-            setCapital(capital + tempStock * productCost)
-            setTempStock(0);
-            setIniStock(0);
-            console.log("didnt find old stock after 1 round", capital);
-            console.log("didnt find after 1 round", updatedStock);
-            return true
-
-          }
-        });
-      }
-      else {
-        setUpdatedStock({
-          producerID: player.id,
-          productID: productID,
-          productIdentifier: name,
-          productQuality: productQuality,
-          productAdQuality: quality,
-          productCost: productCost,
-          productPrice: price,
-          productAdImage: imgUrl,
-          value: value,
-          initialStock: 0,
-          remainingStock: 0,
-          soldStock: 0,
-          round: round.get("name")
-        });
-        setCapital(capital + tempStock * productCost)
-        setTempStock(0);
-        setIniStock(0);
-        console.log("didnt have no stock objects in first round", capital);
-      }
-    }
-    // const updateStock = ({ price, imgUrl, quality, name, value }) => {
-    //   const existingProduct = stock.find((product) => (
-    //     product.productID === productID &&
-    //     product.productQuality === productQuality &&
-    //     product.productAdQuality === quality
-    //   ));
-
-    //   if (existingProduct) {
-    //     setUpdatedStock((prevProduct) => ({
-    //       ...prevProduct,
-    //       initialStock: existingProduct.remainingStock,
-    //       remainingStock: existingProduct.remainingStock,
-    //       round: round.get("name"),
-    //     }));
-    //     console.log("inside existing product")
-    //   } else {
-    //     const newProduct = {
-    //       producerID: player.id,
-    //       productID: productID,
-    //       productIdentifier: name,
-    //       productQuality: productQuality,
-    //       productAdQuality: quality,
-    //       productCost: productCost,
-    //       productPrice: price,
-    //       productAdImage: imgUrl,
-    //       value: value,
-    //       initialStock: 0,
-    //       remainingStock: 0,
-    //       soldStock: 0,
-    //       round: round.get("name"),
-    //     };
-    //     setUpdatedStock(newProduct);
-    //     console.log("in the newproduct else")
-    //   }
-
-    //   setCapital(capital + tempStock * productCost);
-    //   setTempStock(existingProduct ? existingProduct.remainingStock : 0);
-    //   setIniStock(existingProduct ? existingProduct.remainingStock : 0);
-
-    //   console.log("Updated Stock:", updatedStock);
-    //   console.log("Capital:", capital);
-    // };
-
-
-    const updateWarrant = ({ quality, imgUrl, price, name, value }) => {
-      if (warrants.length != 0) {
-        warrants.find((warrant) => {
-          if (
-            warrant.productID === productID &&
-            warrant.productQuality === productQuality &&
-            warrant.productAdQuality === quality
-          ) {
-            setUpdateWarrants(warrant);
-            setUpdateWarrants({
-              ...updateWarrants,
-              round: round.get("name"),
-            });
-            setIsCheckboxSelected(true);
-            console.log("1st Use eff 2nd if", capital);
-            return true
-          } else {
-            setUpdateWarrants({
-              producerID: player.id,
-              productID: productID,
-              productQuality: productQuality,
-              productAdQuality: quality,
-              warrantAdded: false,
-              warrantPrice: 0,
-              warrantDesc: "",
-              challengeAmount: 0,
-              round: round.get("name")
-            });
-            setIsCheckboxSelected(false);
-            console.log("1st Use eff 2nd else", capital);
-            return true
-
-          }
-        });
-      }
-      else {
-        setUpdateWarrants({
-          producerID: player.id,
-          productID: productID,
-          productQuality: productQuality,
-          productAdQuality: quality,
-          warrantAdded: false,
-          warrantPrice: 0,
-          warrantDesc: "",
-          challengeAmount: 0,
-          round: round.get("name")
-        });
-        setIsCheckboxSelected(false);
-        console.log("1st Use eff 2nd else", capital);
-      }
-    }
-
-    // const updateWarrant = () => {
-    //   const existingWarrant = warrants.find((warrant) => (
-    //     warrant.productID === productID &&
-    //     warrant.productQuality === productQuality &&
-    //     warrant.productAdQuality === productAdQuality
-    //   ));
-
-    //   if (existingWarrant) {
-    //     setUpdateWarrants((prevWarrant) => ({
-    //       ...prevWarrant,
-    //       round: round.get("name"),
-    //     }));
-    //     setIsCheckboxSelected(true);
-    //     console.log("Updated Warrant:", updateWarrants);
-    //     console.log("1st Use eff 2nd if", capital);
-    //   } else {
-    //     const newWarrant = {
-    //       producerID: player.id,
-    //       productID: productID,
-    //       productQuality: productQuality,
-    //       productAdQuality: productAdQuality,
-    //       warrantAdded: false,
-    //       warrantPrice: 0,
-    //       warrantDesc: "",
-    //       challengeAmount: 0,
-    //       round: round.get("name"),
-    //     };
-
-    //     setUpdateWarrants(newWarrant);
-    //     setIsCheckboxSelected(false);
-    //     console.log("Updated Warrant:", updateWarrants);
-    //     console.log("1st Use eff 2nd else", capital);
-    //   }
-    // };
-
 
     useEffect(() => {
       if (isCheckboxSelected == true) {
@@ -377,7 +58,6 @@ export function ClaimsStage() {
               round: round.get("name"),
             });
             setCapital(Number(capital) - Number(warrant.warrantPrice));
-            console.log("2nd Use eff 1st if", capital);
             return true
 
           } else {
@@ -392,13 +72,11 @@ export function ClaimsStage() {
               challengeAmount: 0,
               round: round.get("name"),
             });
-            console.log("2nd Use eff 1st else", capital);
             return true
           }
         });
       }
       else {
-        // console.log("Warrnats initial price: ", updateWarrants.warrantPrice)
         if (updateWarrants.warrantPrice == undefined) {
           setUpdateWarrants({
             producerID: player.id,
@@ -427,7 +105,6 @@ export function ClaimsStage() {
           });
         }
 
-        console.log("2nd Use eff ELSE", capital);
       }
     }, [isCheckboxSelected]);
 
@@ -444,10 +121,6 @@ export function ClaimsStage() {
 
       } else {
         warrants = [...warrants, updateWarrants];
-        // setUpdatedStock({
-        //   ...updatedStock,
-        //   productIdentifier: adjSelector(),
-        // })
         stock = [...stock, updatedStock]
         player.set("warrants", warrants);
         player.set("capital", capital);
@@ -491,7 +164,6 @@ export function ClaimsStage() {
         setTempStock(tempStock - 1);
         setCapital(Number(capital) + Number(productCost));
       }
-      console.log("Updated Stock: ", updatedStock)
     };
 
     const incrementQuantity = () => {
@@ -499,7 +171,6 @@ export function ClaimsStage() {
       This function increments the stock of the player by 1 and decrements the capital by the product cost
       */
       if (capital - productCost >= 0) {
-        console.log("Updated Stock: ", updatedStock)
         setUpdatedStock({
 
           ...updatedStock,
@@ -517,60 +188,62 @@ export function ClaimsStage() {
         });
         setTempStock(tempStock + 1);
         setCapital(Number(capital) - Number(productCost));
-        console.log(updatedStock)
       }
     };
 
 
-    // const onWarrantSelection = (e, multiplier, description) => {
-    //   if (warrantAdded) {
-    //     player.round.set("warrantDesc", description);
-    //     player.round.set("warrantPrice", profit * multiplier); // Warrant price calculation
-    //     setIsSelected(description);
-    //     setSelectedWarrant(description);
-    //     setMultiplier(multiplier);
-    //   }
-    // };
-
-    // const onWarrantDeselection = (description) => {
-    //   // setCapital(capital + player.round.get("warrantPrice"))
-    //   player.round.set("warrantDesc", "");
-    //   player.round.set("warrantPrice", 0);
-    //   setIsSelected("");
-    //   setSelectedWarrant(null);
-    //   console.log("Warrant deselected");
-    //   setMultiplier(null);
-    // };
-    // const removeWarrants = (warrantAdded) => {
-    //   if (warrantAdded == false) {
-    //     player.round.set("warrantDesc", "");
-    //     player.round.set("warrantPrice", 0);
-    //     setIsSelected("");
-    //     console.log("Warrant removed");
-    //   }
-    // };
     function SellQualityOption({ quality, imgUrl, price, name, value }) {
-      console.log("quality, imgUrl, price, name, value", quality, imgUrl, price, name, value)
       const qualityCapitalized = quality[0].toUpperCase() + quality.slice(1);
       const backgroundColor = quality === "low" ? "#FA6B84" : "#00CDBB";
-      console.log("Product Ad Quality: ", productAdQuality)
-      console.log("Quality: ", quality)
-      console.log("Product Image: ", productAdImage)
       return (
         <div
           className="text-center flex flex-col justify-center items-center"
           style={{ cursor: "pointer" }}
           onClick={() => {
-            setProductPrice(price);
-            setProductAdImage(imgUrl);
-            setproductAdName(name);
-            setProfit(Math.abs(price - productCost));
-            setProductAdQuality(quality);
-            setValue(value);
-            updateStock(quality, imgUrl, price, name, value);
-            updateWarrant(quality, imgUrl, price, name, value);
-            console.log("quality here in onClick is: ", quality)
-            toast.warn('You also have the ability to warrant your product!');
+            if (isCheckboxSelected == false) {
+              setProductPrice(price);
+              setProductAdImage(imgUrl);
+              setproductAdName(name);
+              setProfit(Math.abs(price - productCost));
+              setProductAdQuality(quality);
+              setValue(value);
+              setUpdatedStock(
+                {
+                  producerID: player.id,
+                  productID: productID,
+                  productIdentifier: name,
+                  productQuality: productQuality,
+                  productAdQuality: quality,
+                  productCost: productCost,
+                  productPrice: price,
+                  productAdImage: imgUrl,
+                  value: value,
+                  initialStock: 0,
+                  remainingStock: 0,
+                  soldStock: 0,
+                  round: round.get("name")
+                }
+              )
+              setCapital(capital + tempStock * productCost)
+              setTempStock(0);
+              setIniStock(0);
+              setUpdateWarrants({
+                producerID: player.id,
+                productID: productID,
+                productQuality: productQuality,
+                productAdQuality: quality,
+                warrantAdded: false,
+                warrantPrice: 0,
+                warrantDesc: "",
+                challengeAmount: 0,
+                round: round.get("name")
+              });
+              setIsCheckboxSelected(false);
+              toast.warn('You also have the ability to warrant your product!');
+            }
+            else {
+              toast.error("Please deselect your warrant first to switch product quality choice!")
+            }
           }}
         >
           <div
@@ -625,15 +298,6 @@ export function ClaimsStage() {
       /*
       This function returns a component that allows the player to select a warrant for their advertisement
       */
-      // const [isModalOpen, setIsModalOpen] = useState(false);
-      // const [isCheckboxSelected, setIsCheckboxSelected] = useState(false);
-      // const [selectedWarrant, setSelectedWarrant] = useState("");
-      // const [isSelected, setIsSelected] = useState("");
-
-      // // const productPrice = player.round.get('productPrice')
-      // const productPrice = selectedIdx === 0 ? "5" : "10";
-      // const profit = Math.abs(productPrice - productCost);
-      // const [multiplier, setMultiplier] = useState(null);
 
       const selectedCardStyle = {
         backgroundColor: "rgba(0, 0, 255, 0.2)",
@@ -709,7 +373,6 @@ export function ClaimsStage() {
             isOpen={isModalOpen}
             onClose={() => {
               setIsModalOpen(false);
-              // setCapital(capital - player.round.get("warrantPrice"));
             }}
             title="Warrant"
             children={
@@ -740,7 +403,6 @@ export function ClaimsStage() {
                                 round: round.get("name"),
                               })
                               setCapital(Number(capital) + Number(warrant.multiplier * profit))
-                              // onWarrantDeselection(warrant.description);
                             } else {
                               setCapital(Number(capital) + Number(updateWarrants.warrantPrice) - Number(warrant.multiplier * profit))
                               setUpdateWarrants({
@@ -751,12 +413,6 @@ export function ClaimsStage() {
                                 challengeAmount: parseInt(Math.ceil((warrant.multiplier * profit) / 10))
                               });
 
-                              // onWarrantSelection(
-                              //   e,
-                              //   warrant.multiplier,
-                              //   warrant.description,
-                              //   warrantAdded
-                              // );
                             }
                           }}
                         >
@@ -861,7 +517,6 @@ export function ClaimsStage() {
         </div>
         <div className={"mx-10 mt-16 mb-16"}>
           <button
-            // disabled={tempStock >= updatedStock.initialStock}
             className="text-red-500 border-solid border-2 rounded-full border-red-500 px-1.5 bg-white"
             onClick={() => {
               if (iniStock - tempStock == 0) {
@@ -881,7 +536,6 @@ export function ClaimsStage() {
           </span>
           <button
             className="text-green-500 border-solid border-2 rounded-full border-green-500 px-1.5 bg-white"
-            // disabled={capital - productCost < 0}
             onClick={() => {
               if (capital - productCost < 0) {
                 toast.error("You do not have enough capital to produce more units!");
@@ -933,7 +587,6 @@ export function ClaimsStage() {
             would gain/lose for each possible combination of the quality you pay
             for and the quality you actually receive:
           </p>
-          {/* TODO: Remove hardcoded costs and values */}
           <PayoffMatrix role={"consumer"} />
 
           <br />
@@ -956,7 +609,7 @@ export function ClaimsStage() {
           onClick={handleProceed}
           className="hover: cursor-pointer rounded-md border-none bg-[#4CAF50] px-3 py-6 text-base text-white shadow-md transition-all ease-in-out hover:bg-[#45a049] hover:shadow-md hover:shadow-gray-400"
         >
-          Proceed to next round
+          Proceed to next stage
         </button>
       </div>
     );

@@ -1,4 +1,6 @@
+/*
 
+*/
 import React, { useState, useEffect } from "react";
 import { usePlayer, usePlayers, useRound } from "@empirica/core/player/classic/react";
 import { toast } from "react-toastify";
@@ -6,19 +8,7 @@ import { toast } from "react-toastify";
 
 const ConsumerProductCard = ({ producer, index, round, productSelections, wallet, setWallet, setBasket, basket, handleButtonClick, player }) => {
     const [stock, setStock] = useState(producer.get("stock"));
-    console.log("Stock in new round:", stock);
-    // const tempStock = stock.find((item) => {
-    //     if (item.round === "Round2") {
-    //         console.log("item in find:",item)
-    //         return item
-    //     }
-    //     return 1
-    // })
     const tempStock = stock.find((item) => item.round === round);
-    console.log("newstock now:", tempStock)
-    // console.log()
-    // const [updateStock, setUpdateStock] = useState(tempStock);
-    // console.log(tempStock)
     const productID = tempStock.productID;
     const productQuality = tempStock.productQuality;
     const productAdQuality = tempStock.productAdQuality;
@@ -29,27 +19,10 @@ const ConsumerProductCard = ({ producer, index, round, productSelections, wallet
     const [remStock, setRemStock] = useState(tempStock.remainingStock);
     const warrants = producer.get("warrants");
     const tempWarrant = warrants.find((item) => item.round === round);
-    // useEffect(() => {
-    //     console.log("RemStock in ref", remStock)
-    // }, [remStock])
     const warrantAdded = tempWarrant.warrantAdded;
     const warrantPrice = tempWarrant.warrantPrice;
     const warrantDesc = tempWarrant.warrantDesc;
     const [quantity, setQuantity] = useState(0);
-    // const tempBasket = basket.find((item) => {
-    //     if (item.round === round && item.producerID === producer.id) {
-    //         return item
-    //     }
-    // })
-    // let [updatedBasket, setUpdatedBasket] = useState(tempBasket);
-    // setUpdatedBasket({
-    //     ...updatedBasket,
-    //     producerID: producer.id,
-    //     productID: productID,
-    //     productQuality: productQuality,
-    //     productAdQuality: productAdQuality,  
-    //     productPrice: productPrice,
-    // });
 
     const updateIncrementStock = () => {
         const trialStock = stock.map((item) => {
@@ -58,12 +31,10 @@ const ConsumerProductCard = ({ producer, index, round, productSelections, wallet
                     ...item,
                     remainingStock: item.remainingStock + 1,
                     soldStock: item.soldStock - 1,
-                    // You can add other attributes here if needed
                 }
                 : item;
         });
-        // Set the updated stock array
-        setStock(trialStock); // [{}]
+        setStock(trialStock);
         setRemStock(remStock + 1);
         setQuantity(quantity - 1);
     };
@@ -81,10 +52,7 @@ const ConsumerProductCard = ({ producer, index, round, productSelections, wallet
                 }
                 : item;
         });
-        // Set the updated basket array
         setBasket(trialBasket);
-        console.log("basket in ", basket)
-        // console.log(basket)
     }
 
     const updateDecrementBasket = () => {
@@ -100,7 +68,6 @@ const ConsumerProductCard = ({ producer, index, round, productSelections, wallet
                 }
                 : item;
         });
-        // Set the updated basket array
         setBasket(trialBasket);
     }
 
@@ -114,12 +81,9 @@ const ConsumerProductCard = ({ producer, index, round, productSelections, wallet
                 }
                 : item;
         });
-        // Set the updated stock array
-        setStock(trialStock); // [{}]
+        setStock(trialStock);
         setRemStock(remStock - 1);
-        // console.log("RemStock", remStock);
         setQuantity(quantity + 1);
-        // console.log("Quantity", quantity);
     };
 
     const decrementQuantity = () => {
@@ -143,8 +107,6 @@ const ConsumerProductCard = ({ producer, index, round, productSelections, wallet
                 setWallet(wallet - productPrice);
                 updateDecrementStock();
                 updateIncrementBasket();
-                // console.log("RemStock", remStock);
-                // console.log("Quantity", quantity);
             }
             else {
                 toast.error("You don't have enough money in your wallet or the stock is not available")
@@ -154,29 +116,8 @@ const ConsumerProductCard = ({ producer, index, round, productSelections, wallet
             toast.error("Please uncheck the checkbox to change the quantity")
         }
     }
-    // const handlePurchase = (wallet, producerID, stock, quantity) => {
-
-    //     console.log("Consumer attempts to buy");
-    //     // Update wallet
-    //     player.set("wallet", wallet);
-    //     // Update basket for the consumer
-    //     let basket = player.round.get("basket") || {};
-    //     basket[producerID] = quantity;
-    //     console.log("player basket updates", player.round.get("basket"));
-    //     //console.log("player wallet updates", player.round.get("wallet"));
-    //     player.round.set("basket", basket);
-    //     const prod = players.find((item) => item.id === producerID);
-    //     if (prod.round.get("productQuality") == "low") {
-    //         prod.round.set("stocklow", stock);
-    //     }
-    //     else {
-    //         prod.round.set("stockhigh", stock);
-    //     }
-
-    // };
 
     const getAllUniqueItems = (basket) => {
-        console.log("basket in getall", basket)
         const uniqueItems = [];
         const itemOccurrences = {};
 
@@ -240,36 +181,16 @@ const ConsumerProductCard = ({ producer, index, round, productSelections, wallet
                         handleButtonClick(index)
                         producer.set("stock", stock)
                         // need to update for multiplayer TODO
-                        console.log("HELLO FROM CHECKBOX")
-                        console.log('getUniqueItems(basket)', getAllUniqueItems(basket))
                         player.set("basket", getAllUniqueItems(basket))
-                        console.log("basket in check", player.get("basket"))
-                        console.log("stock in check", producer.get("stock"))
                     }
                 }}
                 className={`bg-${productSelections[index] ? "green-500" : "white"} text-black py-2 px-4 rounded-full border border-green-300 cursor-pointer shadow-md`}
             >
                 {productSelections[index] ? "Added to Cart" : "Add to Cart"}
             </button>
-            {/*<p>
-            Challenge status: <b>{challengeStatus}</b>
-          </p>
-           <button
-           className="bg-blue-500 text-white py-2 px-4 text-sm rounded-md border-none cursor-pointer shadow-md transition-all duration-200 ease-in-out mt-2 mb-2 hover:bg-blue-700 disabled:bg-gray-400 disabled:cursor-not-allowed disabled:shadow-none"
-            onClick={() => {
-              handleChallenge(challengeStatus, producer.id);
-              console.log(challengeStatus : ${producer.round.get("challengeStatus")});
-              setChallengeStatus(producer.round.get("challengeStatus"));
-            }}
-            disabled={!warrantAdded}
-          >
-            Challenge
-          </button> */}
         </div>
     );
 }
-
-
 
 export function ChoiceStage() {
     const player = usePlayer();
@@ -277,8 +198,6 @@ export function ChoiceStage() {
     const role = player.get("role");
     const roundHook = useRound()
     const round = roundHook.get("name");
-    // console.log('round', round)
-    // console.log('roundHook', roundHook)
 
     let [basket, setBasket] = useState(player.get('role') == "consumer" && (player.get("basket") || []))
     let [wallet, setWallet] = useState(player.get('role') == "consumer" && (player.get("wallet")));
@@ -288,9 +207,7 @@ export function ChoiceStage() {
                 const findproductID = (producer) => {
                     const st = producer.get("stock")
                     let prodID = st.find((item) => {
-                        console.log("item", item)
                         if (item.round === round) {
-                            console.log("returned item", item)
                             return item.productID
                         }
                         return -1
@@ -320,10 +237,8 @@ export function ChoiceStage() {
                 }
                 const findproductPrice = (producer) => {
                     const st = producer.get("stock")
-                    // console.log("stock in findprod", st)
                     let prodPrice = st.find((item) => {
                         if (item.round === round) {
-                            // console.log("item in:",item.productPrice)
                             return item.productPrice
                         }
                         return -1
@@ -333,11 +248,8 @@ export function ChoiceStage() {
 
                 const findvalue = (producer) => {
                     const st = producer.get("stock")
-                    console.log("stock in findvalue", st)
-                    console.log("round in findvalue", round)
                     let prodvalue = st.find((item) => {
                         if (item.round === round) {
-                            // console.log("item in:",item.productPrice)
                             return item.value
                         }
                         return -1
@@ -358,15 +270,10 @@ export function ChoiceStage() {
                         round: round,
                     }));
                 setBasket((prevBasket) => [...prevBasket, ...putBasket]);
-                console.log("basket", basket);
-                console.log("Hello in consumer effe")
             }
             handleBasket()
-            // player.set("basket", basket);
         };
-        console.log("In producer rn")
     }, [])
-    // Check Box state
 
     const producerCount = players.filter((player) => player.get("role") === "producer").length;
 
@@ -389,28 +296,7 @@ export function ChoiceStage() {
         }
     };
 
-    // [
-    //   {productId: ""}, {productId: ""}, {productId: ""}
-    // ]
-
     if (role === "consumer") {
-
-
-
-        // let [basket, setBasket] = useState(player.get("basket") || [])
-
-
-
-
-
-        // const handleProceed = () => {
-        //     // if(role === "consumer" || role === "producer")
-        //     player.set("basket", basket);
-        //     player.set("wallet", wallet);
-        //     player.stage.set("submit", true);
-        // };
-
-
 
         const WalletDisplay = () => {
             return (
@@ -424,12 +310,9 @@ export function ChoiceStage() {
         }
 
         const renderProductFeed = () => {
-            // handleBasket();
-            // console.log("basket", basket);
             return players
                 .filter((p) => p.get("role") === "producer")
                 .map((producer, index) => {
-                    // 
                     return (
                         <ConsumerProductCard
                             key={index}
@@ -454,12 +337,11 @@ export function ChoiceStage() {
                 <h2 className="font-bold">Advertisements</h2>
                 <h3>You can only buy if you have enough money in your wallet.</h3>
                 <WalletDisplay />
-                {/* <button onClick={renderProductFeed}>Are you ready?</button> */}
                 <div>{renderProductFeed()}</div>
                 <br />
                 <br />
                 <button onClick={handleProceed} className="bg-green-500 text-white py-3 px-6 text-lg rounded-md border-none cursor-pointer shadow-md transition-all duration-200 ease-in-out hover:bg-green-700">
-                    Proceed to next round
+                    Proceed to next stage
                 </button>
                 <br />
                 <br />
@@ -474,7 +356,6 @@ export function ChoiceStage() {
         const handleProceed = () => {
             player.stage.set("submit", true);
         };
-        // let unitsSold = player.round.get("unitsSold");
         function ProducerWaitingMessage() {
             /* 
             This fuction will be used to display the waiting message for the producer
@@ -496,7 +377,7 @@ export function ChoiceStage() {
             <div className="text-center p-4 bg-gray-200 rounded-lg shadow-md max-w-[500px] mx-auto my-4">
                 <ProducerWaitingMessage />
                 <button onClick={handleProceed} className="bg-green-500 text-white py-3 px-6 text-lg rounded-md border-none cursor-pointer shadow-md transition-all duration-200 ease-in-out hover:bg-green-700">
-                    Proceed to next round
+                    Proceed to next stage
                 </button>
             </div>
         );

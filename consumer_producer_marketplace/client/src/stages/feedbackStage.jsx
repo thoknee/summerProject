@@ -3,22 +3,15 @@ import { usePlayer, usePlayers, useRound } from "@empirica/core/player/classic/r
 import { toast } from "react-toastify";
 
 function ConsumerFeedbackCard({ producer, player, index, basket, round, wallet, setWallet, challenges, setChallenges, setClaims, claims, claimSelections, handleButtonClick }) {
-    console.log("basket in main func", basket)
     const productAdQuality = basket.find((item) => item.producerID === producer.id && item.round === round).productAdQuality;
     const productQuality = basket.find((item) => item.producerID === producer.id && item.round === round).productQuality;
     const quantity = basket.find((item) => item.producerID === producer.id && item.round === round).quantity;
-    // const stock = producer.get("stock")
-    console.log("productAdQuality", productAdQuality)
-    console.log("productQuality", productQuality)
-
-
     const warrants = producer.get("warrants")
     const warrantAdded = warrants.find((item) => item.round === round).warrantAdded;
     const warrantPrice = warrants.find((item) => item.round === round).warrantPrice;
     const warrantDesc = warrants.find((item) => item.round === round).warrantDesc;
     const challengeAmount = warrants.find((item) => item.round === round).challengeAmount;
     const tempChallenge = challenges.find((item) => item.round === round && item.producerID === producer.id);
-    console.log("warrantDesc", warrantDesc)
     const [challengeStatus, setChallengeStatus] = useState(tempChallenge.status);
 
     const changeChallenge = () => {
@@ -31,8 +24,7 @@ function ConsumerFeedbackCard({ producer, player, index, basket, round, wallet, 
                 }
                 : item;
         });
-        // Set the updated stock array
-        setChallenges(trialChallenge); // [{}]
+        setChallenges(trialChallenge);
         setChallengeStatus(!challengeStatus)
     };
 
@@ -46,9 +38,7 @@ function ConsumerFeedbackCard({ producer, player, index, basket, round, wallet, 
                 }
                 : item;
         });
-        // Set the updated stock array
-        setClaims(trialClaims); // [{}]
-        // setChallengeStatus(!challengeStatus)
+        setClaims(trialClaims); 
     };
 
 
@@ -86,7 +76,6 @@ function ConsumerFeedbackCard({ producer, player, index, basket, round, wallet, 
                     <p><b>Are you willing to challenge the producer's warrant?</b></p>
                     <p><b>Warrant: {warrantDesc}</b></p>
                     <p><b>Challenge Amount: {challengeAmount}</b></p>
-                    {/* <p><b>Challenge Status: </b> {challengeStatus}</p> */}
                     <button
                         className="bg-blue-600 text-white py-2 px-4 text-sm rounded-md border-none cursor-pointer shadow-md transition-all duration-200 ease-in-out hover:bg-blue-700 hover:shadow-md m-2.5 disabled:bg-gray-400 disabled:cursor-not-allowed disabled:shadow-none"
                         onClick={() => {
@@ -104,7 +93,7 @@ function ConsumerFeedbackCard({ producer, player, index, basket, round, wallet, 
                                 changeClaims()
                             }
                             else {
-                                alert("Not enough money in your wallet to challenge")
+                                toast.error("Not enough money in your wallet to challenge")
                             }
                         }}
                     >
@@ -123,8 +112,6 @@ function ConsumerFeedbackCard({ producer, player, index, basket, round, wallet, 
                                 player.round.set("warrantAdded", warrantAdded)
                                 player.round.set("challengeAmount", challengeAmount)
                                 player.set("wallet", wallet)
-                                console.log("claims in submit", claims)
-                                console.log("challenges in submit", challenges)
                             }
                         }}
                         className={`bg-${claimSelections[index] ? "green-500" : "white"} text-black py-2 px-4 rounded-full`}
@@ -143,7 +130,6 @@ function ConsumerFeedbackCard({ producer, player, index, basket, round, wallet, 
                     >{claimSelections[index] == true ? <>Reviewed!</> : <>Reviewed the Summary?</>}</button>
                 </>
             )}<br />
-            {/* <br /><p><span role="img" aria-label="trophy">🏆</span> Your current score is your remaining wallet (<b>${wallet}</b>) + utility score(<b>${(value_use - productPrice) * quantity}</b>) = (<b>${wallet + (value_use - productPrice) * quantity}</b>).</p> */}
             <p><span role="img" aria-label="trophy">🏆</span> Your current score is your remaining wallet + utility score = (<b>${player.get("score")}</b>).</p>
         </div>
     );
@@ -156,13 +142,10 @@ export function FeedbackStage() {
     const role = player.get("role");
     const roundHook = useRound();
     const round = roundHook.get("name");
-    // const getClaims = players.find((p) => p.role === "producer")
     const producerPlayers = players.filter((p) => p.get("role") === "producer");
-    console.log("producerPlayers", producerPlayers)
 
     let [challenges, setChallenges] = useState(player.get("role") == "consumer" && (player.get("challenges") || []))
     let [claims, setClaims] = useState([])
-    console.log("claims", claims)
     const producerCount = players.filter((player) => player.get("role") === "producer").length;
     const [claimSelections, setClaimSelections] = useState(Array(producerCount).fill(false));
 
@@ -173,23 +156,6 @@ export function FeedbackStage() {
     };
 
     const allClaimsSelected = claimSelections.every((isSelected) => isSelected);
-
-    // // challengeStatus = [{ 
-    //     consumerID: "1",
-    //     status: true,
-    //     round: round
-    //     
-    // }]
-    // for producer SIDE ^^^
-    // har ek consumer ke liye ek status hoga
-    /*
-        for consumer SIDE
-        {
-            producerID: "1",
-            status: true
-            round: round
-        }
-    */
     const handleClaims = () => {
         const putClaims = players
             .filter((player) => player.get("role") === "consumer")
@@ -203,7 +169,6 @@ export function FeedbackStage() {
             if (Array.isArray(prevClaims)) {
                 return [...prevClaims, ...putClaims];
             } else {
-                // If prevClaims is not an array, initialize it as an empty array
                 return [...putClaims];
             }
         });
@@ -222,46 +187,19 @@ export function FeedbackStage() {
             if (Array.isArray(prevChallenges)) {
                 return [...prevChallenges, ...putChallenges];
             } else {
-                // If prevChallenges is not an array, initialize it as an empty array
                 return [...putChallenges];
             }
         });
-        // setChallenges((prevChallenges) => [...prevChallenges, ...putChallenges]);
-        // console.log("basket", basket);
     }
-    // useEffect(() => {
-    //     if (role === "consumer") {
-
-    //         console.log("In consumer rn")
-    //         console.log("claims in useEffect", claims)
-    //         console.log("challenges in useEffect", challenges)
-    //         // player.set("basket", basket);
-
-    //     }
-    //     else {
-    //         console.log("In producer rn")
-    //     }
-    // }, [])
 
     if (role === "consumer") {
-        // const [challengeStatus, setChallengeStatus] = useState("No");
         const [wallet, setWallet] = useState(player.get("wallet"));
         const [clicked, setClicked] = useState(false);
-        // useEffect(() => {
-        //   const initialStatuses = players.filter(p => p.get("role") === "producer")
-        //     .reduce((acc, producer) => {
-        //       acc[producer.id] = producer.round.get("challengeStatus") || "No";
-        //       return acc;
-        //     }, {});
-        //   setChallengeStatuses(initialStatuses);
-        // }, [players]);
 
 
         const handleSubmit = (basket) => {
-            // This function submits the stage for the consumer and sets the challengeStatus
-            // player.round.set("challengeStatus", challengeStatus)
             if (allClaimsSelected) {
-                player.set("basket", basket); // Clear the basket
+                player.set("basket", basket);
                 player.set("challenges", challenges);
                 player.stage.set("submit", true);
             }
@@ -273,7 +211,6 @@ export function FeedbackStage() {
 
 
         const getAllUniqueItems = (basket) => {
-            console.log("basket in unique items", basket)
             const uniqueItems = [];
             const itemOccurrences = {};
 
@@ -295,9 +232,6 @@ export function FeedbackStage() {
         };
 
         const basket = getAllUniqueItems(player.get("basket"));
-
-        console.log("basket", basket)
-        console.log("challenges in export function", challenges)
 
 
         return (
@@ -339,12 +273,12 @@ export function FeedbackStage() {
 
                 <br />
                 {allClaimsSelected && (
-                <button
-                    className="bg-green-500 text-white py-3 px-6 text-lg rounded-md border-none cursor-pointer shadow-md transition-all duration-200 ease-in-out hover:bg-green-700 hover:shadow-md"
-                    onClick={() => handleSubmit(basket)}
-                >
-                    Proceed to next round
-                </button>
+                    <button
+                        className="bg-green-500 text-white py-3 px-6 text-lg rounded-md border-none cursor-pointer shadow-md transition-all duration-200 ease-in-out hover:bg-green-700 hover:shadow-md"
+                        onClick={() => handleSubmit(basket)}
+                    >
+                        Proceed to next stage
+                    </button>
                 )}
 
             </div>
@@ -355,12 +289,10 @@ export function FeedbackStage() {
     }
     else if (role === "producer") {
         const handleProceed = () => {
-            // This function submits the stage for the producer
             player.stage.set("submit", true);
         };
 
         const renderProducerFeedback = () => {
-            // This function renders the feedback for the producer
             const productQuality = player.round.get("productQuality");
             const stock = player.get("stock")
             const productAdQuality = stock.find((item) => item.round === round).productAdQuality;
@@ -390,7 +322,7 @@ export function FeedbackStage() {
                 <br />
                 {renderProducerFeedback()}
                 <br />
-                <button className="bg-green-500 text-white py-3 px-6 text-lg rounded-md border-none cursor-pointer shadow-md transition-all duration-200 ease-in-out hover:bg-green-700 hover:shadow-md" onClick={handleProceed}>Proceed to next round</button>
+                <button className="bg-green-500 text-white py-3 px-6 text-lg rounded-md border-none cursor-pointer shadow-md transition-all duration-200 ease-in-out hover:bg-green-700 hover:shadow-md" onClick={handleProceed}>Proceed to next stage</button>
             </div>
         );
 
@@ -406,10 +338,3 @@ export function FeedbackStage() {
 
 
 };
-
-
-
-
-
-// User summary
-// Challenge button if warrant is present
