@@ -2,21 +2,23 @@ import React, { useState, useEffect } from "react";
 import { usePlayer, usePlayers, useRound } from "@empirica/core/player/classic/react";
 import { toast } from "react-toastify";
 
-function ConsumerFeedbackCard({ producer, player, index, basket, round, wallet, setWallet, challenges, setChallenges, setClaims, claims, claimSelections, handleConfirmButtonClick }) {
+function ConsumerFeedbackCard({ producer, player, index, basket, round, wallet, setWallet, challenges, setChallenges, setClaims, claims, claimSelections, handleButtonClick }) {
+    console.log("basket in main func", basket)
     const productAdQuality = basket.find((item) => item.producerID === producer.id && item.round === round).productAdQuality;
-    const productQuality = basket.find((item) => item.producerID === producer.id).productQuality;
-    const quantity = basket.find((item) => item.producerID === producer.id).quantity;
-    const stock = producer.get("stock")
-    const warrantAdded = stock.find((item) => item.round === round).warrantAdded;
-    // const warrantPrice = stock.find((item) => item.round === round).warrantPrice;
-    const warrantDesc = stock.find((item) => item.round === round).warrantDesc;
-    const challengeAmount = stock.find((item) => item.round === round).challengeAmount;
-    const tempChallenge = challenges.find((item) => {
-        if (item.round === round && item.producerID === producer.id) {
-            return item
-        }
-        return 1
-    })
+    const productQuality = basket.find((item) => item.producerID === producer.id && item.round === round).productQuality;
+    const quantity = basket.find((item) => item.producerID === producer.id && item.round === round).quantity;
+    // const stock = producer.get("stock")
+    console.log("productAdQuality", productAdQuality)
+    console.log("productQuality", productQuality)
+
+
+    const warrants = producer.get("warrants")
+    const warrantAdded = warrants.find((item) => item.round === round).warrantAdded;
+    // const warrantPrice = warrants.find((item) => item.round === round).warrantPrice;
+    const warrantDesc = warrants.find((item) => item.round === round).warrantDesc;
+    const challengeAmount = warrants.find((item) => item.round === round).challengeAmount;
+    const tempChallenge = challenges.find((item) => item.round === round && item.producerID === producer.id);
+    console.log("warrantDesc", warrantDesc)
     const [challengeStatus, setChallengeStatus] = useState(tempChallenge.status);
 
     const changeChallenge = () => {
@@ -25,6 +27,7 @@ function ConsumerFeedbackCard({ producer, player, index, basket, round, wallet, 
                 ? {
                     ...item,
                     status: !item.status,
+                    challenge: productAdQuality === productQuality ? false : true
                 }
                 : item;
         });
@@ -66,7 +69,7 @@ function ConsumerFeedbackCard({ producer, player, index, basket, round, wallet, 
     const emoji = getQualityMatchEmoji(productAdQuality, productQuality);
     return (
         <div>
-            <p><b>Producer:</b> {producer.Id}</p>
+            <p><b>Producer:</b> {producer.id}</p>
             <p><b>Units Bought:</b> {quantity}</p>
             <p><b>Advertised quality was:</b> {productAdQuality} </p>
             <p><b>Real product quality was:</b> {productQuality} {emoji}</p>
@@ -100,17 +103,17 @@ function ConsumerFeedbackCard({ producer, player, index, basket, round, wallet, 
                         Challenge
                     </button>
                     <button
-                        onClick={() => { 
-                            if(claimSelections[index] == true){
-                                handleConfirmButtonClick(index)
+                        onClick={() => {
+                            if (claimSelections[index] == true) {
+                                handleButtonClick(index)
                             }
-                            else{
-                                handleConfirmButtonClick(index)
+                            else {
+                                handleButtonClick(index)
                                 producer.set("claims", claims)
                                 player.set("challenges", challenges)
+                                console.log("claims in submit", claims)
+                                console.log("challenges in submit", challenges)
                             }
-                            
-                            
                         }}
                         className={`bg-${claimSelections[index] ? "green-500" : "white"} text-black py-2 px-4 rounded-full`}
                     >
@@ -135,9 +138,13 @@ export function FeedbackStage() {
     const role = player.get("role");
     const roundHook = useRound();
     const round = roundHook.get("name");
-    let [challenges, setChallenges] = useState(player.get('role') == "consumer" && (player.get("challenges") || []))
-    let [claims, setClaims] = useState(player.get("role") == "producer" && (player.get("claims") || []))
-    // console.log("claims", claims)
+    // const getClaims = players.find((p) => p.role === "producer")
+    const producerPlayers = players.filter((p) => p.get("role") === "producer");
+    console.log("producerPlayers", producerPlayers)
+
+    let [challenges, setChallenges] = useState(player.get("role") == "consumer" && (player.get("challenges") || []))
+    let [claims, setClaims] = useState([])
+    console.log("claims", claims)
     const producerCount = players.filter((player) => player.get("role") === "producer").length;
     const [claimSelections, setClaimSelections] = useState(Array(producerCount).fill(false));
 
@@ -165,49 +172,59 @@ export function FeedbackStage() {
             round: round
         }
     */
-    useEffect(() => {
-        if (role === "consumer") {
-          const handleClaims = () => {
-            const putClaims = players
-                .filter((player) => player.get("role") === "consumer")
-                .map((consumer, index) => ({
-                    consumerID: consumer.id,
-                    status: false,
-                    claim: false,
-                    round: round
-                }))
-                setClaims((prevClaims) => {
-                  if (Array.isArray(prevClaims)) {
-                      return [...prevClaims, ...putClaims];
-                  } else {
-                      // If prevClaims is not an array, initialize it as an empty array
-                      return [...putClaims];
-                  }
-              });
-        }
-        handleClaims()
-        
-            const handleChallenges = () => {
-                const putChallenges = players
-                    .filter((player) => player.get("role") === "producer")
-                    .map((producer, index) => ({
-                        producerID: producer.id,
-                        status: false,
-                        claim: false,
-                        round: round,
-                    }));
-                setChallenges((prevChallenges) => [...prevChallenges, ...putChallenges]);
-                // console.log("basket", basket);
+    const handleClaims = () => {
+        const putClaims = players
+            .filter((player) => player.get("role") === "consumer")
+            .map((consumer, index) => ({
+                consumerID: consumer.id,
+                status: false,
+                claim: false,
+                round: round
+            }))
+        setClaims((prevClaims) => {
+            if (Array.isArray(prevClaims)) {
+                return [...prevClaims, ...putClaims];
+            } else {
+                // If prevClaims is not an array, initialize it as an empty array
+                return [...putClaims];
             }
-            handleChallenges()
-            console.log("In consumer rn")
-            // player.set("basket", basket);
-            
-        }
-        else {
-            console.log("In producer rn")
-        }
-    }, [])
+        });
+    }
+
+    const handleChallenges = () => {
+        const putChallenges = players
+            .filter((player) => player.get("role") === "producer")
+            .map((producer, index) => ({
+                producerID: producer.id,
+                status: false,
+                challenge: false,
+                round: round,
+            }));
+        setChallenges((prevChallenges) => {
+            if (Array.isArray(prevChallenges)) {
+                return [...prevChallenges, ...putChallenges];
+            } else {
+                // If prevChallenges is not an array, initialize it as an empty array
+                return [...putChallenges];
+            }
+        });
+        // setChallenges((prevChallenges) => [...prevChallenges, ...putChallenges]);
+        // console.log("basket", basket);
+    }
+    // useEffect(() => {
+    //     if (role === "consumer") {
+
+    //         console.log("In consumer rn")
+    //         console.log("claims in useEffect", claims)
+    //         console.log("challenges in useEffect", challenges)
+    //         // player.set("basket", basket);
+
+    //     }
+    //     else {
+    //         console.log("In producer rn")
+    //     }
+    // }, [])
+
     if (role === "consumer") {
         // const [challengeStatus, setChallengeStatus] = useState("No");
         const [wallet, setWallet] = useState(player.get("wallet"));
@@ -235,46 +252,93 @@ export function FeedbackStage() {
 
         }
 
-        const getUniqueItems = (basket) => {
+
+        const getAllUniqueItems = (basket) => {
+            console.log("basket in unique items", basket)
             const uniqueItems = [];
+            const itemOccurrences = {};
 
             basket.forEach(item => {
-                if (!uniqueItems.some(uniqueItem => uniqueItem.productId === item.productId)) {
+                const roundNo = item.round;
+
+                if (itemOccurrences[roundNo]) {
+                    itemOccurrences[roundNo]++;
+                } else {
+                    itemOccurrences[roundNo] = 1;
+                }
+
+                if (itemOccurrences[roundNo] === 1) {
                     uniqueItems.push(item);
                 }
             });
 
             return uniqueItems;
-        }
+        };
 
-        const basket = getUniqueItems(player.get("basket"));
 
-        const renderConsumerFeedback = () => {
+        const basket = getAllUniqueItems(player.get("basket"));
 
-            // This function renders the feedback for the consumer
+        console.log("basket", basket)
+        console.log("challenges in export function", challenges)
+        const [clicked, setClicked] = useState(false)
 
-            // const challengeStatu
-            // const [wallet, setWallet] = useState(player.get("wallet"))
-            // const handleChallenge = (producer) => {
-            //     if (producer.round.get("challengedClaim") == undefined || producer.round.get("challengedClaim") == "No") {
-            //         producer.round.set("challengedClaim", "Yes")
-            //         setChallengeStatus("Yes")
-            //         setWallet(wallet - parseInt(producer.round.get("warrantPrice") / 10))
-            //         player.set("wallet", wallet);
-            //     }
-            //     else {
-            //         producer.round.set("challengedClaim", "No")
-            //         setChallengeStatus("No")
-            //         setWallet(wallet + parseInt(producer.round.get("warrantPrice") / 10))
-            //         player.set("wallet", wallet);
-            //     }
 
-            // };
+        // const renderConsumerFeedback = () => {
 
-            return players
-                .filter((p) => p.get("role") === "producer")
-                .map((producer, index) => {
-                    <ConsumerFeedbackCard
+        //     // This function renders the feedback for the consumer
+
+        //     // const challengeStatu
+        //     // const [wallet, setWallet] = useState(player.get("wallet"))
+        //     // const handleChallenge = (producer) => {
+        //     //     if (producer.round.get("challengedClaim") == undefined || producer.round.get("challengedClaim") == "No") {
+        //     //         producer.round.set("challengedClaim", "Yes")
+        //     //         setChallengeStatus("Yes")
+        //     //         setWallet(wallet - parseInt(producer.round.get("warrantPrice") / 10))
+        //     //         player.set("wallet", wallet);
+        //     //     }
+        //     //     else {
+        //     //         producer.round.set("challengedClaim", "No")
+        //     //         setChallengeStatus("No")
+        //     //         setWallet(wallet + parseInt(producer.round.get("warrantPrice") / 10))
+        //     //         player.set("wallet", wallet);
+        //     //     }
+
+        //     // };
+
+        //     return players
+        //         .filter((p) => p.get("role") === "producer")
+        //         .map((producer, index) => {
+        //             <ConsumerFeedbackCard
+        //                 producer={producer}
+        //                 player={player}
+        //                 index={index}
+        //                 basket={basket}
+        //                 round={round}
+        //                 wallet={wallet}
+        //                 setWallet={setWallet}
+        //                 challenges={challenges}
+        //                 setChallenges={setChallenges}
+        //                 claims={claims}
+        //                 setClaims={setClaims}
+        //                 handleButtonClick={handleButtonClick}
+        //             />
+        //         });
+        // }
+
+        return (
+            <div className="bg-gray-300 p-4 rounded-lg shadow-md mb-8">
+                <h3><b>🛒 Your Consumer Summary</b></h3>
+                {/* {renderConsumerFeedback()} */}
+                {/* <renderConsumerFeedback /> */}
+                <button onClick={() => {
+                    handleClaims()
+                    handleChallenges()
+                    setClicked(!clicked)
+                }}>Click here</button>
+
+                {clicked && players.filter((p) => p.get("role") === "producer").map((producer, index) => {
+                    return <ConsumerFeedbackCard
+                        key={index}
                         producer={producer}
                         player={player}
                         index={index}
@@ -286,18 +350,13 @@ export function FeedbackStage() {
                         setChallenges={setChallenges}
                         claims={claims}
                         setClaims={setClaims}
-                        handleConfirmButtonClick={handleButtonClick}
+                        handleButtonClick={handleButtonClick}
+                        claimSelections={claimSelections}
                     />
-                });
-        }
+                })}
 
-
-        return (
-            <div className="bg-gray-300 p-4 rounded-lg shadow-md mb-8">
-                <h3><b>🛒 Your Consumer Summary</b></h3>
-                {renderConsumerFeedback()}
                 <br />
-                <button className="bg-green-500 text-white py-3 px-6 text-lg rounded-md border-none cursor-pointer shadow-md transition-all duration-200 ease-in-out hover:bg-green-700 hover:shadow-md" onClick={handleSubmit(basket)}>Proceed to next round</button>
+                <button className="bg-green-500 text-white py-3 px-6 text-lg rounded-md border-none cursor-pointer shadow-md transition-all duration-200 ease-in-out hover:bg-green-700 hover:shadow-md" onClick={() => handleSubmit(basket)}>Proceed to next round</button>
             </div>
         );
     }
@@ -313,20 +372,20 @@ export function FeedbackStage() {
         const renderProducerFeedback = () => {
             // This function renders the feedback for the producer
             const productQuality = player.round.get("productQuality");
-            const adQuality = player.round.get("adQuality")
-            const productPrice = player.round.get("productPrice")
+            const stock = player.get("stock")
+            const productAdQuality = stock.find((item) => item.round === round).productAdQuality;
+            const productPrice = stock.find((item) => item.round === round).productPrice;
             const productCost = player.round.get("productCost")
             const capital = player.get("capital")
-            const unitsSold = player.round.get("unitsSold") || 0;
-            const profit = unitsSold * (productPrice - productCost);
-
+            const soldStock = stock.find((item) => item.round === round).soldStock;
+            const profit = soldStock * (productPrice - productCost);
 
             return (
                 <div className="bg-gray-300 p-4 rounded-lg shadow-md mb-8">
 
                     <h3><b>🌟 Producer Summary 🌟</b></h3>
-                    <p><span role="img" aria-label="factory">🏭</span> You produced a <b>{productQuality}</b> quality product and advertised it as <b>{adQuality}</b> quality.</p>
-                    <p><span role="img" aria-label="shopping-cart">🛒</span> Consumers bought <b>{unitsSold}</b> units of your product at <b>${productPrice}</b> each.</p>
+                    <p><span role="img" aria-label="factory">🏭</span> You produced a <b>{productQuality}</b> quality product and advertised it as <b>{productAdQuality}</b> quality.</p>
+                    <p><span role="img" aria-label="shopping-cart">🛒</span> Consumers bought <b>{soldStock}</b> units of your product at <b>${productPrice}</b> each.</p>
                     <p><span role="img" aria-label="money-bag">💰</span> This resulted in a total profit of: <b>${profit.toFixed(2)}</b>.</p>
 
                     <br />

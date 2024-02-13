@@ -214,3 +214,7 @@ const styles = {
     },
   },
 };
+
+// challenge => update score 
+// consumer win => wallet + warrant amount
+// producer win => capital + warrant amount

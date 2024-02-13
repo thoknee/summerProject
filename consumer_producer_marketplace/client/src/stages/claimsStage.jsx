@@ -118,7 +118,7 @@ export function ClaimsStage() {
     //     }
     //   });
     // }
-    
+
     //   if(warrants.length != 0){
     //   warrants.find((warrant) => {
     //     if (
@@ -153,8 +153,8 @@ export function ClaimsStage() {
     // }
     // }, [productAdQuality]);
 
-    const updateStock = ({price, imgUrl, quality, name, value}) => {
-      if(stock.length != 0){
+    const updateStock = ({ price, imgUrl, quality, name, value }) => {
+      if (stock.length != 0) {
         stock.find((product) => {
           if (
             product.productID === productID &&
@@ -171,6 +171,7 @@ export function ClaimsStage() {
             setTempStock(product.remainingStock);
             setIniStock(product.remainingStock);
             console.log("1st Use eff 1st if", capital);
+            return true
           } else {
             setUpdatedStock({
               producerID: player.id,
@@ -190,11 +191,12 @@ export function ClaimsStage() {
             setTempStock(0);
             setIniStock(0);
             console.log("1st Use eff 1st else", capital);
-  
+            return true
+
           }
         });
       }
-      else{
+      else {
         setUpdatedStock({
           producerID: player.id,
           productID: productID,
@@ -217,7 +219,7 @@ export function ClaimsStage() {
     }
 
     const updateWarrant = () => {
-      if(warrants.length != 0){
+      if (warrants.length != 0) {
         warrants.find((warrant) => {
           if (
             warrant.productID === productID &&
@@ -231,6 +233,7 @@ export function ClaimsStage() {
             });
             setIsCheckboxSelected(true);
             console.log("1st Use eff 2nd if", capital);
+            return true
           } else {
             setUpdateWarrants({
               producerID: player.id,
@@ -245,11 +248,12 @@ export function ClaimsStage() {
             });
             setIsCheckboxSelected(false);
             console.log("1st Use eff 2nd else", capital);
-  
+            return true
+
           }
         });
       }
-      else{
+      else {
         setUpdateWarrants({
           producerID: player.id,
           productID: productID,
@@ -281,6 +285,7 @@ export function ClaimsStage() {
             });
             setCapital(Number(capital) - Number(warrant.warrantPrice));
             console.log("2nd Use eff 1st if", capital);
+            return true
 
           } else {
             setUpdateWarrants({
@@ -295,6 +300,7 @@ export function ClaimsStage() {
               round: round.get("name"),
             });
             console.log("2nd Use eff 1st else", capital);
+            return true
           }
         });
       }
@@ -340,19 +346,20 @@ export function ClaimsStage() {
       } else if (
         isCheckboxSelected == true && updateWarrants.warrantDesc === "") {
         toast.error("Select a warrant from the options!");
-      } else if ( tempStock == 0){
+      } else if (tempStock == 0) {
         toast.error("You cannot submit without any stock!");
-      
-      }else {
+
+      } else {
         warrants = [...warrants, updateWarrants];
         // setUpdatedStock({
         //   ...updatedStock,
         //   productIdentifier: adjSelector(),
         // })
-          stock = [...stock, updatedStock]
-          player.set("warrants", warrants);
-          player.set("stock", stock);
-          player.stage.set("submit", true);
+        stock = [...stock, updatedStock]
+        player.set("warrants", warrants);
+        player.set("capital", capital);
+        player.set("stock", stock);
+        player.stage.set("submit", true);
       }
     };
 
@@ -385,7 +392,7 @@ export function ClaimsStage() {
           productPrice: productPrice,
           productAdImage: productAdImage,
           value: value,
-          initialStock: tempStock -1,
+          initialStock: tempStock - 1,
           remainingStock: tempStock - 1,
         });
         setTempStock(tempStock - 1);
@@ -401,7 +408,7 @@ export function ClaimsStage() {
       if (capital - productCost >= 0) {
         console.log("Updated Stock: ", updatedStock)
         setUpdatedStock({
-          
+
           ...updatedStock,
           producerID: player.id,
           productID: productID,
@@ -463,11 +470,12 @@ export function ClaimsStage() {
             setProductPrice(price);
             setProductAdImage(imgUrl);
             setproductAdName(name);
-            setProfit(price - productCost);
+            setProfit(Math.abs(price - productCost));
             setProductAdQuality(quality);
             setValue(value);
             updateStock(quality, imgUrl, price, name, value);
             updateWarrant();
+            toast.warn('You also have the ability to warrant your product!');
           }}
         >
           <div
@@ -557,13 +565,13 @@ export function ClaimsStage() {
                 if (tempStock <= 0 && capital <= profit * 5) {
                   toast.error("You do not have enough capital to add a warrant");
                 }
-                else if(productAdQuality === ""){
+                else if (productAdQuality === "") {
                   toast.error("Choose a quality to advertise first!");
                 }
-                else if(tempStock == 0){
+                else if (tempStock == 0) {
                   toast.error("You cannot add a warrant without any stock!")
                 }
-                else{
+                else {
                   setIsCheckboxSelected(!isCheckboxSelected);
                 }
 
@@ -645,9 +653,9 @@ export function ClaimsStage() {
                                 warrantAdded: true,
                                 warrantPrice: warrant.multiplier * profit,
                                 warrantDesc: warrant.description,
-                                challengeAmount: (warrant.multiplier * profit)
+                                challengeAmount: parseInt(Math.ceil((warrant.multiplier * profit) / 10))
                               });
-                              
+
                               // onWarrantSelection(
                               //   e,
                               //   warrant.multiplier,
@@ -764,7 +772,7 @@ export function ClaimsStage() {
               if (iniStock - tempStock == 0) {
                 toast.error("You cannot reduce the stock any further!");
               }
-              else if(updatedStock.initialStock == undefined){
+              else if (updatedStock.initialStock == undefined) {
                 toast.error("Choose a quality to advertise first!");
               }
               else {
@@ -782,9 +790,9 @@ export function ClaimsStage() {
             onClick={() => {
               if (capital - productCost < 0) {
                 toast.error("You do not have enough capital to produce more units!");
-              } else if(updatedStock.initialStock == undefined){
+              } else if (updatedStock.initialStock == undefined) {
                 toast.error("Choose a quality to advertise first!");
-                
+
               }
               else {
                 incrementQuantity()

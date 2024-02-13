@@ -5,17 +5,17 @@ const products = [
       low: {
         productName: "Low Quality Toothpaste",
         productQuality: "low",
-        productPrice: 5,
+        productPrice: 4,
         productCost: 2,
-        value: 8,
+        value: 6,
         productImage: "/graphics/StandardToothpasteAI.png"
       },
       high: {
         productName: "High Quality Toothpaste",
         productQuality: "high",
-        productPrice: 10,
+        productPrice: 8,
         productCost: 6,
-        value: 15,
+        value: 10,
         productImage: "/graphics/PremiumToothpasteAI.png"
       },
       productWarrants: [
@@ -45,17 +45,17 @@ const products = [
         low: {
           productName: "Ayurdevic Low Quality Toothpaste",
           productQuality: "low",
-          productPrice: 5,
+          productPrice: 4,
           productCost: 2,
-          value: 8,
+          value: 6,
           productImage:
           "/graphics/StandardToothpasteAI.png"        },
         high: {
           productName: "Ayurdevic High Quality Toothpaste",
           productQuality: "high",
-          productPrice: 10,
+          productPrice: 8,
           productCost: 6,
-          value: 15,
+          value: 10,
           productImage: "/graphics/PremiumToothpasteAI.png"        },
         productWarrants: [
           {

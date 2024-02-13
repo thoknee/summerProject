@@ -1,16 +1,17 @@
 import { ClassicListenersCollector } from "@empirica/core/admin/classic";
-import { useRound } from "@empirica/core/player/classic/react";
+// import { useRound } from "@empirica/core/player/classic/react";
 
 export const Empirica = new ClassicListenersCollector();
 
 // Function to update the score of consumers
 async function updateConsumerScores(game) {
-  const roundHook = useRound();
-  const round = roundHook.get("name");
+  // const roundHook = useRound();
+  // const round = roundHook.get("name");
   await game.players.forEach(async (player) => {
     if (player.get("role") !== "consumer") return;
     const basket = player.get("basket");
     const wallet = player.get("wallet");
+    const round = player.round.get("round")
     console.log("wallet in callbacks", wallet);
     console.log("basket in callbacks", basket);
     // const currentBasket = basket.find((item) => {
@@ -22,7 +23,7 @@ async function updateConsumerScores(game) {
     let score = player.get("score") || 0;
     basket.forEach((item) => {
       if (item.round === round) {
-        score += wallet - (item.val - item.productPrice) * item.quantity;
+        score += wallet + (item.value - item.productPrice) * item.quantity;
       }
     });
     console.log("score in callbacks", score);
@@ -63,12 +64,11 @@ async function updateConsumerScores(game) {
 
 // Function to update the score of producers
 async function updateProducerScores(game) {
-  const roundHook = useRound();
-  const round = roundHook.get("name");
   await game.players.forEach(async (player) => {
     if (player.get("role") !== "producer") return;
     const stock = player.get("stock");
     const capital = player.get("capital");
+    const round = player.round.get("round")
     const currentStock = stock.find((item) => {
       if (item.round === round) {
         return item;
@@ -78,6 +78,7 @@ async function updateProducerScores(game) {
     const productPrice = currentStock.productPrice;
     const productCost = currentStock.productCost;
     const profit = (productPrice - productCost) * soldStock;
+    console.log("profit in callbacks", profit)
     const originalScore = player.get("score") || 0;
     let score = player.get("score") || 0;
     score += profit + capital;
@@ -130,4 +131,4 @@ Empirica.onStageEnded(({ stage }) => {
   }
 });
 
-Empirica.onGameEnded(({ game }) => {});
+Empirica.onGameEnded(({ game }) => { });

@@ -48,6 +48,7 @@ export function SelectRolesStage() {
                 player.set("wallet", player.get("wallet") + 10)
             }
         }
+        player.round.set("round", round.get("name"));
         player.stage.set("submit", true);
 
     }

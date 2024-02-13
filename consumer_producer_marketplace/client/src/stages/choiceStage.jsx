@@ -6,13 +6,17 @@ import { toast } from "react-toastify";
 
 const ConsumerProductCard = ({ producer, index, round, productSelections, wallet, setWallet, setBasket, basket, handleButtonClick, player }) => {
     const [stock, setStock] = useState(producer.get("stock"));
-    // console.log(stock);
-    const tempStock = stock.find((item) => {
-        if (item.round === round) {
-            return item
-        }
-        return 1
-    })
+    console.log("Stock in new round:", stock);
+    // const tempStock = stock.find((item) => {
+    //     if (item.round === "Round2") {
+    //         console.log("item in find:",item)
+    //         return item
+    //     }
+    //     return 1
+    // })
+    const tempStock = stock.find((item) => item.round === round);
+    console.log("newstock now:", tempStock)
+    // console.log()
     // const [updateStock, setUpdateStock] = useState(tempStock);
     // console.log(tempStock)
     const productID = tempStock.productID;
@@ -24,18 +28,13 @@ const ConsumerProductCard = ({ producer, index, round, productSelections, wallet
     const initialStock = tempStock.initialStock;
     const [remStock, setRemStock] = useState(tempStock.remainingStock);
     const warrants = producer.get("warrants");
-    const tempWarrant = warrants.find((item) => {
-        if (item.round === round) {
-            return item
-        }
-    })
+    const tempWarrant = warrants.find((item) => item.round === round);
     // useEffect(() => {
     //     console.log("RemStock in ref", remStock)
     // }, [remStock])
-    const warrant = tempWarrant;
-    const warrantAdded = warrant.warrantAdded;
-    const warrantPrice = warrant.warrantPrice;
-    const warrantDesc = warrant.warrantDesc;
+    const warrantAdded = tempWarrant.warrantAdded;
+    const warrantPrice = tempWarrant.warrantPrice;
+    const warrantDesc = tempWarrant.warrantDesc;
     const [quantity, setQuantity] = useState(0);
     // const tempBasket = basket.find((item) => {
     //     if (item.round === round && item.producerID === producer.id) {
@@ -175,6 +174,30 @@ const ConsumerProductCard = ({ producer, index, round, productSelections, wallet
     //     }
 
     // };
+
+    const getAllUniqueItems = (basket) => {
+        console.log("basket in getall", basket)
+        const uniqueItems = [];
+        const itemOccurrences = {};
+
+        basket.forEach(item => {
+            const roundNo = item.round;
+
+            if (itemOccurrences[roundNo]) {
+                itemOccurrences[roundNo]++;
+            } else {
+                itemOccurrences[roundNo] = 1;
+            }
+
+            if (itemOccurrences[roundNo] === 1) {
+                uniqueItems.push(item);
+            }
+        });
+
+        return uniqueItems;
+    };
+
+
     return (
         <div className="product-card border border-gray-300 shadow-md p-8 rounded-lg w-[325px] text-center bg-white mx-auto relative overflow-hidden">
             {warrantAdded ? (
@@ -217,14 +240,16 @@ const ConsumerProductCard = ({ producer, index, round, productSelections, wallet
                         handleButtonClick(index)
                         producer.set("stock", stock)
                         // need to update for multiplayer TODO
-                        player.set("basket", basket)
+                        console.log("HELLO FROM CHECKBOX")
+                        console.log('getUniqueItems(basket)', getAllUniqueItems(basket))
+                        player.set("basket", getAllUniqueItems(basket))
                         console.log("basket in check", player.get("basket"))
                         console.log("stock in check", producer.get("stock"))
                     }
                 }}
                 className={`bg-${productSelections[index] ? "green-500" : "white"} text-black py-2 px-4 rounded-full`}
             >
-            {productSelections[index] ? "Added to Cart" : "Add to Cart"}
+                {productSelections[index] ? "Added to Cart" : "Add to Cart"}
             </button>
             {/*<p>
             Challenge status: <b>{challengeStatus}</b>
@@ -252,88 +277,94 @@ export function ChoiceStage() {
     const role = player.get("role");
     const roundHook = useRound()
     const round = roundHook.get("name");
+    // console.log('round', round)
+    // console.log('roundHook', roundHook)
 
     let [basket, setBasket] = useState(player.get('role') == "consumer" && (player.get("basket") || []))
     let [wallet, setWallet] = useState(player.get('role') == "consumer" && (player.get("wallet")));
     useEffect(() => {
-        if(role === "consumer"){
-        const handleBasket = () => {
-            const findproductID = (producer) => {
-                const st = producer.get("stock")
-                let prodID = st.find((item) => {
-                    if (item.round === round) {
-                        return item.productID
-                    }
-                    return -1
-                })
-                return prodID.productID
-            }
-            const findproductQuality = (producer) => {
-                const st = producer.get("stock")
-                let prodQual = st.find((item) => {
-                    if (item.round === round) {
-                        return item.productQuality
-                    }
-                    return -1
-                })
-                return prodQual.productQuality
-            }
-            const findproductAdQuality = (producer) => {
-                const st = producer.get("stock")
+        if (role === "consumer") {
+            const handleBasket = () => {
+                const findproductID = (producer) => {
+                    const st = producer.get("stock")
+                    let prodID = st.find((item) => {
+                        console.log("item", item)
+                        if (item.round === round) {
+                            console.log("returned item", item)
+                            return item.productID
+                        }
+                        return -1
+                    })
+                    return prodID.productID
+                }
+                const findproductQuality = (producer) => {
+                    const st = producer.get("stock")
+                    let prodQual = st.find((item) => {
+                        if (item.round === round) {
+                            return item.productQuality
+                        }
+                        return -1
+                    })
+                    return prodQual.productQuality
+                }
+                const findproductAdQuality = (producer) => {
+                    const st = producer.get("stock")
 
-                let prodAdQual = st.find((item) => {
-                    if (item.round === round) {
-                        return item.productAdQuality
-                    }
-                    return -1
-                })
-                return prodAdQual.productAdQuality
-            }
-            const findproductPrice = (producer) => {
-                const st = producer.get("stock")
-                // console.log("stock in findprod", st)
-                let prodPrice = st.find((item) => {
-                    if (item.round === round) {
-                        // console.log("item in:",item.productPrice)
-                        return item.productPrice
-                    }
-                    return -1
-                })
-                return prodPrice.productPrice
-            }
+                    let prodAdQual = st.find((item) => {
+                        if (item.round === round) {
+                            return item.productAdQuality
+                        }
+                        return -1
+                    })
+                    return prodAdQual.productAdQuality
+                }
+                const findproductPrice = (producer) => {
+                    const st = producer.get("stock")
+                    // console.log("stock in findprod", st)
+                    let prodPrice = st.find((item) => {
+                        if (item.round === round) {
+                            // console.log("item in:",item.productPrice)
+                            return item.productPrice
+                        }
+                        return -1
+                    })
+                    return prodPrice.productPrice
+                }
 
-            const findvalue = (producer) => {
-                const st = producer.get("stock")
-                console.log("stock in findvalue", st)
-                let prodvalue = st.find((item) => {
-                    if (item.round === round) {
-                        // console.log("item in:",item.productPrice)
-                        return item.value
-                    }
-                    return -1
-                })
-                return prodvalue.value
-            }
-            
-            const putBasket = players
-                .filter((player) => player.get("role") === "producer")
-                .map((producer, index) => ({
-                    producerID: producer.id,
-                    productID: findproductID(producer),
-                    productQuality: findproductQuality(producer),
-                    productAdQuality: findproductAdQuality(producer),
-                    productPrice: findproductPrice(producer),
-                    value: findvalue(producer),
-                    quantity: 0,
-                    round: round,
-                }));
+                const findvalue = (producer) => {
+                    const st = producer.get("stock")
+                    console.log("stock in findvalue", st)
+                    console.log("round in findvalue", round)
+                    let prodvalue = st.find((item) => {
+                        if (item.round === round) {
+                            // console.log("item in:",item.productPrice)
+                            return item.value
+                        }
+                        return -1
+                    })
+                    return prodvalue.value
+                }
+
+                const putBasket = players
+                    .filter((player) => player.get("role") === "producer")
+                    .map((producer, index) => ({
+                        producerID: producer.id,
+                        productID: findproductID(producer),
+                        productQuality: findproductQuality(producer),
+                        productAdQuality: findproductAdQuality(producer),
+                        productPrice: findproductPrice(producer),
+                        value: findvalue(producer),
+                        quantity: 0,
+                        round: round,
+                    }));
                 setBasket((prevBasket) => [...prevBasket, ...putBasket]);
                 console.log("basket", basket);
+                console.log("Hello in consumer effe")
             }
             handleBasket()
             // player.set("basket", basket);
         };
-      console.log("In producer rn")  
+        console.log("In producer rn")
     }, [])
     // Check Box state
 
@@ -345,7 +376,7 @@ export function ChoiceStage() {
         const newSelections = [...productSelections];
         newSelections[index] = !newSelections[index];
         setProductSelections(newSelections);
-      };
+    };
 
     const allProductsSelected = productSelections.every((isSelected) => isSelected);
 
@@ -365,7 +396,7 @@ export function ChoiceStage() {
     if (role === "consumer") {
 
 
-        
+
         // let [basket, setBasket] = useState(player.get("basket") || [])
 
 

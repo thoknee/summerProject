@@ -21,7 +21,12 @@ export function Stage() {
   const round = useRound();
   const stage = useStage();
 
-  if (player.stage.get("submit")) {
+  if (!stage.get("name") === "selectRoleStage" && player.stage.get("submit") == undefined) {
+    window.location.reload(true);
+    return <>Hello!</>
+  }
+
+  else if (player.stage.get("submit")) {
     if (players.length === 1) {
       return <Loading />;
     }
@@ -35,20 +40,20 @@ export function Stage() {
 
   switch (stage.get("name")) {
     case "selectRoleStage":
-      return <SelectRolesStage/>;
+      return <SelectRolesStage />;
     case "qualityStage":
       return <QualityStage />;
     case "claimsStage":
-      return <ClaimsStage round={round}/>;
+      return <ClaimsStage round={round} />;
     case "deliberateStage":
       return <DeliberateStage />;
     case "choiceStage":
-      return <ChoiceStage/>;
+      return <ChoiceStage />;
     case "feedbackStage":
-      return <FeedbackStage/>;
+      return <FeedbackStage />;
     case "scoreboardStage":
-      return <Leaderboard/>;
+      return <Leaderboard />;
     default:
-      return <Loading/>;
+      return <Loading />;
   }
 }
