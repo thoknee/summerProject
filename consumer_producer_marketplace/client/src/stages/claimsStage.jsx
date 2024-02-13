@@ -1,4 +1,40 @@
 /* 
+This file contains the code for the ClaimsStage component, which is the stage where the players make their choices for the round.
+The producer player is presented with the option to choose the quality of the product they want to produce and the quality of the advertisement they want to use.
+The producer player can also choose to add a warrant to their advertisement, which will cost them a certain amount of capital.
+The producer player can also choose the quantity of the product they want to produce.
+The consumer player is presented with a waiting message and a button to proceed to the next stage.
+player.set("stock", stock);
+player.set("capital", capital);
+player.set("warrants", warrants);
+player.set("warrantPrice", warrantPrice);
+stock = [{
+  producerID: player.id,
+  productID: productID,
+  productIdentifier: adjSelector(),
+  productQuality: productQuality,
+  productAdQuality: productAdQuality,
+  productCost: productCost,
+  productPrice: productPrice,
+  productAdImage: productAdImage,
+  value: value,
+  initialStock: tempStock,
+  remainingStock: tempStock,
+  soldStock: 0,
+  round: round.get("name")
+}]
+warrants = [{
+  producerID: player.id,
+  productID: productID,
+  productQuality: productQuality,
+  productAdQuality: productAdQuality,
+  warrantAdded: false,
+  warrantPrice: 0,
+  warrantDesc: "",
+  challengeAmount: 0,
+  round: round.get("name"),
+}]
+player.stage.set("submit", true);
 
 */
 import React, { useState, useEffect } from "react";
@@ -11,6 +47,7 @@ import { WarrantModal } from "../components/WarrantModal";
 import { PayoffMatrix } from "../components/PayoffMatrix";
 import { toast } from "react-toastify";
 
+// This function returns the component for the ClaimsStage
 export function ClaimsStage() {
   const player = usePlayer();
   const round = useRound();
@@ -19,6 +56,7 @@ export function ClaimsStage() {
   const treatment = game.get("treatment");
   const marketType = treatment["marketType"];
 
+  // This function returns the component for the producer player
   if (role === "producer") {
     const productCost = player.round.get("productCost");
     let selectedProduct = player.round.get("selectedProduct");
@@ -109,7 +147,7 @@ export function ClaimsStage() {
     }, [isCheckboxSelected]);
 
 
-
+    // This function handles the submission of the choices made by the producer player
     const handleSubmit = () => {
       if (productAdQuality === "") {
         toast.error("Please select an advertisment quality for the product!");
@@ -192,6 +230,9 @@ export function ClaimsStage() {
     };
 
 
+    /*
+    This function returns a component that allows the player to select the quality of the product they want to produce
+    */
     function SellQualityOption({ quality, imgUrl, price, name, value }) {
       const qualityCapitalized = quality[0].toUpperCase() + quality.slice(1);
       const backgroundColor = quality === "low" ? "#FA6B84" : "#00CDBB";
@@ -566,7 +607,7 @@ export function ClaimsStage() {
         </div>
       </div >
     );
-  } else {
+  } else { // This function returns the component for the consumer player
     const handleProceed = () => {
       player.stage.set("submit", true);
     };

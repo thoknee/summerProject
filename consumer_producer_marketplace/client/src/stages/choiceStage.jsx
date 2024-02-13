@@ -1,11 +1,32 @@
 /*
+This file contains the code for the choice stage of the game for the consumer.
+The consumer can select the products from the producers and add them to the cart.
+The consumer can also remove the products from the cart.
+The consumer can proceed to the next stage only if he clicks on "Add to Cart".
+player.set("wallet", wallet) is used to update the wallet of the player.
+player.stage.set("submit", true) is used to set the stage to submit.
+player.set("basket", getAllUniqueItems(basket)) is used to update the basket of the player.
+basket=[{
+    producerID: producer.id,
+    productID: productID,
+    productQuality: productQuality,
+    productAdQuality: productAdQuality,
+    productPrice: productPrice,
+    value: value,
+    quantity: 0,
+    round: round,
+}]
+producer.set("stock", stock) is used to update the stock of the producer.
+producer.get("warrants") is used to get the warrants of the player.
 
 */
 import React, { useState, useEffect } from "react";
 import { usePlayer, usePlayers, useRound } from "@empirica/core/player/classic/react";
 import { toast } from "react-toastify";
 
-
+/*
+this function is used to display the product card of multiple producers for the consumer.
+*/
 const ConsumerProductCard = ({ producer, index, round, productSelections, wallet, setWallet, setBasket, basket, handleButtonClick, player }) => {
     const [stock, setStock] = useState(producer.get("stock"));
     const tempStock = stock.find((item) => item.round === round);
@@ -24,6 +45,7 @@ const ConsumerProductCard = ({ producer, index, round, productSelections, wallet
     const warrantDesc = tempWarrant.warrantDesc;
     const [quantity, setQuantity] = useState(0);
 
+    // Update the stock of the product
     const updateIncrementStock = () => {
         const trialStock = stock.map((item) => {
             return item.round === round
@@ -39,6 +61,7 @@ const ConsumerProductCard = ({ producer, index, round, productSelections, wallet
         setQuantity(quantity - 1);
     };
 
+    // Update the basket with the new quantity
     const updateIncrementBasket = () => {
         const trialBasket = basket.map((item) => {
             return item.round === round && item.producerID === producer.id
@@ -55,6 +78,7 @@ const ConsumerProductCard = ({ producer, index, round, productSelections, wallet
         setBasket(trialBasket);
     }
 
+    // Update the basket with the new quantity
     const updateDecrementBasket = () => {
         const trialBasket = basket.map((item) => {
             return item.round === round && item.producerID === producer.id
@@ -71,6 +95,7 @@ const ConsumerProductCard = ({ producer, index, round, productSelections, wallet
         setBasket(trialBasket);
     }
 
+    // Update the stock of the product
     const updateDecrementStock = () => {
         const trialStock = stock.map((item) => {
             return item.round === round
@@ -86,6 +111,7 @@ const ConsumerProductCard = ({ producer, index, round, productSelections, wallet
         setQuantity(quantity + 1);
     };
 
+    // Function to decrement the quantity of the product
     const decrementQuantity = () => {
         if (productSelections[index] === false) {
             if (quantity > 0 && initialStock > remStock) {
@@ -101,6 +127,8 @@ const ConsumerProductCard = ({ producer, index, round, productSelections, wallet
             toast.error("Please uncheck the checkbox to change the quantity")
         }
     }
+
+    // Function to increment the quantity of the product
     const incrementQuantity = () => {
         if (productSelections[index] === false) {
             if (remStock > 0 && productPrice <= wallet) {
@@ -117,6 +145,7 @@ const ConsumerProductCard = ({ producer, index, round, productSelections, wallet
         }
     }
 
+    // Function to get all the unique items in the basket
     const getAllUniqueItems = (basket) => {
         const uniqueItems = [];
         const itemOccurrences = {};
@@ -201,6 +230,10 @@ export function ChoiceStage() {
 
     let [basket, setBasket] = useState(player.get('role') == "consumer" && (player.get("basket") || []))
     let [wallet, setWallet] = useState(player.get('role') == "consumer" && (player.get("wallet")));
+
+    /*
+     This function is used to update the basket of the player.
+    */
     useEffect(() => {
         if (role === "consumer") {
             const handleBasket = () => {

@@ -1,6 +1,31 @@
+/*
+  This file contains the DeliberateStage component which is used to display the warrant summaries to the players after the feedback stage.
+  producerFeedback and consumerFeedback are used to display the feedback to the producer and consumer respectively.
+  handleProceed is used to submit the stage and move to the next stage.
+  handleSubmit is used to submit the stage and move to the next stage.
+  renderProducerFeedback is used to display the feedback to the producer.
+  renderConsumerFeedback is used to display the feedback to the consumer.
+  player.get("stock") is used to get the stock of the player.
+  player.get("capital") is used to get the capital of the player.
+  player.get("warrants") is used to get the warrants of the player.
+  player.get("claims") is used to get the claims of the player.
+  player.get("challenges") is used to get the challenges of the player.
+  player.get("wallet") is used to get the wallet of the player.
+  player.get("basket") is used to get the basket of the player.
+  player.get("score") is used to get the score of the player.
+  player.get("role") is used to get the role of the player.
+  player.round.get("warrantPrice") is used to get the warrant price of the player.
+  player.round.get("warrantAdded") is used to get the warrant added of the player.
+  player.round.get("challengeAmount") is used to get the challenge amount of the player.
+  player.stage.set("submit", true) is used to submit the stage and move to the next stage.
 
-import React, { useState, useEffect } from "react";
-import { Steps, usePlayer, usePlayers, useRound } from "@empirica/core/player/classic/react";
+
+
+  */
+
+
+import React from "react";
+import { usePlayer, usePlayers, useRound } from "@empirica/core/player/classic/react";
 
 export function DeliberateStage() {
   const player = usePlayer();

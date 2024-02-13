@@ -1,7 +1,31 @@
-import React, { useState, useEffect } from "react";
+/*
+    This file contains the feedback stage for the consumer and producer roles.
+    ConsumerFeedbackCard is used to display the feedback to the consumer.
+    ProducerFeedbackCard is used to display the feedback to the producer.
+    handleButtonClick is used to handle the button click.
+    handleClaims is used to handle the claims.
+    handleChallenges is used to handle the challenges.
+    getQualityMatchEmoji is used to get the quality match emoji.
+    player.get("role") is used to get the role of the player.
+    player.get("wallet") is used to get the wallet of the consumer.
+    player.get("challenges") is used to get the challenges of the consumer.
+    player.get("claims") is used to get the claims of the producer.
+    player.get("score") is used to get the score of the player.
+    player.round.set("warrantPrice", warrantPrice) is used to set the warrant price of the consumer.
+    player.round.set("warrantAdded", warrantAdded) is used to set the warrant added of the consumer.
+    player.round.set("challengeAmount", challengeAmount) is used to set the challenge amount of the consumer.
+    player.set("wallet", wallet) is used to set the wallet of the consumer.
+    player.set("challenges", challenges) is used to set the challenges of the consumer.
+    player.set("claims", claims) is used to set the claims of the producer.
+    player.set("basket", basket) is used to set the basket of the consumer.
+    player.stage.set("submit", true) is used to submit the stage and move to the next stage.
+*/
+
+import React, { useState } from "react";
 import { usePlayer, usePlayers, useRound } from "@empirica/core/player/classic/react";
 import { toast } from "react-toastify";
 
+// ConsumerFeedbackCard is used to display the feedback to the consumer.
 function ConsumerFeedbackCard({ producer, player, index, basket, round, wallet, setWallet, challenges, setChallenges, setClaims, claims, claimSelections, handleButtonClick }) {
     const productAdQuality = basket.find((item) => item.producerID === producer.id && item.round === round).productAdQuality;
     const productQuality = basket.find((item) => item.producerID === producer.id && item.round === round).productQuality;
@@ -38,7 +62,7 @@ function ConsumerFeedbackCard({ producer, player, index, basket, round, wallet, 
                 }
                 : item;
         });
-        setClaims(trialClaims); 
+        setClaims(trialClaims);
     };
 
 
@@ -54,7 +78,7 @@ function ConsumerFeedbackCard({ producer, player, index, basket, round, wallet, 
             return '❓'; // Question mark for any other case
         }
     };
-
+    // This function handles the button click when there is no warrant
     const funcHandle = () => {
         handleButtonClick(index)
         producer.set("claims", claims)
