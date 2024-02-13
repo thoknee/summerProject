@@ -4,7 +4,7 @@ import { usePlayer, usePlayers, useRound } from "@empirica/core/player/classic/r
 import { toast } from "react-toastify";
 
 
-const ConsumerProductCard = ({ producer, index, round, productSelections, wallet, setWallet, setBasket, basket, handleCheckboxChange, player }) => {
+const ConsumerProductCard = ({ producer, index, round, productSelections, wallet, setWallet, setBasket, basket, handleButtonClick, player }) => {
     const [stock, setStock] = useState(producer.get("stock"));
     // console.log(stock);
     const tempStock = stock.find((item) => {
@@ -208,22 +208,24 @@ const ConsumerProductCard = ({ producer, index, round, productSelections, wallet
                 <button className="text-green-500 border border-green-500 rounded-full px-3 bg-white" onClick={incrementQuantity}>+</button>
             </div>
 
-            <input
-                type="checkbox"
-                checked={productSelections[index]}
-                onChange={() => {
+            <button
+                onClick={() => {
                     if (productSelections[index] === true) {
-                        handleCheckboxChange(index)
+                        handleButtonClick(index)
                     }
                     else {
-                        handleCheckboxChange(index)
+                        handleButtonClick(index)
                         producer.set("stock", stock)
+                        // need to update for multiplayer TODO
                         player.set("basket", basket)
                         console.log("basket in check", player.get("basket"))
                         console.log("stock in check", producer.get("stock"))
                     }
                 }}
-            />
+                className={`bg-${productSelections[index] ? "green-500" : "white"} text-black py-2 px-4 rounded-full`}
+            >
+            {productSelections[index] ? "Added to Cart" : "Add to Cart"}
+            </button>
             {/*<p>
             Challenge status: <b>{challengeStatus}</b>
           </p>
@@ -252,8 +254,9 @@ export function ChoiceStage() {
     const round = roundHook.get("name");
 
     let [basket, setBasket] = useState(player.get('role') == "consumer" && (player.get("basket") || []))
-
+    let [wallet, setWallet] = useState(player.get('role') == "consumer" && (player.get("wallet")));
     useEffect(() => {
+        if(role === "consumer"){
         const handleBasket = () => {
             const findproductID = (producer) => {
                 const st = producer.get("stock")
@@ -288,7 +291,7 @@ export function ChoiceStage() {
             }
             const findproductPrice = (producer) => {
                 const st = producer.get("stock")
-                console.log("stock in findprod", st)
+                // console.log("stock in findprod", st)
                 let prodPrice = st.find((item) => {
                     if (item.round === round) {
                         // console.log("item in:",item.productPrice)
@@ -297,6 +300,19 @@ export function ChoiceStage() {
                     return -1
                 })
                 return prodPrice.productPrice
+            }
+
+            const findvalue = (producer) => {
+                const st = producer.get("stock")
+                console.log("stock in findvalue", st)
+                let prodvalue = st.find((item) => {
+                    if (item.round === round) {
+                        // console.log("item in:",item.productPrice)
+                        return item.value
+                    }
+                    return -1
+                })
+                return prodvalue.value
             }
             
             const putBasket = players
@@ -307,17 +323,17 @@ export function ChoiceStage() {
                     productQuality: findproductQuality(producer),
                     productAdQuality: findproductAdQuality(producer),
                     productPrice: findproductPrice(producer),
+                    value: findvalue(producer),
                     quantity: 0,
                     round: round,
                 }));
-            if (role === "consumer") {
                 setBasket((prevBasket) => [...prevBasket, ...putBasket]);
                 console.log("basket", basket);
-
             }
+            handleBasket()
             // player.set("basket", basket);
         };
-        handleBasket()
+      console.log("In producer rn")  
     }, [])
     // Check Box state
 
@@ -325,11 +341,11 @@ export function ChoiceStage() {
 
     const [productSelections, setProductSelections] = useState(Array(producerCount).fill(false));
 
-    const handleCheckboxChange = (index) => {
+    const handleButtonClick = (index) => {
         const newSelections = [...productSelections];
         newSelections[index] = !newSelections[index];
         setProductSelections(newSelections);
-    };
+      };
 
     const allProductsSelected = productSelections.every((isSelected) => isSelected);
 
@@ -338,7 +354,7 @@ export function ChoiceStage() {
             player.set("wallet", wallet);
             player.stage.set("submit", true);
         } else {
-            toast.error("Please select all checboxes for the products before proceeding.");
+            toast.error("Please select all checkboxes for the products before proceeding.");
         }
     };
 
@@ -349,7 +365,7 @@ export function ChoiceStage() {
     if (role === "consumer") {
 
 
-        let [wallet, setWallet] = useState(player.get("wallet"));
+        
         // let [basket, setBasket] = useState(player.get("basket") || [])
 
 
@@ -394,7 +410,7 @@ export function ChoiceStage() {
                             setWallet={setWallet}
                             basket={basket}
                             setBasket={setBasket}
-                            handleCheckboxChange={handleCheckboxChange}
+                            handleButtonClick={handleButtonClick}
                             player={player}
                         />
                     )
@@ -463,7 +479,6 @@ export function ChoiceStage() {
         return <div>Unknown role</div>;
     }
 }
-
 
 
 

@@ -40,7 +40,7 @@ export function ClaimsStage() {
     let [productAdQuality, setProductAdQuality] = useState("");
     let [productAdImage, setProductAdImage] = useState("");
     let [productAdName, setproductAdName] = useState("");
-
+    let [value, setValue] = useState(0)
     let [isModalOpen, setIsModalOpen] = useState(false);
     let [isCheckboxSelected, setIsCheckboxSelected] = useState(false);
     // let [selectedWarrant, setSelectedWarrant] = useState("");
@@ -153,7 +153,7 @@ export function ClaimsStage() {
     // }
     // }, [productAdQuality]);
 
-    const updateStock = ({price, imgUrl, quality, name}) => {
+    const updateStock = ({price, imgUrl, quality, name, value}) => {
       if(stock.length != 0){
         stock.find((product) => {
           if (
@@ -181,6 +181,7 @@ export function ClaimsStage() {
               productCost: productCost,
               productPrice: price,
               productAdImage: imgUrl,
+              value: value,
               initialStock: 0,
               remainingStock: 0,
               soldStock: 0,
@@ -203,6 +204,7 @@ export function ClaimsStage() {
           productCost: productCost,
           productPrice: price,
           productAdImage: imgUrl,
+          value: value,
           initialStock: 0,
           remainingStock: 0,
           soldStock: 0,
@@ -382,6 +384,7 @@ export function ClaimsStage() {
           productCost: productCost,
           productPrice: productPrice,
           productAdImage: productAdImage,
+          value: value,
           initialStock: tempStock -1,
           remainingStock: tempStock - 1,
         });
@@ -408,6 +411,7 @@ export function ClaimsStage() {
           productCost: productCost,
           productPrice: productPrice,
           productAdImage: productAdImage,
+          value: value,
           initialStock: updatedStock.remainingStock + 1,
           remainingStock: updatedStock.remainingStock + 1,
         });
@@ -445,7 +449,7 @@ export function ClaimsStage() {
     //     console.log("Warrant removed");
     //   }
     // };
-    function SellQualityOption({ quality, imgUrl, price, name }) {
+    function SellQualityOption({ quality, imgUrl, price, name, value }) {
       const qualityCapitalized = quality[0].toUpperCase() + quality.slice(1);
       const backgroundColor = quality === "low" ? "#FA6B84" : "#00CDBB";
       console.log("Product Ad Quality: ", productAdQuality)
@@ -461,7 +465,8 @@ export function ClaimsStage() {
             setproductAdName(name);
             setProfit(price - productCost);
             setProductAdQuality(quality);
-            updateStock(quality, imgUrl, price, name);
+            setValue(value);
+            updateStock(quality, imgUrl, price, name, value);
             updateWarrant();
           }}
         >
@@ -741,12 +746,14 @@ export function ClaimsStage() {
             imgUrl={low.productImage}
             price={low.productPrice}
             name={low.productName}
+            value={productQuality === "low" ? low.value : high.value}
           />
           <SellQualityOption
             quality={high.productQuality}
             imgUrl={high.productImage}
             price={high.productPrice}
             name={high.productName}
+            value={productQuality === "low" ? low.value : high.value}
           />
         </div>
         <div className={"mx-10 mt-16 mb-16"}>
