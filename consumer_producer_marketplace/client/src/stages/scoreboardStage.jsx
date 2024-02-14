@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useMemo } from "react";
 import { usePlayer, usePlayers } from "@empirica/core/player/classic/react";
 
 export function ScoreboardStage() {
@@ -6,11 +6,9 @@ export function ScoreboardStage() {
   const players = usePlayers();
 
   // Sort players by score in descending order
-  const sortedPlayers = players.slice().sort((a, b) => {
-    const scoreA = a.get("score") || 0;
-    const scoreB = b.get("score") || 0;
-    return scoreB - scoreA;
-  });
+  const sortedPlayers = useMemo(() => {
+    return [...players].sort((a, b) => (b.get("score") || 0) - (a.get("score") || 0));
+  }, [players]);
 
   const handleProceed = () => {
     console.log(player.get("role"))

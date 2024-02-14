@@ -1,3 +1,6 @@
+// Untouched since Nov 2023
+// CC: Swapneel Mehta
+
 import { Sweeper, usePlayer } from "@empirica/core/player/classic/react";
 import React from "react";
 import { Avatar } from "../components/Avatar";

@@ -44,7 +44,7 @@ export default function App() {
         <EmpiricaMenu position="bottom-left" />
         <div className="h-full overflow-auto">
           <EmpiricaContext introSteps={introSteps} exitSteps={exitSteps}>
-            <ToastContainer />
+            <ToastContainer theme="dark" />
             <Game />
           </EmpiricaContext>
         </div>

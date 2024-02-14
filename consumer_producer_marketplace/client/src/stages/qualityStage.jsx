@@ -61,6 +61,7 @@ export function QualityStage() {
         /*
         Used to display the quality options for the producer.
         */
+        const [hover, setHover] = useState(false);
         const qualityCapitalized = quality[0].toUpperCase() + quality.slice(1); // low -> Low
         const backgroundColor = quality === "low" ? "#FA6B84" : "#00CDBB";
 
@@ -82,12 +83,15 @@ export function QualityStage() {
                             quality === productQuality
                                 ? `4px solid ${backgroundColor}`
                                 : "none",
+                        background : quality === productQuality || hover ? `${backgroundColor}80` : "transparent",
                     }}
+                    onMouseEnter={() => setHover(true)}
+                    onMouseLeave={() => setHover(false)}
                 >
                     <h2
                         style={{
                             fontWeight: "bold",
-                            fontFamily: "Avenir",
+                            fontFamily: "Unbounded",
                             fontSize: "24px",
                         }}
                     >
@@ -95,7 +99,7 @@ export function QualityStage() {
                         {" " + qualityCapitalized + " "}
                         Quality
                     </h2>
-                    <p style={{ fontWeight: "lighter", fontFamily: "Avenir" }}>
+                    <p style={{ fontWeight: "lighter", fontFamily: "Archivo" }}>
                         This will cost you ${cost} to produce, and you may advertise it as
                         you wish.
                     </p>
@@ -114,6 +118,7 @@ export function QualityStage() {
             </div>
         );
     }
+    
     function ConsumerWaitingMessage() {
         /*
         Used to display the waiting message for the consumer.
@@ -186,7 +191,7 @@ export function QualityStage() {
             <div className="flex justify-center items-center">
                 <button
                     onClick={handleSubmit}
-                    className="bg-[#4CAF50] hover:bg-[#45a049] text-white px-[12px] py-[16px] rounded-sm cursor-pointer shadow-md hover:shadow-lg transitionn-all ease-in-out"
+                    className="bg-[#4CAF50] hover:bg-[#45a049] text-white px-[12px] py-[16px] rounded-lg cursor-pointer shadow-md hover:shadow-lg transitionn-all ease-in-out"
                 >
                     Next Page →
                 </button>

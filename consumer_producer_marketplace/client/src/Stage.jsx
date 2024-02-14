@@ -19,12 +19,16 @@ export function Stage() {
   const players = usePlayers();
   const stage = useStage();
 
+  // Fixes Window Blank Error Screen
+  // Ref. to Empirica v2 (https://docs.empirica.ly)
+
   // if (stage.get("name") !== "selectRoleStage" && player.stage.get("submit") == undefined) {
   //   player.stage.set("submit", true);
   //   window.location.reload(true);
   //   return <>Hello!</>
   // }
   // else
+
   if (player.stage.get("submit") == true) {
     if (players.length === 1) {
       return <Loading />;

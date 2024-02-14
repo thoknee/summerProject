@@ -1,3 +1,6 @@
+// Untouched since Jan 16, 2024
+// CC: Swapneel Mehta
+
 import {
     Slider,
     usePlayer,

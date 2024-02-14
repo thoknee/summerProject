@@ -1,3 +1,5 @@
+// Connected to the Alert Toast via React-Toastify
+
 import React from "react";
 
 export function Alert({ children, title, kind = "normal" }) {
@@ -45,7 +47,7 @@ export function Alert({ children, title, kind = "normal" }) {
         </div>
         <div className="ml-3">
           <h3 className={`text-sm font-medium ${ttl}`}>{title}</h3>
-          <div className={`mt-2 text-sm text-yellow-700 ${chld}`}>
+          <div className={`mt-2 text-sm ${chld}`}>
             {children}
           </div>
         </div>

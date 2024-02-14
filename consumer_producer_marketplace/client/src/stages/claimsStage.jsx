@@ -202,6 +202,9 @@ export function ClaimsStage() {
         setTempStock(tempStock - 1);
         setCapital(Number(capital) + Number(productCost));
       }
+      if (tempStock === 1 && isCheckboxSelected) {
+        setIsCheckboxSelected(false);
+      }
     };
 
     const incrementQuantity = () => {
@@ -280,7 +283,7 @@ export function ClaimsStage() {
                 round: round.get("name")
               });
               setIsCheckboxSelected(false);
-              toast.warn('You also have the ability to warrant your product!');
+              toast.info('You also have the ability to warrant your product!');
             }
             else {
               toast.error("Please deselect your warrant first to switch product quality choice!")
@@ -288,7 +291,7 @@ export function ClaimsStage() {
           }}
         >
           <div
-            className="option"
+            className="option shadow-lg"
             style={{
               textAlign: "center",
               padding: "20px",
@@ -309,14 +312,14 @@ export function ClaimsStage() {
             <h2
               style={{
                 fontWeight: "bold",
-                fontFamily: "Avenir",
+                fontFamily: "Unbounded",
                 fontSize: "24px",
               }}
             >
               Advertise as {qualityCapitalized + " "}
               Quality
             </h2>
-            <p style={{ fontWeight: "lighter", fontFamily: "Avenir" }}>
+            <p style={{ fontWeight: "lighter", fontFamily: "Archivo" }}>
               This will sell for ${price} in the market
             </p>
           </div>
@@ -349,22 +352,23 @@ export function ClaimsStage() {
       return (
         <div className="flex justify-center items-center">
           <div
-            className="container cursor-pointer p-[20px] mb-[20px] w-1/2"
+            className="container cursor-pointer p-[20px] mb-[20px] w-1/2 border border-gray-300 rounded-lg shadow-md"
             style={{
-              outline: isCheckboxSelected ? "3px solid #6688FF" : "1px solid #AAAAAA",
+              outline: isCheckboxSelected ? "3px solid #a666ff" : "1px solid #AAAAAA",
               outlineOffset: "3px",
               borderRadius: "15px",
             }}
           >
+            <div className="flex items-center"> 
             <input
-              className="rounded-full cursor-pointer"
+              className="rounded-md mr-2 focus:ring-8 focus:ring-blue-500 cursor-pointer h-6 w-6"
               type="checkbox"
               id="addWarrant"
               checked={isCheckboxSelected}
               onClick={() => {
                 if (tempStock <= 0 && capital <= profit * 5) {
                   toast.error("You do not have enough capital to add a warrant");
-                }
+                } 
                 else if (productAdQuality === "") {
                   toast.error("Choose a quality to advertise first!");
                 }
@@ -374,31 +378,37 @@ export function ClaimsStage() {
                 else {
                   setIsCheckboxSelected(!isCheckboxSelected);
                 }
-
               }}
               readOnly={true}
             />
+              <div>
+                <span className="text-lg font-semibold">Warrant my Advertisement</span>
+              </div>
+              
+              <div className="ml-auto">
+                  {isCheckboxSelected && (
+                    <button
+                      className={`bg-blue-400 p-2 rounded-lg ${updateWarrants.warrantAdded ? "" : "bg-red-400"} ${isCheckboxSelected && updateWarrants.warrantAdded ? "" : "animate-pulse"}`}
+                      disabled={!isCheckboxSelected}
+                      onClick={() => setIsModalOpen(true)}
+                    >
+                      {updateWarrants.warrantAdded ? "Warrant Selected" : "Select Warrant"}
+                    </button>
+                  )}
+                </div>
+              
+            </div>
+            <hr className="mt-1 mb-2"/>
             <div className="option">
               <div className="flex justify-between">
-                <h2 style={{ fontWeight: "bold", fontSize: "18px" }}>
-                  Warrant my Advertisement
-                </h2>
-                {isCheckboxSelected && (
-                  <button
-                    className={`bg-blue-400 p-2 rounded-lg ${updateWarrants.warrantAdded ? "" : "bg-red-400"
-                      }`}
-                    disabled={!isCheckboxSelected}
-                    onClick={() => setIsModalOpen(true)}
-                  >
-                    {updateWarrants.warrantAdded ? "Warrant Selected" : "Select Warrant"}
-                  </button>
-                )}
               </div>
-              <p style={{ fontWeight: "normal" }}>
-                This will cost you{" "}
+              <p className="mb-2" style={{ fontWeight: "normal" }}>
+                🧾 This will cost you{" — $"}
                 <b>{updateWarrants.warrantPrice == 0 ? "..." : updateWarrants.warrantPrice}</b>
-                <br />
-                Potential customers can see if you have chosen to warrant your
+              </p>
+              
+              <p className="text-justify">
+                💡 Potential customers can see if you have chosen to warrant your
                 advertisement or not, and a warrant can boost your credibility
                 in the marketplace. If your ad is not found to be false, the
                 money spent on your warrant will be fully refunded. However, if
@@ -484,8 +494,9 @@ export function ClaimsStage() {
 
     function InfoDisplay() {
       return (
-        <div className="fixed left-[10px] top-[200px] w-[300px] bg-white p-[10px] shadow-md rounded-md z-[1000]">
-          <b>Choices summary</b> <br />
+        <div className="fixed left-[10px] top-[200px] w-[340px] bg-white p-[10px] shadow-md rounded-md z-[1000]">
+          <b className="text-lg">Choices summary</b> <hr/>
+          <div className="mt-2" style={{ whiteSpace: 'nowrap' }}>
           <span role="img" aria-label="capital">
             💵
           </span>
@@ -519,7 +530,10 @@ export function ClaimsStage() {
           </span>
           Profit if you sell everything:{" "}
           <b>${profit * tempStock}</b>
-          <PayoffMatrix role={"producer"} />
+          </div>
+          <div className="mt-4 ">
+            <PayoffMatrix className="mt-4" role={"producer"} />
+          </div>
         </div>
       );
     }
@@ -534,8 +548,14 @@ export function ClaimsStage() {
             textAlign: "center",
           }}
         >
-          <b>Choose how you want to Advertise</b> <br /> Note: Your goal is to
-          maximize your profits.
+          <div class="divide-y divide-lime-500">
+            <div>
+              <b>Choose how you want to Advertise</b>
+            </div> 
+            <div>
+              <strong>NOTE:</strong> Your goal is to maximize your profits.
+            </div>
+          </div>
         </h1>
 
         {<InfoDisplay />}
@@ -557,47 +577,62 @@ export function ClaimsStage() {
           />
         </div>
         <div className={"mx-10 mt-16 mb-16"}>
-          <button
-            className="text-red-500 border-solid border-2 rounded-full border-red-500 px-1.5 bg-white"
-            onClick={() => {
-              if (iniStock - tempStock == 0) {
-                toast.error("You cannot reduce the stock any further!");
-              }
-              else if (updatedStock.initialStock == undefined) {
-                toast.error("Choose a quality to advertise first!");
-              }
-              else {
-                decrementQuantity()
-              }
-            }}
-          >-
-          </button>
-          <span style={{ marginLeft: "6px", marginRight: "6px" }}>
-            {tempStock}
-          </span>
-          <button
-            className="text-green-500 border-solid border-2 rounded-full border-green-500 px-1.5 bg-white"
-            onClick={() => {
-              if (capital - productCost < 0) {
-                toast.error("You do not have enough capital to produce more units!");
-              } else if (updatedStock.initialStock == undefined) {
-                toast.error("Choose a quality to advertise first!");
-
-              }
-              else {
-                incrementQuantity()
-              }
-            }}
+        <button
+          className={`text-red-500 border-solid border-2 rounded-full border-red-500 px-2 py-1 bg-white ${tempStock === 0 ? 'cursor-not-allowed opacity-50' : ''}`}
+          onClick={() => {
+            if (iniStock - tempStock === 0) {
+              toast.error("You cannot reduce the stock any further!");
+            } else if (updatedStock.initialStock === undefined) {
+              toast.error("Choose a quality to advertise first!");
+            } else {
+              decrementQuantity();
+            }
+          }}
+          disabled={tempStock === 0}
+        >
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            className="h-5 w-5"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
           >
-            +
-          </button>
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M20 12H4" />
+          </svg>
+        </button>
+        <span style={{ marginLeft: "10px", marginRight: "10px", fontSize: "25px" }}>
+          {tempStock}
+        </span>
+        <button
+          className={`text-green-500 border-solid border-2 rounded-full border-green-500 px-2 py-1 bg-white ${capital - productCost < 0 ? 'cursor-not-allowed opacity-50' : ''}`}
+          onClick={() => {
+            if (capital - productCost < 0) {
+              toast.error("You do not have enough capital to produce more units!");
+            } else if (updatedStock.initialStock === undefined) {
+              toast.error("Choose a quality to advertise first!");
+            } else {
+              incrementQuantity();
+            }
+          }}
+          disabled={capital - productCost < 0}
+        >
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            className="h-5 w-5"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+          >
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v12m0-6h6m-6 0H6" />
+          </svg>
+        </button>
         </div>
         {
           marketType === "coasian-market" ? (
             <WarrantSelector />
           ) : null
         }
-        <div className="flex justify-center items-center">
+        <div className="flex justify-center items-center mt-4">
           <button
             onClick={handleSubmit}
             className="p-2 rounded-md border-transparent shadow-sm text-white bg-empirica-600 hover:bg-empirica-700"
