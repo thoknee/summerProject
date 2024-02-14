@@ -120,10 +120,12 @@ const ConsumerProductCard = ({ producer, index, round, productSelections, wallet
                 updateDecrementBasket();
             }
             else {
-                toast.error("You cannot decrease the quantity further!")
+                toast.error("You cannot decrease the quantity further")
             }
         }
-        toast.error("Please uncheck the checkbox to change the quantity!")
+        else {
+            toast.error("Please uncheck the checkbox to change the quantity")
+        }
     }
 
     // Function to increment the quantity of the product
@@ -135,30 +137,35 @@ const ConsumerProductCard = ({ producer, index, round, productSelections, wallet
                 updateIncrementBasket();
             }
             else {
-                toast.error("You don't have enough money in your wallet or the stock is not available!")
+                toast.error("You don't have enough money in your wallet or the stock is not available")
             }
         }
         else {
-            toast.error("Please uncheck the checkbox to change the quantity!")
+            toast.error("Please uncheck the checkbox to change the quantity")
         }
     }
 
     // Function to get all the unique items in the basket
     const getAllUniqueItems = (basket) => {
-        const uniqueItemsSet = new Set();
         const uniqueItems = [];
-      
+        const itemOccurrences = {};
+
         basket.forEach(item => {
-          const roundNo = item.round;
-      
-          if (!uniqueItemsSet.has(roundNo)) {
-            uniqueItemsSet.add(roundNo);
-            uniqueItems.push(item);
-          }
+            const roundNo = item.round;
+
+            if (itemOccurrences[roundNo]) {
+                itemOccurrences[roundNo]++;
+            } else {
+                itemOccurrences[roundNo] = 1;
+            }
+
+            if (itemOccurrences[roundNo] === 1) {
+                uniqueItems.push(item);
+            }
         });
-      
+
         return uniqueItems;
-      };
+    };
 
 
     return (
@@ -417,3 +424,7 @@ export function ChoiceStage() {
         return <div>Unknown role</div>;
     }
 }
+
+
+
+

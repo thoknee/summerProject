@@ -125,7 +125,7 @@ export function QualityStage() {
         */
         return (
             <div className="text-center p-[20px] bg-white rounded-md shadow-md max-w-[500px] mx-[20px] my-auto">
-                <h2>🕒 Waiting Room 🕒</h2>
+                <h2 className="text-xl mb-2 font-semibold">🕒 Waiting Room 🕒</h2>
                 <p>While you wait: </p>
                 <ul>
                     <li>"What products will be available? 🤔🛍️"</li>
@@ -137,6 +137,7 @@ export function QualityStage() {
                     gain/lose for each possible combination of the quality you pay for and
                     the quality you actually receive:
                 </p>
+                <br/>
                 <PayoffMatrix role={"consumer"} selectedProduct={selectedProduct} />
                 <br />
                 <p>Get ready to make smart choices and find the best products! 🧠🎯</p>
@@ -147,11 +148,11 @@ export function QualityStage() {
 
     if (role === "consumer") {
         return (
-            <div className="text-center p-[20px] bg-white rounded-md shadow-md max-w-[500px] mx-[20px] my-auto">
+            <div className="text-center mt-10 p-[20px] bg-white rounded-md shadow-md max-w-[500px] mx-[20px] my-auto">
                 <ConsumerWaitingMessage />
                 <button
                     onClick={handleSubmit}
-                    className="bg-[#4CAF50] hover:bg-[#45a049] text-white px-[12px] py-[16px] rounded-sm cursor-pointer shadow-md hover:shadow-lg transitionn-all ease-in-out"
+                    className="mt-6 rounded-md bg-[#4CAF50] hover:bg-[#45a049] text-white px-[12px] py-[16px] rounded-sm cursor-pointer shadow-md hover:shadow-lg transitionn-all ease-in-out"
                 >
                     Proceed to next stage
                 </button>

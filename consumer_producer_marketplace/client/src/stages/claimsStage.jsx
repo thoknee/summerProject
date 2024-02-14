@@ -649,28 +649,25 @@ export function ClaimsStage() {
     function ConsumerWaitingMessage() {
       return (
         <div className="text-center p-[20px] bg-white rounded-md shadow-md max-w-[500px] mx-[20px] my-auto">
-          <h2>🕒 Waiting Room 🕒</h2>
+          <h2 className="text-xl mb-2 font-semibold">🕒 Waiting Room 🕒</h2>
           <p>While you wait: </p>
           <ul>
             <li>"What products will be available? 🤔🛍️"</li>
             <li>"Can you spot the best deals? 🕵️🔍"</li>
           </ul>
-
           <br />
-
-          <p>
-            For convenience, the table below represents how many points you
-            would gain/lose for each possible combination of the quality you pay
-            for and the quality you actually receive:
-          </p>
+            <p>
+              For convenience, the table below represents how many points you
+              would gain/lose for each possible combination of the quality you pay
+              for and the quality you actually receive:
+            </p>
+          <br/>
           <PayoffMatrix role={"consumer"} />
-
           <br />
-
           <p>
             Get ready to make smart choices and find the best products! 🧠🎯
           </p>
-          <div className="text-base mt-[20px]">🛒🌟</div>
+          <div className="text-base mt-[10px]">🛒🌟</div>
         </div>
       );
     }
@@ -679,11 +676,11 @@ export function ClaimsStage() {
     }
 
     return (
-      <div className="text-center p-[20px] bg-white rounded-md shadow-md max-w-[500px] mx-[20px] my-auto">
+      <div className="text-center mt-10 p-[20px] bg-white rounded-md shadow-md max-w-[500px] mx-[20px] my-auto">
         <ConsumerWaitingMessage />
         <button
           onClick={handleProceed}
-          className="hover: cursor-pointer rounded-md border-none bg-[#4CAF50] px-3 py-6 text-base text-white shadow-md transition-all ease-in-out hover:bg-[#45a049] hover:shadow-md hover:shadow-gray-400"
+          className="mt-6 rounded-md hover: cursor-pointer rounded-md border-none bg-[#4CAF50] px-3 py-6 text-base text-white shadow-md transition-all ease-in-out hover:bg-[#45a049] hover:shadow-md hover:shadow-gray-400"
         >
           Proceed to next stage
         </button>
