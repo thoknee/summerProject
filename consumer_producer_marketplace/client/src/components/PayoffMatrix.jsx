@@ -87,7 +87,14 @@ function PayoffTable({ columnNames, rows }) {
             <thead>
                 <tr>
                     {columnNames.map((columnName, index) => (
-                        <th key={index} style={{ fontFamily: "Archivo", color: 'white', backgroundColor: getColor(columnName), border: '1px solid #ddd', padding: '8px', fontSize: "10px" }}>
+                        <th key={index} 
+                            style={{ fontFamily: "Archivo", 
+                                     color: 'white', 
+                                     backgroundColor: getColor(columnName), 
+                                     border: '1px solid #ddd', 
+                                     padding: '8px', 
+                                     fontSize: "10px" }}
+                        >
                             {columnName}
                         </th>
                     ))}
@@ -96,11 +103,22 @@ function PayoffTable({ columnNames, rows }) {
             <tbody>
                 {rows.map((row, rowIndex) => (
                     <tr key={rowIndex}>
-                        <td style={{ fontFamily: "Archivo", fontWeight: "bold", color: 'white', backgroundColor: getColor(row[0]), border: '1px solid #ddd', padding: '8px', fontSize: "10px" }}>
+                        <td style={{ fontFamily: "Archivo", 
+                                     fontWeight: "bold", 
+                                     color: 'white', 
+                                     backgroundColor: getColor(row[0]), 
+                                     border: '1px solid #ddd', 
+                                     padding: '8px', 
+                                     fontSize: "10px" }}
+                        >
                             {row[0]}
                         </td>
                         {row.slice(1).map((cell, cellIndex) => (
-                            <td key={cellIndex} style={{ color: cell < 0 ? 'red' : (cell > 0 ? 'green' : ''), border: '1px solid #ddd', padding: '8px', backgroundColor: 'white' }}>
+                            <td key={cellIndex} style={{ color: cell < 0 ? 'red' : (cell > 0 ? 'green' : ''), 
+                                                         border: '1px solid #ddd', 
+                                                         padding: '8px', 
+                                                         backgroundColor: 'white' }}
+                            >
                                 {(cell > 0 ? "+" : "") + cell + " points"}
                             </td>
                         ))}

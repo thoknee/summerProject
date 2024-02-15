@@ -124,8 +124,12 @@ export function QualityStage() {
         Used to display the waiting message for the consumer.
         */
         return (
-            <div className="text-center p-[20px] bg-white rounded-md shadow-md max-w-[500px] mx-[20px] my-auto">
-                <h2 className="text-xl mb-2 font-semibold">🕒 Waiting Room 🕒</h2>
+            <div className="text-center p-[20px] bg-gray-100 rounded-md shadow-md max-w-[500px] mx-[20px] my-auto">
+                <h2 className="text-xl mb-2 font-semibold flex items-center justify-center">
+                    <img src="https://cdn.pixabay.com/animation/2023/03/08/09/53/09-53-16-104_512.gif" alt="timer" className="w-6 h-6 mr-2" />
+                    Waiting Room
+                    <img src="https://cdn.pixabay.com/animation/2023/03/08/09/53/09-53-16-104_512.gif" alt="timer" className="w-6 h-6 ml-2" />
+                </h2>
                 <p>While you wait: </p>
                 <ul>
                     <li>"What products will be available? 🤔🛍️"</li>

@@ -394,22 +394,27 @@ export function ChoiceStage() {
             This fuction will be used to display the waiting message for the producer
             */
             return (
-                <div className="text-center p-4 bg-gray-200 rounded-lg shadow-md max-w-[500px] mx-auto my-4">
-                    <h2>🕒 Waiting Room 🕒</h2>
+                <div className="text-center p-4 bg-white rounded-lg shadow-md max-w-[600px] mx-auto my-4">
+                    <h2 className="text-xl mb-2 font-semibold flex items-center justify-center">
+                        <img src="https://cdn.pixabay.com/animation/2023/03/08/09/53/09-53-16-104_512.gif" alt="timer" className="w-6 h-6 mr-2" />
+                        Waiting Room
+                        <img src="https://cdn.pixabay.com/animation/2023/03/08/09/53/09-53-16-104_512.gif" alt="timer" className="w-6 h-6 ml-2" />
+                    </h2>
                     <p>While you wait: </p>
                     <ul>
                         <li>"How many will buy your product? 🤔🛒"</li>
                         <li>"What moves are your competitors making? 🚀🕵‍♂"</li>
                     </ul>
+                    <br/>
                     <p>Keep an eye on the market trends and plan your next steps! 💡📈</p>
-                    <div className="text-2xl mt-5">🏭🌟</div>
+                    <div className="text-xl mt-5">🏭🌟</div>
                 </div>
             );
         }
         return (
-            <div className="text-center p-4 bg-gray-200 rounded-lg shadow-md max-w-[500px] mx-auto my-4">
+            <div className="text-center mt-8 p-4 bg-gradient-to-br from-gray-50 to-blue-50 rounded-lg shadow-md max-w-[700px] mx-auto my-4">
                 <ProducerWaitingMessage />
-                <button onClick={handleProceed} className="bg-green-500 text-white py-3 px-6 text-lg rounded-md border-none cursor-pointer shadow-md transition-all duration-200 ease-in-out hover:bg-green-700">
+                <button onClick={handleProceed} className="mt-2 bg-green-500 text-white py-3 px-5 text-lg rounded-md border-none cursor-pointer shadow-md transition-all duration-200 ease-in-out hover:bg-green-700">
                     Proceed to next stage
                 </button>
             </div>
@@ -424,7 +429,3 @@ export function ChoiceStage() {
         return <div>Unknown role</div>;
     }
 }
-
-
-
-

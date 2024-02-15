@@ -35,9 +35,15 @@ export function Stage() {
     }
 
     return (
-      <div className="text-center text-gray-400 pointer-events-none">
-        Please wait for other player(s).
-      </div>
+      <div className="text-center text-gray-400 pointer-events-none flex items-center justify-center mt-10">
+        <img src="https://raw.githubusercontent.com/Neilblaze/GSOC-23/main/Interactive%20Demo/public/sumercamppulse.gif" alt="" style={{ width: 23, height: 23 }} className="mr-2" />
+        Please wait for other player(s)
+        <span className="inline-block">
+          <span className="animate-ping inline-block w-1 h-1 rounded-full bg-gray-400 ml-1"></span>
+          <span className="animate-ping inline-block w-1 h-1 rounded-full bg-gray-400 ml-1"></span>
+          <span className="animate-ping inline-block w-1 h-1 rounded-full bg-gray-400 ml-1"></span>
+        </span>
+    </div>
     );
   }
 
