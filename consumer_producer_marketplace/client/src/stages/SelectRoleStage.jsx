@@ -144,9 +144,14 @@ export function SelectRolesStage() {
             <div className="md:min-w-96 lg:min-w-128 xl:min-w-192 flex flex-col items-center space-y-10 p-4">
                 <p>You will play as a <b>{player.get("role")}</b>!</p>
                 <ConsumerInfo />
-                <Button handleClick={handleSubmit}>
-                    I'm ready!
-                </Button>
+                <div className="relative inline-flex group">
+                    <div
+                        className="absolute transitiona-all duration-300 opacity-30 -inset-px bg-gradient-to-r from-[#44BCFF] via-[#FF44EC] to-[#FF675E] rounded-xl blur-lg filter group-hover:opacity-80 group-hover:-inset-1 group-hover:duration-100">
+                    </div>
+                    <Button className="z-3" handleClick={handleSubmit}>
+                        I'm ready!
+                    </Button>
+                </div>
             </div>
         )
     }
@@ -156,9 +161,14 @@ export function SelectRolesStage() {
             <div className="md:min-w-96 lg:min-w-128 xl:min-w-192 flex flex-col items-center space-y-10 p-4">
                 <p>You will play as a <b>{player.get("role")}</b>!</p>
                 <ProducerInfo />
-                <Button handleClick={handleSubmit}>
-                    I'm ready!
-                </Button>
+                <div className="relative inline-flex group">
+                    <div
+                        className="absolute transitiona-all duration-300 opacity-30 -inset-px bg-gradient-to-r from-[#44BCFF] via-[#FF44EC] to-[#FF675E] rounded-xl blur-lg filter group-hover:opacity-80 group-hover:-inset-1 group-hover:duration-100">
+                    </div>
+                    <Button className="z-3" handleClick={handleSubmit}>
+                        I'm ready!
+                    </Button>
+                </div>
             </div>
         )
     }

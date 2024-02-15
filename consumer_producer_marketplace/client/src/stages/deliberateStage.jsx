@@ -62,31 +62,94 @@ export function DeliberateStage() {
 
     return (
       <div style={styles.feedbackContainer}>
-
-        <h3><b>🌟 Your Warrant Summary 🌟</b></h3>
-        <p><span role="img" aria-label="factory">🏭</span> You produced a <b>{productQuality}</b> quality product and advertised it as <b>{productAdQuality}</b> quality.</p>
-        {!warrantAdded ? (<>
-          <p>There was no warrant to be challenged.</p>
-          <br /><p><span role="img" aria-label="trophy">🏆</span> Your current score is <b>{player.get("score")}</b>.</p>
-        </>) : warrantAdded == true && claimStatus == true && warrantClaim == true ? (<>
-          <p>Your warrant claim was challenged <span className="bg-green-700 text-white p-1 rounded-md">unsucessfully!</span></p>
-          <p>You have been rewarded back your warrant amount, i.e. ${warrantPrice} back</p>
-          <p>Your capital is ${capital}</p>
-          <br /><p><span role="img" aria-label="trophy">🏆</span> Your current score is <b>{player.get("score")}</b>.</p>
-        </>) : warrantAdded == true && claimStatus == true && warrantClaim == false ? (<>
-          <p>Your warrant claim was challenged <span className="bg-red-700 text-white p-1 rounded-md">sucessfully!</span></p>
-          <p>You lose your warrant Price of ${warrantPrice}</p>
-          <p>Your capital is ${capital}</p>
-          <br /><p><span role="img" aria-label="trophy">🏆</span> Your current score is <b>{player.get("score")}</b>.</p>
-        </>) : warrantAdded == true && claimStatus == false ? (<>
-          <p>Your warrant was not challenged this round.</p>
-          <p>You have been rewarded back your warrant amount, i.e. ${warrantPrice} back</p>
-          <p>Your capital is ${capital}</p>
-          <br /><p><span role="img" aria-label="trophy">🏆</span> Your current score is <b>{player.get("score")}</b>.</p>
-        </>) : (<>
-          <p>Your capital is ${capital}</p>
-          <br /><p><span role="img" aria-label="trophy">🏆</span> Your current score is <b>{player.get("score")}</b>.</p>
-        </>)}
+        <h3>
+          <b>🌟 Your Warrant Summary 🌟</b>
+        </h3>
+        <p>
+          <span role="img" aria-label="factory">
+            🏭
+          </span>{" "}
+          You produced a <b>{productQuality}</b> quality product and advertised it
+          as <b>{productAdQuality}</b> quality.
+        </p>
+        {!warrantAdded ? (
+          <>
+            <p>There was no warrant to be challenged.</p>
+            <br />
+            <p>
+              <span role="img" aria-label="trophy">
+                🏆
+              </span>{" "}
+              Your current score is <b>{player.get("score")}</b>.
+            </p>
+          </>
+        ) : warrantAdded == true && claimStatus == true && warrantClaim == true ? (
+          <>
+            <p>
+              Your warrant claim was challenged{" "}
+              <span className="bg-green-700 text-white p-1 rounded-md">
+                unsucessfully!
+              </span>
+            </p>
+            <p>
+              You have been rewarded back your warrant amount, i.e. ${warrantPrice}{" "}
+              back
+            </p>
+            <p>Your capital is ${capital}</p>
+            <br />
+            <p>
+              <span role="img" aria-label="trophy">
+                🏆
+              </span>{" "}
+              Your current score is <b>{player.get("score")}</b>.
+            </p>
+          </>
+        ) : warrantAdded == true && claimStatus == true && warrantClaim == false ? (
+          <>
+            <p>
+              Your warrant claim was challenged{" "}
+              <span className="bg-red-700 text-white p-1 rounded-md">
+                sucessfully!
+              </span>
+            </p>
+            <p>You lose your warrant Price of ${warrantPrice}</p>
+            <p>Your capital is ${capital}</p>
+            <br />
+            <p>
+              <span role="img" aria-label="trophy">
+                🏆
+              </span>{" "}
+              Your current score is <b>{player.get("score")}</b>.
+            </p>
+          </>
+        ) : warrantAdded == true && claimStatus == false ? (
+          <>
+            <p>Your warrant was not challenged this round.</p>
+            <p>
+              You have been rewarded back your warrant amount, i.e. ${warrantPrice}{" "}
+              back
+            </p>
+            <p>Your capital is ${capital}</p>
+            <br />
+            <p>
+              <span role="img" aria-label="trophy">
+                🏆
+              </span>{" "}
+              Your current score is <b>{player.get("score")}</b>.
+            </p>
+          </>
+        ) : (
+          <>
+            <p>Your capital is ${capital}</p>
+            <br />
+            <p>
+              <span role="img" aria-label="trophy">
+                🏆
+              </span>{" "}
+              Your current score is <b>{player.get("score")}</b>.
+            </p>
+          </>
+        )}
         <br />
       </div>
     );
@@ -107,25 +170,84 @@ export function DeliberateStage() {
 
     return (
       <div style={styles.feedbackContainer}>
-        <h3><b>Your Warrant Summary</b></h3>
-        {quantity == 0 ? (<><p><h3> No Products bought in this round, hence no warrants were challenged.</h3></p></>) : warrantAdded == true && challengeStatus == true && challengeSuccess == true ? (<>
-          <p>Your Challenge was <span className="bg-green-700 text-white p-1 rounded-md">successful!</span></p>
-          <p>You have been rewarded ${warrantPrice}</p>
-          <br /><p><span role="img" aria-label="trophy">🏆</span> Your successful claim amount of (<b>${warrantPrice}</b>) is added to your wallet = (<b>${wallet}</b>).</p>
-          <br /><p>Your current score is {player.get("score")}</p>
-        </>) : warrantAdded == true && challengeStatus == true && challengeSuccess == false ? (<>
-          <p>Your Challenge was <span className="bg-red-700 text-white p-1 rounded-md">unsuccessful!</span></p>
-          <p>You have lost the challenge amount of ${challengeAmount}</p>
-          <p>Your current wallet is ${wallet}.</p>
-          <br /><p><span role="img" aria-label="trophy">🏆</span> Your current score is <b>${player.get("score")}</b>.</p>
-        </>) : warrantAdded == true && challengeStatus == false ? (<>
-          <p>You did not challenge the warrant!</p>
-          <br /><p><span role="img" aria-label="trophy">🏆</span> Your current score is <b>${player.get("score")}</b>.</p>
-        </>) : (<>
-          <p>The product was not warranted!</p>
-          <p>Your capital is ${wallet}</p>
-          <br /><p><span role="img" aria-label="trophy">🏆</span> Your current score is <b>${player.get("score")}</b>.</p>
-        </>)}
+        <h3>
+          <b>Your Warrant Summary</b>
+        </h3>
+        {quantity == 0 ? (
+          <>
+            <p>
+              <h3>
+                {" "}
+                No Products bought in this round, hence no warrants were challenged.
+              </h3>
+            </p>
+          </>
+        ) : warrantAdded == true &&
+          challengeStatus == true &&
+          challengeSuccess == true ? (
+          <>
+            <p>
+              Your Challenge was{" "}
+              <span className="bg-green-700 text-white p-1 rounded-md">
+                successful!
+              </span>
+            </p>
+            <p>You have been rewarded ${warrantPrice}</p>
+            <br />
+            <p>
+              <span role="img" aria-label="trophy">
+                🏆
+              </span>{" "}
+              Your successful claim amount of (<b>${warrantPrice}</b>) is added to
+              your wallet = (<b>${wallet}</b>).
+            </p>
+            <br />
+            <p>Your current score is {player.get("score")}</p>
+          </>
+        ) : warrantAdded == true &&
+          challengeStatus == true &&
+          challengeSuccess == false ? (
+          <>
+            <p>
+              Your Challenge was{" "}
+              <span className="bg-red-700 text-white p-1 rounded-md">
+                unsuccessful!
+              </span>
+            </p>
+            <p>You have lost the challenge amount of ${challengeAmount}</p>
+            <p>Your current wallet is ${wallet}.</p>
+            <br />
+            <p>
+              <span role="img" aria-label="trophy">
+                🏆
+              </span>{" "}
+              Your current score is <b>${player.get("score")}</b>.
+            </p>
+          </>
+        ) : warrantAdded == true && challengeStatus == false ? (
+          <>
+            <p>You did not challenge the warrant!</p>
+            <br />
+            <p>
+              <span role="img" aria-label="trophy">
+                🏆
+              </span>{" "}
+              Your current score is <b>${player.get("score")}</b>.
+            </p>
+          </>
+        ) : (
+          <>
+            <p>The product was not warranted!</p>
+            <p>Your capital is ${wallet}</p>
+            <br />
+            <p>
+              <span role="img" aria-label="trophy">
+                🏆
+              </span>{" "}
+              Your current score is <b>${player.get("score")}</b>.
+            </p>
+          </>
+        )}
       </div>
     );
   };

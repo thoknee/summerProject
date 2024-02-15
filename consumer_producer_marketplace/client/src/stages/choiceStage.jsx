@@ -394,7 +394,7 @@ export function ChoiceStage() {
             This fuction will be used to display the waiting message for the producer
             */
             return (
-                <div className="text-center p-4 bg-white rounded-lg shadow-md max-w-[600px] mx-auto my-4">
+                <div className="text-center p-4 bg-white rounded-lg shadow-md max-w-[600px] mx-auto my-4 border-8 border-gray-100">
                     <h2 className="text-xl mb-2 font-semibold flex items-center justify-center">
                         <img src="https://cdn.pixabay.com/animation/2023/03/08/09/53/09-53-16-104_512.gif" alt="timer" className="w-6 h-6 mr-2" />
                         Waiting Room

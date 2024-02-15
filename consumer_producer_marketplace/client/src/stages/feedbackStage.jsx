@@ -352,7 +352,6 @@ export function FeedbackStage() {
             const profit = soldStock * (productPrice - productCost);
 
             return (
-                // <div className="bg-gray-300 p-4 rounded-lg shadow-md mb-8">
                 <div className="text-center p-4 bg-white rounded-lg shadow-md max-w-[600px] mx-auto border-8 border-gray-100">
                     <h2 className="text-2xl mb-6 font-semibold flex items-center justify-center">
                         <img src="https://i.pinimg.com/originals/8f/9f/76/8f9f76391315ee0b33d9b17981ee8ce0.gif" alt="timer" className="w-6 h-6 mr-2" />
@@ -361,7 +360,6 @@ export function FeedbackStage() {
                     </h2>
                     <hr class="border-t border-gray-300 my-4"/>
                     <div className="mt-6">
-                    {/* <h3><b>🌟 Producer Summary 🌟</b></h3> */}
                         <p><span role="img" aria-label="factory">🏭</span> You produced a <b>{productQuality.charAt(0).toUpperCase() + productQuality.slice(1)}</b> quality product and advertised it as <b>{productQuality.charAt(0).toUpperCase() + productQuality.slice(1)}</b> quality!</p>
                         <p><span role="img" aria-label="shopping-cart">🛒</span> Consumers bought <b>{soldStock}</b> unit(s) of your product at <b>${productPrice}</b> each!</p>
                         <p><span role="img" aria-label="money-bag">💰</span> This resulted in a total profit of: <b>${profit.toFixed(2)}</b></p>
@@ -374,7 +372,6 @@ export function FeedbackStage() {
             );
         };
         return (
-            // <div className="bg-gray-300 p-4 rounded-lg shadow-md mb-8">
             <div className="text-center mt-8 p-4 bg-gradient-to-br from-gray-50 to-blue-50 rounded-lg shadow-md max-w-[700px] mx-auto my-4">
                 <br />
                 {renderProducerFeedback()}
