@@ -107,7 +107,8 @@ function ConsumerFeedbackCard({ producer, player, index, basket, round, wallet, 
                                 <p><b>Are you willing to challenge the producer's warrant?</b></p>
                             </div>
                             <p className="text-base"><b className="text-gray-800">Warrant:</b> {warrantDesc}</p>
-                            <p className="text-base mb-6"><b className="text-gray-800">Challenge Amount:</b> {challengeAmount}</p>
+                            <p className="text-base mb-6"><b className="text-gray-800">Each challenge costs:</b> ${challengeAmount}</p>
+                            <p className="text-base"><b className="text-gray-800">(You might win the warrant deposit!)</b></p>
                             <button
                                 className="bg-blue-600 text-white py-2.5 px-5 text-base rounded-md border-none cursor-pointer shadow-md transition-all duration-200 ease-in-out hover:bg-blue-700 hover:shadow-md m-2.5 disabled:bg-gray-400 disabled:cursor-not-allowed disabled:shadow-none"
                                 onClick={() => {
@@ -152,7 +153,13 @@ function ConsumerFeedbackCard({ producer, player, index, basket, round, wallet, 
                             </button>
                         </>
                     ) : warrantAdded && quantity == 0 ? (
-                        <p>Since you didnt buy any units for this product, you cannot challenge it!.</p>
+                        <>
+                            <p>Since you didnt buy any units for this product, you cannot challenge it!.</p><br/>
+                            <button
+                                className={`bg-${claimSelections[index] ? "green-500" : "bg-white"} text-black py-2 px-4 rounded-full shadow-md mb-2`}
+                                onClick={() => funcHandle()}
+                            >{claimSelections[index] == true ? <>Ready!</> : <>Ready to proceed?</>}</button>
+                        </>
                     ) : (
                         <>
                             <p className="mb-5">Since this product is <strong>not</strong> warranted, you are not able to challenge it</p>
@@ -360,7 +367,7 @@ export function FeedbackStage() {
                     </h2>
                     <hr class="border-t border-gray-300 my-4"/>
                     <div className="mt-6">
-                        <p><span role="img" aria-label="factory">🏭</span> You produced a <b>{productQuality.charAt(0).toUpperCase() + productQuality.slice(1)}</b> quality product and advertised it as <b>{productQuality.charAt(0).toUpperCase() + productQuality.slice(1)}</b> quality!</p>
+                        <p><span role="img" aria-label="factory">🏭</span> You produced a <b>{productQuality.charAt(0).toUpperCase() + productQuality.slice(1)}</b> quality product and advertised it as <b>{productAdQuality.charAt(0).toUpperCase() + productQuality.slice(1)}</b> quality!</p>
                         <p><span role="img" aria-label="shopping-cart">🛒</span> Consumers bought <b>{soldStock}</b> unit(s) of your product at <b>${productPrice}</b> each!</p>
                         <p><span role="img" aria-label="money-bag">💰</span> This resulted in a total profit of: <b>${profit.toFixed(2)}</b></p>
                         <br />
