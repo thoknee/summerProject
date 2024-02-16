@@ -137,9 +137,9 @@ export function QualityStage() {
                 </ul>
                 <br />
                 <p>
-                    For convenience, the table below represents how many points you would
-                    gain/lose for each possible combination of the quality you pay for and
-                    the quality you actually receive:
+                    Here is the payout you stand to win if you buy genuine products and lose 
+                    if you get misled by false advertisements. 
+                    Remember that <b className='text-red-600'>no purchase means no points</b>!
                 </p>
                 <br/>
                 <PayoffMatrix role={"consumer"} selectedProduct={selectedProduct} />

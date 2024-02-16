@@ -221,7 +221,7 @@ export function DeliberateStage() {
               <span role="img" aria-label="trophy">
                 🏆
               </span>{" "}
-              Your current score is <b>${player.get("score")}</b>.
+              Your current score is <b>{player.get("score")}</b>.
             </p>
           </>
         ) : warrantAdded == true && challengeStatus == false ? (
@@ -232,7 +232,7 @@ export function DeliberateStage() {
               <span role="img" aria-label="trophy">
                 🏆
               </span>{" "}
-              Your current score is <b>${player.get("score")}</b>.
+              Your current score is <b>{player.get("score")}</b>.
             </p>
           </>
         ) : (
@@ -244,7 +244,7 @@ export function DeliberateStage() {
               <span role="img" aria-label="trophy">
                 🏆
               </span>{" "}
-              Your current score is <b>${player.get("score")}</b>.
+              Your current score is <b>{player.get("score")}</b>.
             </p>
           </>
         )}
