@@ -11,4 +11,4 @@ const value_lo = 6;
 // const initialWallet = 30;
 // const walletRefresh = 15;
 
-export { cost_hi, cost_lo, value_hi, value_lo, price_hi, price_lo };
+export { cost_hi, cost_lo, price_hi, price_lo, value_hi, value_lo};

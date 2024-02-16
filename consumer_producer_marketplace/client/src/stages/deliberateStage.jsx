@@ -88,7 +88,7 @@ export function DeliberateStage() {
             <p>
               Your warrant claim was challenged{" "}
               <span className="bg-green-700 text-white p-1 rounded-md">
-                unsucessfully!
+                unsuccessfully!
               </span>
             </p>
             <p>
@@ -109,7 +109,7 @@ export function DeliberateStage() {
             <p>
               Your warrant claim was challenged{" "}
               <span className="bg-red-700 text-white p-1 rounded-md">
-                sucessfully!
+                successfully!
               </span>
             </p>
             <p>You lose your warrant Price of ${warrantPrice}</p>

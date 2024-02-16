@@ -198,7 +198,7 @@ export function QualityStage() {
                     onClick={handleSubmit}
                     className="bg-[#4CAF50] hover:bg-[#45a049] text-white px-[12px] py-[16px] rounded-lg cursor-pointer shadow-md hover:shadow-lg transitionn-all ease-in-out"
                 >
-                    Next Page →
+                    Proceed to Next Page
                 </button>
             </div>
         </div>

@@ -138,8 +138,8 @@ export function PayoffMatrix({ role }) {
 
     const producerData = [
         ['', 'Advertised As - Low', 'Advertised As - High'],
-        ['Produced Quality - Low', price_lo - cost_hi, price_lo - cost_lo],
-        ['Produced Quality - High', price_hi - cost_hi, price_hi - cost_lo],
+        ['Produced Quality - Low', price_lo - cost_lo, price_hi - cost_lo],
+        ['Produced Quality - High', price_lo - cost_hi, price_hi - cost_hi],
     ];
 
     const data = role === "consumer" ? consumerData : producerData;

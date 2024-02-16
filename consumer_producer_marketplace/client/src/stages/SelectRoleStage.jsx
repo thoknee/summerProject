@@ -32,19 +32,19 @@ export function SelectRolesStage() {
             player.round.set("brandName", randomBrandName());
 
             if (round.get("name") == "Round1") {
-                player.set("capital", 100);
+                player.set("capital", 24);
             }
             if (round.get("name") != "Round1") {
-                player.set("capital", player.get("capital") + 20)
+                player.set("capital", player.get("capital") + 12)
             }
         }
 
         else {
             if (round.get("name") == "Round1") {
-                player.set("wallet", 20);
+                player.set("wallet", 24);
             }
             if (round.get("name") != "Round1") {
-                player.set("wallet", player.get("wallet") + 10)
+                player.set("wallet", player.get("wallet") + 12)
             }
         }
         player.round.set("round", round.get("name"));
@@ -81,19 +81,19 @@ export function SelectRolesStage() {
                             Producers! 🌟
                         </h2>
                         <p className="mt-3 text-base text-gray-600 sm:mt-5 sm:text-xl lg:text-lg xl:text-xl" style={{ whiteSpace: 'nowrap' }}>
-                            As a producer, your main goal is to maximize your profits! 💰 Each round presents a new opportunity for you to shine. <br/>
-                            You get to decide what kind of products you'll produce and the best way to advertise them. Remember, premium products usually fetch a higher price! 💎
+                            Your goal is to achieve a high-score based on high profits, by selling many products to consumers 💰. The highest scoring players will win this game! <br/>
+                            You get to decide what kind of products you'll produce and the best way to advertise them. Remember, premium products fetch a higher price! 💎
                         </p>
                         <p className="mt-3 text-base text-gray-600 sm:mt-5 sm:text-xl lg:text-lg xl:text-xl" style={{ whiteSpace: 'nowrap' }}>
-                            Here's the catch: every round, you'll use all your capital (that's your hard-earned money 💵) to create products of the quality you choose. <br/>
-                            But be strategic! The consumers only learn about the true quality of your product after they buy it. So, think carefully about your production and advertising choices.
+                            Every round, you'll use your capital (that's your hard-earned money 💵) to create products and advertisements of a quality you choose. <br/>
+                            But be strategic! The consumers only learn about the true quality of your product after they buy it based on the ad!
                         </p>
                         <p className="mt-3 text-base text-gray-600 sm:mt-5 sm:text-xl lg:text-lg xl:text-xl" style={{ whiteSpace: 'nowrap' }}>
-                            And don't forget, you're not alone in this game! Other producers are out there, trying to make their mark just like you. Keep an eye on the competition while you plot your path to success. 🏭👀
+                            And don't forget, other producers are out there so keep an eye on their scores. 🏭👀
                         </p> 
                     <br/>
                     <p className="mt-6 text-2xl text-gray-600 sm:mt-5 sm:text-xl lg:text-lg xl:text-xl" style={{ whiteSpace: 'nowrap' }}>
-                        Are you ready to take on the challenge and become the top producer? Let's get started! 🚀🏆
+                        Are you ready to become the top producer? Let's go! 🚀🏆
                     </p>
                 </div>
             </div>
@@ -119,19 +119,19 @@ export function SelectRolesStage() {
                             Consumers! 🛒
                         </h2>
                         <p className="mt-3 text-base text-gray-600 sm:mt-5 sm:text-xl lg:text-lg xl:text-xl" style={{ whiteSpace: 'nowrap' }}>
-                            As a savvy consumer, your mission is to make smart buying decisions! 🧐 Every round is a new adventure in the marketplace, where you'll encounter a variety of products. <br/>
-                            Your goal is to get the best value for your money. Remember, not all that glitters is gold! 🌟
+                            As a savvy consumer, your mission is to make smart buying decisions! 🧐 Every round is a new adventure in the marketplace, where you'll encounter advertisements. <br/>
+                            Your goal is to purchase genuine products based on the ads, to increase your score and top the leaderboard! 🌟
                         </p>
                         <p className="mt-3 text-base text-gray-600 sm:mt-5 sm:text-xl lg:text-lg xl:text-xl" style={{ whiteSpace: 'nowrap' }}>
-                            Here's the twist: you'll be spending from your wallet 💸, but beware! The true quality of products is only revealed after purchase. <br/>
-                            So, use your intuition and make your choices wisely. Are the producers bluffing with their ads? Or is it really a deal of a lifetime? 🕵️‍♀️
+                            You'll be spending from your wallet 💸, but beware! The true quality of products is only revealed after purchase. <br/>
+                            Are the producers bluffing with their ads? Or is it really a deal of a lifetime? Let's find out! 🕵️‍♀️
                         </p>
                         <p className="mt-3 text-base text-gray-600 sm:mt-5 sm:text-xl lg:text-lg xl:text-xl" style={{ whiteSpace: 'nowrap' }}>
-                            Remember, you're competing against other consumers to be the most astute shopper. Keep an eye on your wallet and don't get swayed by every shiny ad! 🛍️💡
+                            You're competing against the other players for a high-score. Keep an eye on your wallet and don't get swayed by every shiny ad! 🛍️💡
                         </p> 
                     <br/>
                     <p className="mt-6 text-2xl text-gray-600 sm:mt-5 sm:text-xl lg:text-lg xl:text-xl" style={{ whiteSpace: 'nowrap' }}>
-                    Ready to embark on this shopping spree and make some clever purchases? Let's dive into the world of consumer wisdom! 🚀🛍️
+                    Ready to make smart purchases? Let's dive in! 🚀🛍️
                     </p>
                 </div>
             </div>

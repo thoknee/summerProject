@@ -88,7 +88,7 @@ async function updateConsumerScores(game) {
     let score = player.get("score") || 0;
     basket.forEach((item) => {
       if (item.round === round) {
-        score += wallet + (item.value - item.productPrice) * item.quantity;
+        score += (item.value - item.productPrice) * item.quantity;
       }
     });
     player.set("score", score);
@@ -101,16 +101,15 @@ async function updateProducerScores(game) {
   await game.players.forEach(async (player) => {
     if (player.get("role") !== "producer") return;
     const stock = player.get("stock");
-    const capital = player.get("capital");
     const round = player.round.get("round")
     const currentStock = stock.find((item) => item.round === round);
     const soldStock = currentStock.soldStock;
     const productPrice = currentStock.productPrice;
     const productCost = currentStock.productCost;
-    const profit = (productPrice - productCost) * soldStock;
+    const profit = productPrice - productCost;
     const originalScore = player.get("score") || 0;
     let score = player.get("score") || 0;
-    score += profit + capital;
+    score += (profit * soldStock);
     player.set("score", score);
     player.set("scoreDiff", score - originalScore);
   });

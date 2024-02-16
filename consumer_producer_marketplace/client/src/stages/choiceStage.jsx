@@ -169,10 +169,10 @@ const ConsumerProductCard = ({ producer, index, round, productSelections, wallet
 
 
     return (
-        <div className="product-card border border-gray-300 shadow-md p-8 rounded-lg w-[325px] text-center bg-white mx-auto relative overflow-hidden">
+        <div className="product-card border border-gray-300 shadow-md p-8 rounded-lg w-[310px] text-center bg-white mx-auto relative overflow-hidden">
             {warrantAdded ? (
                 <div
-                    className="warrant-banner bg-blue-500 transform rotate-30 w-[200px] absolute right-0 mr-neg-45 -mt-[10px]"
+                    className="warrant-banner bg-yellow-600 transform rotate-40 h-6 w-160px absolute right-[0px] ml-neg-150 mt-20px"
                 >
                     <b className="text-white" style={{ fontFamily: "Avenir" }}>WARRANTED</b>
                 </div>
@@ -189,7 +189,7 @@ const ConsumerProductCard = ({ producer, index, round, productSelections, wallet
             />
             <p>Quality: {productAdQuality}</p>
             <p>Price: ${productPrice}</p>
-            {warrantAdded ? <><p>Warrant Description: {warrantDesc}</p><p>Warranted for: ${warrantPrice}</p></> : <></>}
+            {warrantAdded ? <><p>Warranted Claim Description: {warrantDesc}</p><p>Warranted for: ${warrantPrice}</p></> : <></>}
             <p>
                 In stock: <b>{remStock}</b>
             </p><br />
@@ -215,7 +215,7 @@ const ConsumerProductCard = ({ producer, index, round, productSelections, wallet
                 }}
                 className={`bg-${productSelections[index] ? "green-500" : "white"} text-black py-2 px-4 rounded-full border border-green-300 cursor-pointer shadow-md`}
             >
-                {productSelections[index] ? "Added to Cart" : "Add to Cart"}
+                {productSelections[index] ? "Confirmed" : "Confirm"}
             </button>
         </div>
     );
@@ -237,7 +237,7 @@ export function ChoiceStage() {
     useEffect(() => {
         if (role === "consumer") {
             const handleBasket = () => {
-                const findproductID = (producer) => {
+                const findProductID = (producer) => {
                     const st = producer.get("stock")
                     let prodID = st.find((item) => {
                         if (item.round === round) {
@@ -247,7 +247,7 @@ export function ChoiceStage() {
                     })
                     return prodID.productID
                 }
-                const findproductQuality = (producer) => {
+                const findProductQuality = (producer) => {
                     const st = producer.get("stock")
                     let prodQual = st.find((item) => {
                         if (item.round === round) {
@@ -257,7 +257,7 @@ export function ChoiceStage() {
                     })
                     return prodQual.productQuality
                 }
-                const findproductAdQuality = (producer) => {
+                const findProductAdQuality = (producer) => {
                     const st = producer.get("stock")
 
                     let prodAdQual = st.find((item) => {
@@ -268,7 +268,7 @@ export function ChoiceStage() {
                     })
                     return prodAdQual.productAdQuality
                 }
-                const findproductPrice = (producer) => {
+                const findProductPrice = (producer) => {
                     const st = producer.get("stock")
                     let prodPrice = st.find((item) => {
                         if (item.round === round) {
@@ -279,26 +279,26 @@ export function ChoiceStage() {
                     return prodPrice.productPrice
                 }
 
-                const findvalue = (producer) => {
+                const findValue = (producer) => {
                     const st = producer.get("stock")
-                    let prodvalue = st.find((item) => {
+                    let prodValue = st.find((item) => {
                         if (item.round === round) {
                             return item.value
                         }
                         return -1
                     })
-                    return prodvalue.value
+                    return prodValue.value
                 }
 
                 const putBasket = players
                     .filter((player) => player.get("role") === "producer")
                     .map((producer, index) => ({
                         producerID: producer.id,
-                        productID: findproductID(producer),
-                        productQuality: findproductQuality(producer),
-                        productAdQuality: findproductAdQuality(producer),
-                        productPrice: findproductPrice(producer),
-                        value: findvalue(producer),
+                        productID: findProductID(producer),
+                        productQuality: findProductQuality(producer),
+                        productAdQuality: findProductAdQuality(producer),
+                        productPrice: findProductPrice(producer),
+                        value: findValue(producer),
                         quantity: 0,
                         round: round,
                     }));
@@ -374,7 +374,7 @@ export function ChoiceStage() {
                 <br />
                 <br />
                 <button onClick={handleProceed} className="bg-green-500 text-white py-3 px-6 text-lg rounded-md border-none cursor-pointer shadow-md transition-all duration-200 ease-in-out hover:bg-green-700">
-                    Proceed to next stage
+                    Proceed to Next Stage
                 </button>
                 <br />
                 <br />
@@ -391,7 +391,7 @@ export function ChoiceStage() {
         };
         function ProducerWaitingMessage() {
             /* 
-            This fuction will be used to display the waiting message for the producer
+            This function will be used to display the waiting message for the producer
             */
             return (
                 <div className="text-center p-4 bg-white rounded-lg shadow-md max-w-[600px] mx-auto my-4 border-8 border-gray-100">
@@ -415,7 +415,7 @@ export function ChoiceStage() {
             <div className="text-center mt-8 p-4 bg-gradient-to-br from-gray-50 to-blue-50 rounded-lg shadow-md max-w-[700px] mx-auto my-4">
                 <ProducerWaitingMessage />
                 <button onClick={handleProceed} className="mt-2 bg-green-500 text-white py-3 px-5 text-lg rounded-md border-none cursor-pointer shadow-md transition-all duration-200 ease-in-out hover:bg-green-700">
-                    Proceed to next stage
+                    Proceed to Next Stage
                 </button>
             </div>
         );
@@ -426,6 +426,6 @@ export function ChoiceStage() {
     }
 
     else {
-        return <div>Unknown role</div>;
+        return <div>Unknown Role</div>;
     }
 }

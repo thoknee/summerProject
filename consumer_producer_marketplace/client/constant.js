@@ -3,7 +3,7 @@ const products = [
       id: 1,
       category: "toothpaste",
       low: {
-        productName: "Low Quality Toothpaste",
+        productName: "Low Quality",
         productQuality: "low",
         productPrice: 4,
         productCost: 2,
@@ -11,7 +11,7 @@ const products = [
         productImage: "/graphics/StandardToothpasteAI.png"
       },
       high: {
-        productName: "High Quality Toothpaste",
+        productName: "High Quality",
         productQuality: "high",
         productPrice: 8,
         productCost: 6,
@@ -21,21 +21,21 @@ const products = [
       productWarrants: [
         {
           icon: "https://res.cloudinary.com/dgccztjql/image/upload/v1704638438/SimPPL/Gum_Protection_onbo0t.png",
-          description: "Advanced Cavity Protection for Lasting Oral Heatlh",
+          description: "Fresher Breath with this Toothpaste!",
           multiplier: 3,
-          challengeMultiplier: 0.1,
+          challengeMultiplier: 0.2,
         },
         {
           icon: "https://res.cloudinary.com/dgccztjql/image/upload/v1704638434/SimPPL/Fresh_Breath_he5jws.png",
-          description: "Fresh Dreath Assurance with Enhanced Whitening",
+          description: "Fresh Breath Guaranteed along with Enhanced Whitening",
           multiplier: 4,
-          challengeMultiplier: 0.1,
+          challengeMultiplier: 0.2,
         },
         {
           icon: "https://res.cloudinary.com/dgccztjql/image/upload/v1704638437/SimPPL/Healthy_Gum_domd4m.png",
-          description: "Gentle Care for Sensitivity and Healthy Gums",
+          description: "Fresh Breath, Enhanced Whitening, and Healthy Gums!",
           multiplier: 5,
-          challengeMultiplier: 0.1,
+          challengeMultiplier: 0.2,
         },
       ],
     },
@@ -43,7 +43,7 @@ const products = [
         id: 2,
         category: "Toothpaste",
         low: {
-          productName: "Ayurdevic Low Quality Toothpaste",
+          productName: "Ayurvedic",
           productQuality: "low",
           productPrice: 4,
           productCost: 2,
@@ -51,7 +51,7 @@ const products = [
           productImage:
           "/graphics/StandardToothpasteAI.png"        },
         high: {
-          productName: "Ayurdevic High Quality Toothpaste",
+          productName: "Ayurvedic",
           productQuality: "high",
           productPrice: 8,
           productCost: 6,
@@ -60,21 +60,21 @@ const products = [
         productWarrants: [
           {
             icon: "https://res.cloudinary.com/dgccztjql/image/upload/v1704638438/SimPPL/Gum_Protection_onbo0t.png",
-            description: "Advanced Cavity Protection for Lasting Oral Heatlh",
+            description: "Fresher Breath with this Toothpaste!",
             multiplier: 3,
-            challengeMultiplier: 0.1,
+            challengeMultiplier: 0.2,
           },
           {
             icon: "https://res.cloudinary.com/dgccztjql/image/upload/v1704638434/SimPPL/Fresh_Breath_he5jws.png",
-            description: "Fresh Dreath Assurance with Enhanced Whitening",
+            description: "Fresh Breath Guaranteed along with Enhanced Whitening",
             multiplier: 4,
-            challengeMultiplier: 0.1,
+            challengeMultiplier: 0.2,
           },
           {
             icon: "https://res.cloudinary.com/dgccztjql/image/upload/v1704638437/SimPPL/Healthy_Gum_domd4m.png",
-            description: "Gentle Care for Sensitivity and Healthy Gums",
+            description: "Fresh Breath, Enhanced Whitening, and Healthy Gums!",
             multiplier: 5,
-            challengeMultiplier: 0.1,
+            challengeMultiplier: 0.2,
           },
         ],
       },

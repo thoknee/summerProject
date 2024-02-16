@@ -68,7 +68,7 @@ export function ClaimsStage() {
     let [productPrice, setProductPrice] = useState(0);
     let [productAdQuality, setProductAdQuality] = useState("");
     let [productAdImage, setProductAdImage] = useState("");
-    let [productAdName, setproductAdName] = useState("");
+    let [productAdName, setProductAdName] = useState("");
     let [value, setValue] = useState(0)
     let [isModalOpen, setIsModalOpen] = useState(false);
     let [isCheckboxSelected, setIsCheckboxSelected] = useState(false);
@@ -78,8 +78,7 @@ export function ClaimsStage() {
     let stock = player.get("stock") || [];
     let [updatedStock, setUpdatedStock] = useState({});
     let warrants = player.get("warrants") || [];
-    let [updateWarrants, setUpdateWarrants] = useState({
-    });
+    let [updateWarrants, setUpdateWarrants] = useState({});
     let [tempStock, setTempStock] = useState(0);
 
     useEffect(() => {
@@ -150,7 +149,7 @@ export function ClaimsStage() {
     // This function handles the submission of the choices made by the producer player
     const handleSubmit = () => {
       if (productAdQuality === "") {
-        toast.error("Please select an advertisment quality for the product!");
+        toast.error("Please select an advertisement quality for the product!");
       } else if (
         isCheckboxSelected == true && updateWarrants.warrantDesc === "") {
         toast.error("Select a warrant from the options!");
@@ -177,7 +176,7 @@ export function ClaimsStage() {
         productAdQuality === "high"
           ? adjPos[Math.floor(Math.random() * adjPos.length)]
           : adjNeg[Math.floor(Math.random() * adjNeg.length)];
-      return `${brandName} ${productAdName} ${chosenAdj}'s ${category}`;
+      return `${brandName} ${productAdName}'s ${chosenAdj} ${category}`;
     }
 
     const decrementQuantity = () => {
@@ -247,8 +246,8 @@ export function ClaimsStage() {
             if (isCheckboxSelected == false) {
               setProductPrice(price);
               setProductAdImage(imgUrl);
-              setproductAdName(name);
-              setProfit(Math.abs(price - productCost));
+              setProductAdName(name);
+              setProfit(price - productCost);
               setProductAdQuality(quality);
               setValue(value);
               setUpdatedStock(
@@ -366,7 +365,7 @@ export function ClaimsStage() {
               id="addWarrant"
               checked={isCheckboxSelected}
               onClick={() => {
-                if (tempStock <= 0 && capital <= profit * 5) {
+                if (tempStock <= 0 || capital <= Math.abs(profit) * 3) {
                   toast.error("You do not have enough capital to add a warrant");
                 } 
                 else if (productAdQuality === "") {
@@ -408,14 +407,10 @@ export function ClaimsStage() {
               </p>
               
               <p className="text-justify">
-                💡 Potential customers can see if you have chosen to warrant your
-                advertisement or not, and a warrant can boost your credibility
-                in the marketplace. If your ad is not found to be false, the
-                money spent on your warrant will be fully refunded. However, if
-                your warrant is challenged and your ad is found to be false, the
-                money spent on the warrant will be lost to the challenger - and
-                anyone in the market, including a competitor, may challenge this
-                warrant.
+                💡 Warrants allow you to add credible claims to boost your advertisements, backed by an amount of money. 
+                Your warranted advertisement is showcased to all potential consumers. If your claim is unchallenged or truthful, the
+                money spent on your warrant will be fully refunded. However, if you warrant a false advertisement that is challenged, 
+                your money spent on the warrant will be lost to the challenger.
               </p>
             </div>
           </div>
@@ -423,7 +418,9 @@ export function ClaimsStage() {
           <WarrantModal
             isOpen={isModalOpen}
             onClose={() => {
-              setIsModalOpen(false);
+              if (capital < 0) {
+                toast.error("Not enough funds, change advertising choices!");
+              } else {setIsModalOpen(false)}
             }}
             title="Warrant"
             children={
@@ -453,15 +450,15 @@ export function ClaimsStage() {
                                 challengeAmount: 0,
                                 round: round.get("name"),
                               })
-                              setCapital(Number(capital) + Number(warrant.multiplier * profit))
+                              setCapital(Number(capital) + Number(warrant.multiplier * Math.abs(profit)))
                             } else {
-                              setCapital(Number(capital) + Number(updateWarrants.warrantPrice) - Number(warrant.multiplier * profit))
+                              setCapital(Number(capital) + Number(updateWarrants.warrantPrice) - Number(warrant.multiplier * Math.abs(profit)))
                               setUpdateWarrants({
                                 ...updateWarrants,
                                 warrantAdded: true,
-                                warrantPrice: warrant.multiplier * profit,
+                                warrantPrice: warrant.multiplier * Math.abs(profit),
                                 warrantDesc: warrant.description,
-                                challengeAmount: parseInt(Math.ceil((warrant.multiplier * profit) / 10))
+                                challengeAmount: parseInt(Math.ceil((warrant.multiplier * Math.abs(profit)) / 5))
                               });
 
                             }
@@ -477,7 +474,7 @@ export function ClaimsStage() {
                           </h1>
                           <h1 className="font-semibold text-xl text-center">
                             <span style={{ color: "green" }}>
-                              ${profit * warrant.multiplier}
+                              ${Math.abs(profit) * warrant.multiplier}
                             </span>
                           </h1>
                         </div>
@@ -530,6 +527,8 @@ export function ClaimsStage() {
           </span>
           Profit if you sell everything:{" "}
           <b>${profit * tempStock}</b>
+          <br />
+          <b style={{color: "red"}}>All unsold products removed each round!</b>
           </div>
           <div className="mt-4 ">
             <PayoffMatrix className="mt-4" role={"producer"} />
@@ -548,12 +547,12 @@ export function ClaimsStage() {
             textAlign: "center",
           }}
         >
-          <div class="divide-y divide-lime-500">
+          <div className="divide-y divide-lime-500">
             <div>
               <b>Choose how you want to Advertise</b>
             </div> 
             <div>
-              <strong>NOTE:</strong> Your goal is to maximize your profits.
+              Higher profits get you a higher score!
             </div>
           </div>
         </h1>
@@ -634,8 +633,8 @@ export function ClaimsStage() {
         }
         <div className="flex justify-center items-center mt-4">
           <button
+            className={"p-2 rounded-md border-transparent shadow-sm text-white bg-empirica-600 hover:bg-empirica-700"}
             onClick={handleSubmit}
-            className="p-2 rounded-md border-transparent shadow-sm text-white bg-empirica-600 hover:bg-empirica-700"
           >
             Submit choices and go to market
           </button>

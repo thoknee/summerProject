@@ -71,7 +71,7 @@ const Leaderboard = (props) => {
               handleProceed();
             }}
           >
-            Proceed to next stage
+            Proceed to Next Stage
           </Button>
         </div>
       </div>

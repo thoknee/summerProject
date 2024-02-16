@@ -104,7 +104,7 @@ function ConsumerFeedbackCard({ producer, player, index, basket, round, wallet, 
                     {warrantAdded && quantity > 0 ? (
                         <>
                             <div className="text-xl mb-3" style={{ fontFamily: "Archivo" }}>
-                                <p><b>Are you willing to challenge the producer's warrant?</b></p>
+                                <p><b>Do you want to challenge the producer's warranted claims for being false?</b></p>
                             </div>
                             <p className="text-base"><b className="text-gray-800">Warrant:</b> {warrantDesc}</p>
                             <p className="text-base mb-6"><b className="text-gray-800">Each challenge costs:</b> ${challengeAmount}</p>
@@ -113,7 +113,7 @@ function ConsumerFeedbackCard({ producer, player, index, basket, round, wallet, 
                                 className="bg-blue-600 text-white py-2.5 px-5 text-base rounded-md border-none cursor-pointer shadow-md transition-all duration-200 ease-in-out hover:bg-blue-700 hover:shadow-md m-2.5 disabled:bg-gray-400 disabled:cursor-not-allowed disabled:shadow-none"
                                 onClick={() => {
                                     if (claimSelections[index] == true) {
-                                        toast.error("Please unconfirm your decision first!")
+                                        toast.error("Please deselect your decision first!")
                                     }
                                     else if (wallet >= parseInt(challengeAmount) && challengeStatus == false) {
                                         setWallet(wallet - challengeAmount)
@@ -126,7 +126,7 @@ function ConsumerFeedbackCard({ producer, player, index, basket, round, wallet, 
                                         changeClaims()
                                     }
                                     else {
-                                        toast.error("Not enough money in your wallet to challenge")
+                                        toast.error("Not enough money in your wallet to challenge the warranted claim!")
                                     }
                                 }}
                             >
@@ -172,7 +172,7 @@ function ConsumerFeedbackCard({ producer, player, index, basket, round, wallet, 
                     </div>
                 </div>
             </div>
-            <p className="mb-6"><span role="img" aria-label="trophy">🏆</span> Your current score is your remaining wallet + utility score = (<b>${player.get("score")}</b>)</p>
+            <p className="mb-6"><span role="img" aria-label="trophy">🏆</span> You get points equal to your utility score = (<b>${player.get("score")}</b>)</p>
         </div>
     );
 }
@@ -333,7 +333,7 @@ export function FeedbackStage() {
                         className="bg-green-500 text-white py-3 px-6 text-lg rounded-md border-none cursor-pointer shadow-md transition-all duration-200 ease-in-out hover:bg-green-700 hover:shadow-md"
                         onClick={() => handleSubmit(basket)}
                     >
-                        Proceed to next stage
+                        Proceed to Next Stage
                     </button>
                 )}
 
@@ -373,7 +373,7 @@ export function FeedbackStage() {
                         <br />
                         <p><span role="img" aria-label="trophy">🏆</span> Your score this round is your profits (<b>${profit}</b>).</p>
                         <br />
-                        <p className="text-lg" style={{ fontFamily: "'Archivo', sans-serif" }}>Your remaining capital for this round is : <b>${capital}</b></p>
+                        <p className="text-lg" style={{ fontFamily: "'Archivo', sans-serif" }}>Your unused capital is: <b>${capital}</b></p>
                     </div>
                 </div>
             );

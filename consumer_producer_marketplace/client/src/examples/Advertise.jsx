@@ -42,7 +42,7 @@ import {
       console.log("Saved production cost to player.round object: ", player.round.get("productionCost"));
     }
     
-    function handleAdverisementChoice(e, advertisementQuality) {
+    function handleAdvertisementChoice(e, advertisementQuality) {
       player.round.set("advertisementQuality", advertisementQuality);
       console.log("Saved advertisement quality to player.round object: ", advertisementQuality);
     }
@@ -89,7 +89,7 @@ import {
         <br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/>
         <div>
         <h1><b>You are a producer of toothpaste.</b> </h1>
-        <h1>You will now decide what to produce, how to advertise it and the price.</h1>
+        <h1>You will now decide what to produce, how to advertise it, and pay for producing it.</h1>
 
         </div>
 
@@ -108,8 +108,8 @@ import {
           <p><strong>Note: </strong>You have the ability to make any kind of advertisement<br/> about your product in order to maximize your sales.</p>
           <p>Your current choice is to advertise your product as: <b>{player.round.get("advertisementQuality")} </b> quality toothspaste.</p>
           <div className="flex justify-center space-x-4"> {/* This flex container will lay out its children (products) in a row */}
-          <AdvertisementAlternative title="Standard Toothpaste (low quality)"  quality="low" imageUrl={"url(/images/toothpastestandard.jpg)"} on_button_click={(e) => handleAdverisementChoice(e, "low")}/>
-          <AdvertisementAlternative title="Amazing Toothpaste (high quality)"  quality="high" imageUrl={"url(/images/toothpaseamazing.jpg)"} on_button_click={(e) => handleAdverisementChoice(e, "high")}/>
+          <AdvertisementAlternative title="Standard Toothpaste (low quality)"  quality="low" imageUrl={"url(/images/toothpastestandard.jpg)"} on_button_click={(e) => handleAdvertisementChoice(e, "low")}/>
+          <AdvertisementAlternative title="Amazing Toothpaste (high quality)"  quality="high" imageUrl={"url(/images/toothpaseamazing.jpg)"} on_button_click={(e) => handleAdvertisementChoice(e, "high")}/>
         </div>
         <br/><br/><br/><br/><br/>
           <h1><b>Choose the price for your product</b></h1>
