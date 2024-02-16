@@ -67,7 +67,7 @@ export function ExitSurvey({ next }) {
               </p>
               <div className="mt-4">
                 <a
-                  href="https://bostonu.qualtrics.com/jfe/form/SV_bKv1fR9YmYvmpnw"
+                  href="https://bostonu.qualtrics.com/jfe/form/SV_3aqq5tzlJfllTca"
                   target="_blank"
                 >
                   <p className="survey-link">Click here to continue</p>
@@ -163,8 +163,7 @@ export function ExitSurvey({ next }) {
                     </label>
 
                     <label className={labelClassName}>
-                      Could you explain why or provide other feedback, including
-                      problems you encountered.
+                      Could you explain what made you decide to do this?
                     </label>
 
                     <br />
