@@ -35,8 +35,9 @@ warrants = [{
   round: round.get("name"),
 }]
 player.stage.set("submit", true);
-
 */
+
+
 import React, { useState, useEffect } from "react";
 import {
   useGame,
@@ -141,7 +142,6 @@ export function ClaimsStage() {
             round: round.get("name"),
           });
         }
-
       }
     }, [isCheckboxSelected]);
 
@@ -155,7 +155,6 @@ export function ClaimsStage() {
         toast.error("Select a warrant from the options!");
       } else if (tempStock == 0) {
         toast.error("You cannot submit without any stock!");
-
       } else {
         warrants = [...warrants, updateWarrants];
         stock = [...stock, updatedStock]
@@ -212,7 +211,6 @@ export function ClaimsStage() {
       */
       if (capital - productCost >= 0) {
         setUpdatedStock({
-
           ...updatedStock,
           producerID: player.id,
           productID: productID,
@@ -420,7 +418,8 @@ export function ClaimsStage() {
             onClose={() => {
               if (capital < 0) {
                 toast.error("Not enough funds, change advertising choices!");
-              } else {setIsModalOpen(false)}
+              } 
+              {setIsModalOpen(false)}
             }}
             title="Warrant"
             children={
@@ -460,7 +459,6 @@ export function ClaimsStage() {
                                 warrantDesc: warrant.description,
                                 challengeAmount: parseInt(Math.ceil((warrant.multiplier * Math.abs(profit)) / 5))
                               });
-
                             }
                           }}
                         >

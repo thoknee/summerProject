@@ -219,7 +219,6 @@ import {
     );
   }
 
-
   function ProfitMarginCalculation({producerPlayer}){
     let profit = producerPlayer.round.get("priceOfProduct") - producerPlayer.round.get("productionCost")
     return(

@@ -21,6 +21,7 @@
     player.stage.set("submit", true) is used to submit the stage and move to the next stage.
 */
 
+
 import React, { useState } from "react";
 import { usePlayer, usePlayers, useRound } from "@empirica/core/player/classic/react";
 import { toast } from "react-toastify";
@@ -78,6 +79,7 @@ function ConsumerFeedbackCard({ producer, player, index, basket, round, wallet, 
             return '❓'; // Question mark for any other case
         }
     };
+
     // This function handles the button click when there is no warrant
     const funcHandle = () => {
         handleButtonClick(index)
@@ -210,9 +212,8 @@ export function FeedbackStage() {
         setClaims((prevClaims) => {
             if (Array.isArray(prevClaims)) {
                 return [...prevClaims, ...putClaims];
-            } else {
-                return [...putClaims];
             }
+            return [...putClaims];
         });
     }
 
@@ -228,9 +229,8 @@ export function FeedbackStage() {
         setChallenges((prevChallenges) => {
             if (Array.isArray(prevChallenges)) {
                 return [...prevChallenges, ...putChallenges];
-            } else {
-                return [...putChallenges];
             }
+            return [...putChallenges];
         });
     }
 
@@ -245,10 +245,7 @@ export function FeedbackStage() {
                 player.set("challenges", challenges);
                 player.stage.set("submit", true);
             }
-            else {
-                toast.error("Review the summary or confirm your challenge to make more profits in the next round!");
-            }
-
+            toast.error("Review the summary or confirm your challenge to make more profits in the next round!");
         }
 
 
@@ -304,9 +301,7 @@ export function FeedbackStage() {
                             Are You Ready!
                     </button>
                 </div>
-
-
-                </div>
+            </div>
 
                 {clicked && players.filter((p) => p.get("role") === "producer").map((producer, index) => {
                     return <ConsumerFeedbackCard
@@ -328,6 +323,7 @@ export function FeedbackStage() {
                 })}
 
                 <br />
+
                 {allClaimsSelected && (
                     <button
                         className="bg-green-500 text-white py-3 px-6 text-lg rounded-md border-none cursor-pointer shadow-md transition-all duration-200 ease-in-out hover:bg-green-700 hover:shadow-md"
@@ -340,9 +336,11 @@ export function FeedbackStage() {
             </div>
         );
     }
+
     else if (!role) {
         return <div>Loading...</div>;
     }
+    
     else if (role === "producer") {
         const handleProceed = () => {
             player.stage.set("submit", true);
@@ -386,9 +384,7 @@ export function FeedbackStage() {
                 <button className="mb-4 mt-1 bg-green-500 text-white py-3 px-6 text-lg rounded-md border-none cursor-pointer shadow-md transition-all duration-200 ease-in-out hover:bg-green-700 hover:shadow-md" onClick={handleProceed}>Proceed to next stage</button>
             </div>
         );
-
     }
-
     else {
         return (
             <div>
@@ -396,6 +392,4 @@ export function FeedbackStage() {
             </div>
         );
     }
-
-
 };

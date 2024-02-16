@@ -18,8 +18,9 @@ basket=[{
 }]
 producer.set("stock", stock) is used to update the stock of the producer.
 producer.get("warrants") is used to get the warrants of the player.
-
 */
+
+
 import React, { useState, useEffect } from "react";
 import { usePlayer, usePlayers, useRound } from "@empirica/core/player/classic/react";
 import { toast } from "react-toastify";
@@ -119,13 +120,9 @@ const ConsumerProductCard = ({ producer, index, round, productSelections, wallet
                 updateIncrementStock();
                 updateDecrementBasket();
             }
-            else {
-                toast.error("You cannot decrease the quantity further")
-            }
+            toast.error("You cannot decrease the quantity further")
         }
-        else {
-            toast.error("Please uncheck the checkbox to change the quantity")
-        }
+        toast.error("Please uncheck the checkbox to change the quantity")
     }
 
     // Function to increment the quantity of the product
@@ -136,13 +133,9 @@ const ConsumerProductCard = ({ producer, index, round, productSelections, wallet
                 updateDecrementStock();
                 updateIncrementBasket();
             }
-            else {
-                toast.error("You don't have enough money in your wallet or the stock is not available")
-            }
+            toast.error("You don't have enough money in your wallet or the stock is not available")
         }
-        else {
-            toast.error("Please uncheck the checkbox to change the quantity")
-        }
+        toast.error("Please uncheck the checkbox to change the quantity")
     }
 
     // Function to get all the unique items in the basket
@@ -324,9 +317,8 @@ export function ChoiceStage() {
         if (allProductsSelected) {
             player.set("wallet", wallet);
             player.stage.set("submit", true);
-        } else {
-            toast.error("Please add your products to the cart before proceeding!");
         }
+        toast.error("Please add your products to the cart before proceeding!");
     };
 
     if (role === "consumer") {

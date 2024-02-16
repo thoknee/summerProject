@@ -44,9 +44,8 @@ export function QualityStage() {
             } else {
                 toast.error("Not selected a product to produce!")
             }
-        } else {
-            player.stage.set("submit", true);
         }
+        player.stage.set("submit", true);
     }
 
     function getRandomProduct() {

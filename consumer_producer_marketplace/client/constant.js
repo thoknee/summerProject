@@ -49,14 +49,16 @@ const products = [
           productCost: 2,
           value: 6,
           productImage:
-          "/graphics/StandardToothpasteAI.png"        },
+          "/graphics/StandardToothpasteAI.png"
+        },
         high: {
           productName: "Ayurvedic",
           productQuality: "high",
           productPrice: 8,
           productCost: 6,
           value: 10,
-          productImage: "/graphics/PremiumToothpasteAI.png"        },
+          productImage: "/graphics/PremiumToothpasteAI.png"
+        },
         productWarrants: [
           {
             icon: "https://res.cloudinary.com/dgccztjql/image/upload/v1704638438/SimPPL/Gum_Protection_onbo0t.png",

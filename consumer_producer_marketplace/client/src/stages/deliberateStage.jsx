@@ -18,10 +18,7 @@
   player.round.get("warrantAdded") is used to get the warrant added of the player.
   player.round.get("challengeAmount") is used to get the challenge amount of the player.
   player.stage.set("submit", true) is used to submit the stage and move to the next stage.
-
-
-
-  */
+*/
 
 
 import React from "react";
@@ -252,8 +249,6 @@ export function DeliberateStage() {
     );
   };
 
-
-
   if (!role) {
     return <div>Loading...</div>;
   }
@@ -263,7 +258,6 @@ export function DeliberateStage() {
       <br />
       {role === "producer" && renderProducerFeedback()}
       {role === "consumer" && renderConsumerFeedback()}
-
 
       <br />
       {role === "producer" ? <button style={styles.proceedButton} onClick={handleProceed}>Proceed to next stage</button> : <button style={styles.proceedButton} onClick={handleSubmit}>Proceed to next stage</button>}
