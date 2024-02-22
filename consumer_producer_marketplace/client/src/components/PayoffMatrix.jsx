@@ -3,9 +3,9 @@ import { cost_hi, cost_lo, price_hi, price_lo, value_hi, value_lo } from "../../
 
 function getColor(name) {
     if (name.toLowerCase().includes("low")) {
-        return "#FA6B84";
+        return "#EF4444";
     } else if (name.toLowerCase().includes("high") || name.toLowerCase().includes("premium")) {
-        return "#00CDBB";
+        return "#22C55E";
     } else {
         return "white";
     }
@@ -87,13 +87,15 @@ function PayoffTable({ columnNames, rows }) {
             <thead>
                 <tr>
                     {columnNames.map((columnName, index) => (
-                        <th key={index} 
-                            style={{ fontFamily: "Archivo", 
-                                     color: 'white', 
-                                     backgroundColor: getColor(columnName), 
-                                     border: '1px solid #ddd', 
-                                     padding: '8px', 
-                                     fontSize: "10px" }}
+                        <th key={index}
+                            style={{
+                                fontFamily: "Archivo",
+                                color: 'black',
+                                backgroundColor: getColor(columnName),
+                                border: '1px solid #ddd',
+                                padding: '8px',
+                                fontSize: "10px"
+                            }}
                         >
                             {columnName}
                         </th>
@@ -103,21 +105,25 @@ function PayoffTable({ columnNames, rows }) {
             <tbody>
                 {rows.map((row, rowIndex) => (
                     <tr key={rowIndex}>
-                        <td style={{ fontFamily: "Archivo", 
-                                     fontWeight: "bold", 
-                                     color: 'white', 
-                                     backgroundColor: getColor(row[0]), 
-                                     border: '1px solid #ddd', 
-                                     padding: '8px', 
-                                     fontSize: "10px" }}
+                        <td style={{
+                            fontFamily: "Archivo",
+                            fontWeight: "bold",
+                            color: 'black',
+                            backgroundColor: getColor(row[0]),
+                            border: '1px solid #ddd',
+                            padding: '8px',
+                            fontSize: "10px"
+                        }}
                         >
                             {row[0]}
                         </td>
                         {row.slice(1).map((cell, cellIndex) => (
-                            <td key={cellIndex} style={{ color: cell < 0 ? 'red' : (cell > 0 ? 'green' : ''), 
-                                                         border: '1px solid #ddd', 
-                                                         padding: '8px', 
-                                                         backgroundColor: 'white' }}
+                            <td key={cellIndex} style={{
+                                color: cell < 0 ? 'red' : (cell > 0 ? 'green' : ''),
+                                border: '1px solid #ddd',
+                                padding: '8px',
+                                backgroundColor: 'white'
+                            }}
                             >
                                 {(cell > 0 ? "+" : "") + cell + " points"}
                             </td>
@@ -131,15 +137,15 @@ function PayoffTable({ columnNames, rows }) {
 
 export function PayoffMatrix({ role }) {
     const consumerData = [
-        ['', 'Advertised Quality - Low', 'Advertised Quality - High'],
-        ['Actual Quality - Low', value_lo - price_lo, value_lo - price_hi],
-        ['Actual Quality - High', value_hi - price_lo, value_hi - price_hi],
+        ['Reward', 'Advertised Quality : Low', 'Advertised Quality : High'],
+        ['Actual Quality : Low', value_lo - price_lo, value_lo - price_hi],
+        ['Actual Quality : High', value_hi - price_lo, value_hi - price_hi],
     ];
 
     const producerData = [
-        ['', 'Advertised As - Low', 'Advertised As - High'],
-        ['Produced Quality - Low', price_lo - cost_lo, price_hi - cost_lo],
-        ['Produced Quality - High', price_lo - cost_hi, price_hi - cost_hi],
+        ['Reward', 'Advertised As : Low', 'Advertised As : High'],
+        ['Produced Quality : Low', price_lo - cost_lo, price_hi - cost_lo],
+        ['Produced Quality : High', price_lo - cost_hi, price_hi - cost_hi],
     ];
 
     const data = role === "consumer" ? consumerData : producerData;

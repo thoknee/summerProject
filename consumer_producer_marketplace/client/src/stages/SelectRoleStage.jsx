@@ -62,7 +62,7 @@ export function SelectRolesStage() {
             "Admilton", "Isa", "Jerry", "Parker", "Wayne", "West", "Kent", "Allen", "Stark"];
         const chosenName = names[Math.floor(Math.random() * names.length)];
         const nums = Math.floor(Math.random() * 999) + 1;
-        return `${chosenName}${nums}`;
+        return `${chosenName}${nums}'s`;
     }
 
     function ProducerInfo() {

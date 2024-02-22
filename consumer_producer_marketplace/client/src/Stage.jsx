@@ -12,6 +12,7 @@ import { ClaimsStage } from "./stages/claimsStage";
 import { DeliberateStage } from "./stages/deliberateStage";
 import { ChoiceStage } from "./stages/choiceStage";
 import { FeedbackStage } from "./stages/feedbackStage";
+import { TrialStage } from "./stages/trialStage";
 import Leaderboard from "./components/Leaderboard";
 
 export function Stage() {
@@ -50,10 +51,12 @@ export function Stage() {
   switch (stage.get("name")) {
     case "selectRoleStage":
       return <SelectRolesStage />;
-    case "qualityStage":
-      return <QualityStage />;
-    case "claimsStage":
-      return <ClaimsStage />;
+    case "stockStage":
+      return <TrialStage />;
+    // case "qualityStage":
+    //   return <QualityStage />;
+    // case "claimsStage":
+    //   return <ClaimsStage />;
     case "deliberateStage":
       return <DeliberateStage />;
     case "choiceStage":

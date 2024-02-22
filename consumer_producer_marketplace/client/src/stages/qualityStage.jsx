@@ -82,7 +82,7 @@ export function QualityStage() {
                             quality === productQuality
                                 ? `4px solid ${backgroundColor}`
                                 : "none",
-                        background : quality === productQuality || hover ? `${backgroundColor}80` : "transparent",
+                        background: quality === productQuality || hover ? `${backgroundColor}80` : "transparent",
                     }}
                     onMouseEnter={() => setHover(true)}
                     onMouseLeave={() => setHover(false)}
@@ -117,7 +117,7 @@ export function QualityStage() {
             </div>
         );
     }
-    
+
     function ConsumerWaitingMessage() {
         /*
         Used to display the waiting message for the consumer.
@@ -131,20 +131,18 @@ export function QualityStage() {
                 </h2>
                 <p>While you wait: </p>
                 <ul>
-                    <li>"What products will be available? 🤔🛍️"</li>
-                    <li>"Can you spot the best deals? 🕵️🔍"</li>
+                    <li>"What products will be available? 🤔"</li>
+                    <li>"Can you spot the best deals? 🕵️"</li>
                 </ul>
                 <br />
                 <p>
-                    Here is the payout you stand to win if you buy genuine products and lose 
-                    if you get misled by false advertisements. 
-                    Remember that <b className='text-red-600'>no purchase means no points</b>!
+                <b className='text-red-600'>Are you fooled by false ads?</b> Here is the payout depending on the product you buy:
                 </p>
-                <br/>
+                <br />
                 <PayoffMatrix role={"consumer"} selectedProduct={selectedProduct} />
                 <br />
-                <p>Get ready to make smart choices and find the best products! 🧠🎯</p>
-                <div>🛒🌟</div>
+                <p>Reward applies to each unit purchased. No purchase means no points. 🎯</p>
+                <div>Get ready to find the best deals! 🛒</div>
             </div>
         );
     }

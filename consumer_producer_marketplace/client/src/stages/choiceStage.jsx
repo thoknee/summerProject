@@ -120,9 +120,13 @@ const ConsumerProductCard = ({ producer, index, round, productSelections, wallet
                 updateIncrementStock();
                 updateDecrementBasket();
             }
-            toast.error("You cannot decrease the quantity further")
+            else{
+                toast.error("You cannot decrease the quantity further")
+            }
         }
-        toast.error("Please uncheck the checkbox to change the quantity")
+        else{
+            toast.error("Please uncheck the checkbox to change the quantity")
+        }
     }
 
     // Function to increment the quantity of the product
@@ -133,9 +137,13 @@ const ConsumerProductCard = ({ producer, index, round, productSelections, wallet
                 updateDecrementStock();
                 updateIncrementBasket();
             }
-            toast.error("You don't have enough money in your wallet or the stock is not available")
+            else{
+                toast.error("You don't have enough money in your wallet or the stock is not available")
+            }
         }
-        toast.error("Please uncheck the checkbox to change the quantity")
+        else{
+            toast.error("Please uncheck the checkbox to change the quantity")
+        }
     }
 
     // Function to get all the unique items in the basket
@@ -165,7 +173,7 @@ const ConsumerProductCard = ({ producer, index, round, productSelections, wallet
         <div className="product-card border border-gray-300 shadow-md p-8 rounded-lg w-[310px] text-center bg-white mx-auto relative overflow-hidden">
             {warrantAdded ? (
                 <div
-                    className="warrant-banner bg-yellow-600 transform rotate-40 h-6 w-160px absolute right-[0px] ml-neg-150 mt-20px"
+                    className="warrant-banner bg-yellow-600 transform rotate-40 h-6 w-160px absolute right-[-30px]"
                 >
                     <b className="text-white" style={{ fontFamily: "Avenir" }}>WARRANTED</b>
                 </div>
@@ -180,7 +188,7 @@ const ConsumerProductCard = ({ producer, index, round, productSelections, wallet
                 src={productAdImage}
                 alt={`Product ${index + 1}`}
             />
-            <p>Quality: {productAdQuality}</p>
+            <p>Advertised Quality: {productAdQuality}</p>
             <p>Price: ${productPrice}</p>
             {warrantAdded ? <><p>Warranted Claim Description: {warrantDesc}</p><p>Warranted for: ${warrantPrice}</p></> : <></>}
             <p>
@@ -204,6 +212,7 @@ const ConsumerProductCard = ({ producer, index, round, productSelections, wallet
                         producer.set("stock", stock)
                         // need to update for multiplayer TODO
                         player.set("basket", getAllUniqueItems(basket))
+                        console.log("Basket", getAllUniqueItems(basket))
                     }
                 }}
                 className={`bg-${productSelections[index] ? "green-500" : "white"} text-black py-2 px-4 rounded-full border border-green-300 cursor-pointer shadow-md`}
@@ -318,7 +327,9 @@ export function ChoiceStage() {
             player.set("wallet", wallet);
             player.stage.set("submit", true);
         }
-        toast.error("Please add your products to the cart before proceeding!");
+        else{
+            toast.error("Please add your products to the cart before proceeding!");
+        }
     };
 
     if (role === "consumer") {
@@ -394,12 +405,12 @@ export function ChoiceStage() {
                     </h2>
                     <p>While you wait: </p>
                     <ul>
-                        <li>"How many will buy your product? 🤔🛒"</li>
-                        <li>"What moves are your competitors making? 🚀🕵‍♂"</li>
+                        <li>"How many will buy your product? 🤔"</li>
+                        <li>"What moves are your competitors making? 🕵‍♂"</li>
                     </ul>
                     <br/>
-                    <p>Keep an eye on the market trends and plan your next steps! 💡📈</p>
-                    <div className="text-xl mt-5">🏭🌟</div>
+                    <p>Keep an eye on the market trends and plan your next steps! 📈</p>
+                    <div className="text-xl mt-5">🏭</div>
                 </div>
             );
         }

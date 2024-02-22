@@ -70,9 +70,6 @@ async function updateConsumerClaimScores(game) {
     else if (currentChallenges.status === false) {
       return;
     }
-    else {
-      return;
-    }
   });
 }
 
@@ -83,7 +80,6 @@ async function updateConsumerScores(game) {
     const basket = player.get("basket");
     const wallet = player.get("wallet");
     const round = player.round.get("round")
-
     const originalScore = player.get("score") || 0;
     let score = player.get("score") || 0;
     basket.forEach((item) => {
@@ -100,18 +96,23 @@ async function updateConsumerScores(game) {
 async function updateProducerScores(game) {
   await game.players.forEach(async (player) => {
     if (player.get("role") !== "producer") return;
+    const capital = player.get("capital");
     const stock = player.get("stock");
     const round = player.round.get("round")
     const currentStock = stock.find((item) => item.round === round);
     const soldStock = currentStock.soldStock;
     const productPrice = currentStock.productPrice;
     const productCost = currentStock.productCost;
-    const profit = productPrice - productCost;
+    // const profit = productPrice - productCost;
+    const initialStock = currentStock.initialStock;
+    const totalCost = initialStock * productCost;
+    const totalSales = soldStock * productPrice;
     const originalScore = player.get("score") || 0;
     let score = player.get("score") || 0;
-    score += (profit * soldStock);
+    score += (totalSales - totalCost);
     player.set("score", score);
     player.set("scoreDiff", score - originalScore);
+    player.set("capital", capital + totalSales);
   });
 }
 
@@ -135,8 +136,9 @@ Empirica.onGameStart(async ({ game }) => {
   for (let roundNumber = 1; roundNumber <= numRounds; roundNumber++) {
     const round = game.addRound({ name: `Round${roundNumber}` });
     round.addStage({ name: "selectRoleStage", duration: 24000 });
-    round.addStage({ name: "qualityStage", duration: 24000 });
-    round.addStage({ name: "claimsStage", duration: 24000 });
+    round.addStage({ name: "stockStage", duration: 24000 });
+    // round.addStage({ name: "qualityStage", duration: 24000 });
+    // round.addStage({ name: "claimsStage", duration: 24000 });
     round.addStage({ name: "choiceStage", duration: 24000 });
     round.addStage({ name: "feedbackStage", duration: 24000 });
     round.addStage({ name: "deliberateStage", duration: 24000 });
@@ -150,13 +152,15 @@ Empirica.onGameStart(async ({ game }) => {
 });
 
 Empirica.onStageEnded(({ stage }) => {
-  if (stage.get("name") === "choiceStage") {
-    updateProducerScores(stage.currentGame);
-    updateConsumerScores(stage.currentGame);
-  }
-  if (stage.get("name") === "feedbackStage") {
-    updateProducerClaimScores(stage.currentGame);
-    updateConsumerClaimScores(stage.currentGame);
+  switch (stage.get("name")) {
+    case "choiceStage":
+      updateProducerScores(stage.currentGame);
+      updateConsumerScores(stage.currentGame);
+      break;
+    case "feedbackStage":
+      updateProducerClaimScores(stage.currentGame);
+      updateConsumerClaimScores(stage.currentGame);
+      break;
   }
 });
 

@@ -175,7 +175,7 @@ export function ClaimsStage() {
         productAdQuality === "high"
           ? adjPos[Math.floor(Math.random() * adjPos.length)]
           : adjNeg[Math.floor(Math.random() * adjNeg.length)];
-      return `${brandName} ${productAdName}'s ${chosenAdj} ${category}`;
+      return `${brandName} ${productAdName} ${chosenAdj} ${category}`;
     }
 
     const decrementQuantity = () => {
@@ -356,46 +356,46 @@ export function ClaimsStage() {
               borderRadius: "15px",
             }}
           >
-            <div className="flex items-center"> 
-            <input
-              className="rounded-md mr-2 focus:ring-8 focus:ring-blue-500 cursor-pointer h-6 w-6"
-              type="checkbox"
-              id="addWarrant"
-              checked={isCheckboxSelected}
-              onClick={() => {
-                if (tempStock <= 0 || capital <= Math.abs(profit) * 3) {
-                  toast.error("You do not have enough capital to add a warrant");
-                } 
-                else if (productAdQuality === "") {
-                  toast.error("Choose a quality to advertise first!");
-                }
-                else if (tempStock == 0) {
-                  toast.error("You cannot add a warrant without any stock!")
-                }
-                else {
-                  setIsCheckboxSelected(!isCheckboxSelected);
-                }
-              }}
-              readOnly={true}
-            />
+            <div className="flex items-center">
+              <input
+                className="rounded-md mr-2 focus:ring-8 focus:ring-blue-500 cursor-pointer h-6 w-6"
+                type="checkbox"
+                id="addWarrant"
+                checked={isCheckboxSelected}
+                onClick={() => {
+                  if (tempStock <= 0 || capital <= Math.abs(profit) * 3) {
+                    toast.error("You do not have enough capital to add a warrant");
+                  }
+                  else if (productAdQuality === "") {
+                    toast.error("Choose a quality to advertise first!");
+                  }
+                  else if (tempStock == 0) {
+                    toast.error("You cannot add a warrant without any stock!")
+                  }
+                  else {
+                    setIsCheckboxSelected(!isCheckboxSelected);
+                  }
+                }}
+                readOnly={true}
+              />
               <div>
                 <span className="text-lg font-semibold">Warrant my Advertisement</span>
               </div>
-              
+
               <div className="ml-auto">
-                  {isCheckboxSelected && (
-                    <button
-                      className={`bg-blue-400 p-2 rounded-lg ${updateWarrants.warrantAdded ? "" : "bg-red-400"} ${isCheckboxSelected && updateWarrants.warrantAdded ? "" : "animate-pulse"}`}
-                      disabled={!isCheckboxSelected}
-                      onClick={() => setIsModalOpen(true)}
-                    >
-                      {updateWarrants.warrantAdded ? "Warrant Selected" : "Select Warrant"}
-                    </button>
-                  )}
-                </div>
-              
+                {isCheckboxSelected && (
+                  <button
+                    className={`bg-blue-400 p-2 rounded-lg ${updateWarrants.warrantAdded ? "" : "bg-red-400"} ${isCheckboxSelected && updateWarrants.warrantAdded ? "" : "animate-pulse"}`}
+                    disabled={!isCheckboxSelected}
+                    onClick={() => setIsModalOpen(true)}
+                  >
+                    {updateWarrants.warrantAdded ? "Warrant Selected" : "Select Warrant"}
+                  </button>
+                )}
+              </div>
+
             </div>
-            <hr className="mt-1 mb-2"/>
+            <hr className="mt-1 mb-2" />
             <div className="option">
               <div className="flex justify-between">
               </div>
@@ -403,11 +403,11 @@ export function ClaimsStage() {
                 🧾 This will cost you{" — "}<b>$</b>
                 <b>{updateWarrants.warrantPrice == 0 ? "..." : updateWarrants.warrantPrice}</b>
               </p>
-              
+
               <p className="text-justify">
-                💡 Warrants allow you to add credible claims to boost your advertisements, backed by an amount of money. 
+                💡 Warrants allow you to add credible claims to boost your advertisements, backed by an amount of money.
                 Your warranted advertisement is showcased to all potential consumers. If your claim is unchallenged or truthful, the
-                money spent on your warrant will be fully refunded. However, if you warrant a false advertisement that is challenged, 
+                money spent on your warrant will be fully refunded. However, if you warrant a false advertisement that is challenged,
                 your money spent on the warrant will be lost to the challenger.
               </p>
             </div>
@@ -418,8 +418,8 @@ export function ClaimsStage() {
             onClose={() => {
               if (capital < 0) {
                 toast.error("Not enough funds, change advertising choices!");
-              } 
-              {setIsModalOpen(false)}
+              }
+              { setIsModalOpen(false) }
             }}
             title="Warrant"
             children={
@@ -488,46 +488,58 @@ export function ClaimsStage() {
     }
 
     function InfoDisplay() {
+
+      // Production Budget:	$24
+      // Quality Level:	Low
+      // Unit Margin:	$6
+      // Units Produced:	5
+      // Advertised Quality:	High
+      // Ad Quality warranted?	No
+      // Profit: No Sales -$10, Everything Sells $30
+
       return (
-        <div className="fixed left-[10px] top-[200px] w-[340px] bg-white p-[10px] shadow-md rounded-md z-[1000]">
-          <b className="text-lg">Choices summary</b> <hr/>
-          <div className="mt-2" style={{ whiteSpace: 'nowrap' }}>
-          <span role="img" aria-label="capital">
-            💵
-          </span>
-          Disposable capital for production: <b>${capital}</b>
-          <br />
-          <span role="img" aria-label="units">
-            🏭
-          </span>
-          Produce {tempStock > 0 ? tempStock : "..."}{" "}
-          <b>{productQuality}</b> quality units
-          <br />
-          <span role="img" aria-label="units">
-            📢{" "}
-          </span>
-          Advertise as <b>{productAdQuality ? productAdQuality : "..."}</b>{" "}
-          quality at a price of <b>${productPrice ? productPrice : "..."}</b>
-          <br />
-          <span role="img" aria-label="units">
-            💲{" "}
-          </span>
-          Profit per unit sold: <b>${profit ? profit : "..."}</b>
-          <br />
-          <span role="img" aria-label="units">
-            📢{" "}
-          </span>
-          Warrant your ad? <b>{updateWarrants.warrantAdded ? "Yes" : "No"}</b>
-          <br />
-          {/* Don't factor in warrant in total profit calculation, because it may be fully refunded */}
-          <span role="img" aria-label="units">
-            💰{" "}
-          </span>
-          Profit if you sell everything:{" "}
-          <b>${profit * tempStock}</b>
-          <br />
-          <b style={{color: "red"}}>All unsold products removed each round!</b>
-          </div>
+        <div className="fixed left-[10px] top-[200px] w-[280px] bg-white p-[10px] shadow-md rounded-md z-[1000]">
+          <h1 className="text-xl font-semibold">Choices Summary</h1>
+          <table
+            className="table-auto border-separate border-spacing-2 border border-slate-500 rounded-md">
+            <tr>
+              <td className="text-left font-semibold">Production Budget</td>
+              <td className="text-center font-semibold text-base/none text-green-700 bg-green-300 rounded-lg
+                  ">{capital}</td>
+            </tr>
+            <tr>
+              <td className="text-left font-semibold">Quality Level</td>
+              <td className="text-center font-semibold text-base/none text-red-700 bg-red-300 rounded-lg
+                  ">{productQuality}</td>
+            </tr>
+            <tr>
+              <td className="text-left font-semibold">Unit Margin</td>
+              <td className="text-center font-semibold text-base/none text-green-700 bg-green-300 rounded-lg
+                  ">{profit ? profit : "..."}</td>
+            </tr>
+            <tr>
+              <td className="text-left font-semibold">Units Produced</td>
+              <td className="text-center
+                  ">{tempStock > 0 ? tempStock : "..."}</td>
+            </tr>
+            <tr>
+              <td className="text-left font-semibold">Advertised Quality</td>
+              <td className="text-center
+                  ">{productAdQuality ? productAdQuality : "..."}</td>
+            </tr>
+            <tr>
+              <td className="text-left font-semibold">Ad Quality warranted?</td>
+              <td className="text-center
+                  ">{updateWarrants.warrantAdded ? "Yes" : "No"}</td>
+            </tr>
+            <tr>
+              <td className="text-left font-semibold">Profit</td>
+              <td className="text-center
+                  ">{profit * tempStock}</td>
+            </tr>
+          </table>
+          <b style={{ color: "red" }}>All unsold products removed each round!</b>
+
           <div className="mt-4 ">
             <PayoffMatrix className="mt-4" role={"producer"} />
           </div>
@@ -548,7 +560,7 @@ export function ClaimsStage() {
           <div className="divide-y divide-lime-500">
             <div>
               <b>Choose how you want to Advertise</b>
-            </div> 
+            </div>
             <div>
               Higher profits get you a higher score!
             </div>
@@ -574,55 +586,55 @@ export function ClaimsStage() {
           />
         </div>
         <div className={"mx-10 mt-16 mb-16"}>
-        <button
-          className={`text-red-500 border-solid border-2 rounded-full border-red-500 px-2 py-1 bg-white ${tempStock === 0 ? 'cursor-not-allowed opacity-50' : ''}`}
-          onClick={() => {
-            if (iniStock - tempStock === 0) {
-              toast.error("You cannot reduce the stock any further!");
-            } else if (updatedStock.initialStock === undefined) {
-              toast.error("Choose a quality to advertise first!");
-            } else {
-              decrementQuantity();
-            }
-          }}
-          disabled={tempStock === 0}
-        >
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            className="h-5 w-5"
-            fill="none"
-            viewBox="0 0 24 24"
-            stroke="currentColor"
+          <button
+            className={`text-red-500 border-solid border-2 rounded-full border-red-500 px-2 py-1 bg-white ${tempStock === 0 ? 'cursor-not-allowed opacity-50' : ''}`}
+            onClick={() => {
+              if (iniStock - tempStock === 0) {
+                toast.error("You cannot reduce the stock any further!");
+              } else if (updatedStock.initialStock === undefined) {
+                toast.error("Choose a quality to advertise first!");
+              } else {
+                decrementQuantity();
+              }
+            }}
+            disabled={tempStock === 0}
           >
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M20 12H4" />
-          </svg>
-        </button>
-        <span style={{ marginLeft: "10px", marginRight: "10px", fontSize: "25px" }}>
-          {tempStock}
-        </span>
-        <button
-          className={`text-green-500 border-solid border-2 rounded-full border-green-500 px-2 py-1 bg-white ${capital - productCost < 0 ? 'cursor-not-allowed opacity-50' : ''}`}
-          onClick={() => {
-            if (capital - productCost < 0) {
-              toast.error("You do not have enough capital to produce more units!");
-            } else if (updatedStock.initialStock === undefined) {
-              toast.error("Choose a quality to advertise first!");
-            } else {
-              incrementQuantity();
-            }
-          }}
-          disabled={capital - productCost < 0}
-        >
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            className="h-5 w-5"
-            fill="none"
-            viewBox="0 0 24 24"
-            stroke="currentColor"
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              className="h-5 w-5"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+            >
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M20 12H4" />
+            </svg>
+          </button>
+          <span style={{ marginLeft: "10px", marginRight: "10px", fontSize: "25px" }}>
+            {tempStock}
+          </span>
+          <button
+            className={`text-green-500 border-solid border-2 rounded-full border-green-500 px-2 py-1 bg-white ${capital - productCost < 0 ? 'cursor-not-allowed opacity-50' : ''}`}
+            onClick={() => {
+              if (capital - productCost < 0) {
+                toast.error("You do not have enough capital to produce more units!");
+              } else if (updatedStock.initialStock === undefined) {
+                toast.error("Choose a quality to advertise first!");
+              } else {
+                incrementQuantity();
+              }
+            }}
+            disabled={capital - productCost < 0}
           >
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v12m0-6h6m-6 0H6" />
-          </svg>
-        </button>
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              className="h-5 w-5"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+            >
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v12m0-6h6m-6 0H6" />
+            </svg>
+          </button>
         </div>
         {
           marketType === "coasian-market" ? (
@@ -648,28 +660,24 @@ export function ClaimsStage() {
         <div className="text-center p-[20px] bg-gray-100 rounded-md shadow-md max-w-[500px] mx-[20px] my-auto">
           <h2 className="text-xl mb-2 font-semibold flex items-center justify-center">
             <img src="https://cdn.pixabay.com/animation/2023/03/08/09/53/09-53-16-104_512.gif" alt="timer" className="w-6 h-6 mr-2" />
-              Waiting Room
+            Waiting Room
             <img src="https://cdn.pixabay.com/animation/2023/03/08/09/53/09-53-16-104_512.gif" alt="timer" className="w-6 h-6 ml-2" />
           </h2>
           <p>While you wait: </p>
-          <ul>
-            <li>"What products will be available? 🤔🛍️"</li>
-            <li>"Can you spot the best deals? 🕵️🔍"</li>
-          </ul>
-          <br />
+            <ul>
+              <li>"What products will be available? 🤔"</li>
+              <li>"Can you spot the best deals? 🕵️"</li>
+            </ul>
+            <br />
             <p>
-              Here is the payout you stand to win if you buy genuine products and lose 
-              if you get misled by false advertisements. 
-              Remember that <b className='text-red-600'>no purchase means no points</b>!
+              <b className='text-red-600'>Are you fooled by false ads?</b> Here is the payout depending on the product you buy:
             </p>
-          <br/>
-          <PayoffMatrix role={"consumer"} />
-          <br />
-          <p>
-            Get ready to make smart choices and find the best products! 🧠🎯
-          </p>
-          <div className="text-base mt-[10px]">🛒🌟</div>
-        </div>
+            <br/>
+            <PayoffMatrix role={"consumer"} />
+            <br />
+            <p>Reward applies to each unit purchased. No purchase means no points. 🎯</p>
+            <div>Get ready to find the best deals! 🛒</div>
+          </div>
       );
     }
     if (!role) {
