@@ -17,7 +17,6 @@ basket=[{
     round: round,
 }]
 producer.set("stock", stock) is used to update the stock of the producer.
-producer.get("warrants") is used to get the warrants of the player.
 */
 
 
@@ -39,11 +38,6 @@ const ConsumerProductCard = ({ producer, index, round, productSelections, wallet
     const productAdImage = tempStock.productAdImage;
     const initialStock = tempStock.initialStock;
     const [remStock, setRemStock] = useState(tempStock.remainingStock);
-    const warrants = producer.get("warrants");
-    const tempWarrant = warrants.find((item) => item.round === round);
-    const warrantAdded = tempWarrant.warrantAdded;
-    const warrantPrice = tempWarrant.warrantPrice;
-    const warrantDesc = tempWarrant.warrantDesc;
     const [quantity, setQuantity] = useState(0);
 
     // Update the stock of the product
@@ -171,15 +165,6 @@ const ConsumerProductCard = ({ producer, index, round, productSelections, wallet
 
     return (
         <div className="product-card border border-gray-300 shadow-md p-8 rounded-lg w-[310px] text-center bg-white mx-auto relative overflow-hidden">
-            {warrantAdded ? (
-                <div
-                    className="warrant-banner bg-yellow-600 transform rotate-40 h-6 w-160px absolute right-[-30px]"
-                >
-                    <b className="text-white" style={{ fontFamily: "Avenir" }}>WARRANTED</b>
-                </div>
-            ) : (
-                <></>
-            )}
             <h3>{`Ad # ${index + 1}`}</h3>
             <h4>Seller: {producer.id}</h4>
             <h3>{productIdentifier}</h3>
@@ -190,7 +175,7 @@ const ConsumerProductCard = ({ producer, index, round, productSelections, wallet
             />
             <p>Advertised Quality: {productAdQuality}</p>
             <p>Price: ${productPrice}</p>
-            {warrantAdded ? <><p>Warranted Claim Description: {warrantDesc}</p><p>Warranted for: ${warrantPrice}</p></> : <></>}
+        
             <p>
                 In stock: <b>{remStock}</b>
             </p><br />

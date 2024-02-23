@@ -53,12 +53,6 @@ export function Stage() {
       return <SelectRolesStage />;
     case "stockStage":
       return <TrialStage />;
-    // case "qualityStage":
-    //   return <QualityStage />;
-    // case "claimsStage":
-    //   return <ClaimsStage />;
-    case "deliberateStage":
-      return <DeliberateStage />;
     case "choiceStage":
       return <ChoiceStage />;
     case "feedbackStage":

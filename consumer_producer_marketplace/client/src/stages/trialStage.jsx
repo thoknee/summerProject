@@ -23,12 +23,12 @@ export function TrialStage() {
 
     if (role === "producer") {
         let [selectedProduct, _] = useState(getRandomProduct());
-        let { low, high, id, category, lowWarrant, highWarrant } = selectedProduct;
+        let { low, high, id, category } = selectedProduct;
         let brandName = player.round.get("brandName");
 
         let [productQuality, setProductQuality] = useState("");
         let [productAdQuality, setProductAdQuality] = useState("");
-        const [hover, setHover] = useState(false);
+        
         const backgroundColor = productQuality === "low" ? "#FA6B84" : "#00CDBB";
         const backgroundColorAd = productAdQuality === "low" ? "#FA6B84" : "#00CDBB";
 
@@ -45,14 +45,7 @@ export function TrialStage() {
         let [profit, setProfit] = useState(0);
         let stock = player.get("stock") || [];
         let [updatedStock, setUpdatedStock] = useState({});
-        let warrants = player.get("warrants") || [];
-        let [updateWarrants, setUpdateWarrants] = useState({});
         let [tempStock, setTempStock] = useState(0);
-        let [warrantPrice, setWarrantPrice] = useState(0);
-        let [warrantAdded, setWarrantAdded] = useState(false);
-        // let [warrantQuality, setwarrantQuality] = useState("")
-
-        const backgroundColorWarrant = warrantAdded === true ? "#FA6B84" : "#00CDBB";
 
         function adjSelector() {
             /*
@@ -130,9 +123,7 @@ export function TrialStage() {
                 } else if (tempStock == 0) {
                     toast.error("You need to produce units!");
                 } else {
-                    warrants = [...warrants, updateWarrants];
                     stock = [...stock, updatedStock]
-                    player.set("warrants", warrants);
                     player.set("capital", capital);
                     player.set("stock", stock);
                     player.round.set("round", round)
@@ -170,7 +161,7 @@ export function TrialStage() {
                                 <h1 className="text-lg font-bold">Choose Product Quality</h1>
                                 <div className="flex flex-row justify-center space-x-4 w-full">
                                     <div onClick={() => {
-                                        setCapital(capital + tempStock * productCost + warrantPrice)
+                                        setCapital(capital + tempStock * productCost)
                                         setProductQuality(low.productQuality);
                                         setProductCost(low.productCost);
                                         setProductImage(low.productImage);
@@ -179,10 +170,8 @@ export function TrialStage() {
                                         setValue(low.value);
                                         setUpdatedStock({})
                                         setTempStock(0)
-                                        setUpdateWarrants({})
                                         setProfit(0)
                                         setProductAdQuality("")
-                                        setWarrantPrice(0)
                                     }}
                                         className="bg-red-500 hover:bg-red-400 text-white font-bold py-2 px-4 border-b-4 border-red-700 hover:border-red-500 rounded-md text-center cursor-pointer w-1/2"
                                         style={{
@@ -197,7 +186,7 @@ export function TrialStage() {
                                     </div>
                                     <div
                                         onClick={() => {
-                                            setCapital(capital + tempStock * productCost + warrantPrice);
+                                            setCapital(capital + tempStock * productCost);
                                             setProductQuality(high.productQuality);
                                             setProductCost(high.productCost);
                                             setProductImage(high.productImage);
@@ -206,10 +195,8 @@ export function TrialStage() {
                                             setValue(high.value);
                                             setUpdatedStock({})
                                             setTempStock(0)
-                                            setUpdateWarrants({})
                                             setProfit(0)
                                             setProductAdQuality("")
-                                            setWarrantPrice(0)
                                         }}
                                         className="bg-green-500 hover:bg-green-400 text-white font-bold py-2 px-4 border-b-4 border-green-700 hover:border-green-500 rounded-md text-center cursor-pointer w-1/2"
                                         style={{
@@ -230,7 +217,7 @@ export function TrialStage() {
                                 <div className="flex flex-row justify-center space-x-4 w-full">
                                     <div onClick={() => {
                                         if (productQuality != "") {
-                                            setCapital(capital + tempStock * productCost + warrantPrice)
+                                            setCapital(capital + tempStock * productCost)
                                             setTempStock(0);
                                             setProfit(Number(low.productPrice) - Number(productCost))
                                             setProductAdQuality(low.productQuality)
@@ -254,19 +241,7 @@ export function TrialStage() {
                                                     round: round
                                                 }
                                             )
-                                            setWarrantPrice(0)
-                                            setUpdateWarrants({
-                                                producerID: player.id,
-                                                productID: productID,
-                                                productQuality: productQuality,
-                                                productAdQuality: low.productQuality,
-                                                warrantAdded: false,
-                                                warrantPrice: 0,
-                                                warrantDesc: "",
-                                                challengeAmount: 0,
-                                                round: round
-                                            });
-                                            toast.info('You also have the ability to warrant your product!');
+                                            toast.info('You can now select the number of units to produce!');
 
                                         }
                                         else {
@@ -287,7 +262,7 @@ export function TrialStage() {
                                     </div>
                                     <div onClick={() => {
                                         if (productQuality != "") {
-                                            setCapital(capital + tempStock * productCost + warrantPrice)
+                                            setCapital(capital + tempStock * productCost)
                                             setTempStock(0);
                                             setProfit(Number(high.productPrice) - Number(productCost))
                                             setProductAdQuality(high.productQuality)
@@ -311,20 +286,7 @@ export function TrialStage() {
                                                     round: round
                                                 }
                                             )
-                                            setWarrantPrice(0)
-                                            setUpdateWarrants({
-                                                producerID: player.id,
-                                                productID: productID,
-                                                productQuality: productQuality,
-                                                productAdQuality: high.productQuality,
-                                                warrantAdded: false,
-                                                warrantPrice: 0,
-                                                warrantDesc: "",
-                                                warrantQuality: "",
-                                                challengeAmount: 0,
-                                                round: round
-                                            });
-                                            toast.info('You also have the ability to warrant your product!');
+                                            toast.info('You can now select the number of units to produce!');
 
                                         }
                                         else {
@@ -399,206 +361,6 @@ export function TrialStage() {
                                 </div>
                             </div>
 
-                            {/* <div className="h-full w-full flex flex-col justify-center items-center gap-4">
-                                <h1 className="text-lg font-bold">Add Warrant</h1>
-                                <div className="flex flex-row justify-center space-x-4 w-full">
-                                    <div onClick={() => {
-                                        if (productQuality != "" && productAdQuality != "" && tempStock > 0 && capital - lowWarrant.multiplier * Math.abs(profit) + warrantPrice >= 0 && warrantQuality != lowWarrant.quality) {
-                                            setUpdateWarrants({
-                                                producerID: player.id,
-                                                productID: productID,
-                                                productQuality: productQuality,
-                                                productAdQuality: productAdQuality,
-                                                warrantAdded: true,
-                                                warrantPrice: lowWarrant.multiplier * Math.abs(profit),
-                                                warrantDesc: lowWarrant.description,
-                                                warrantQuality: lowWarrant.quality,
-                                                challengeAmount: (parseInt(lowWarrant.multiplier * Math.abs(profit) * lowWarrant.challengeMultiplier)),
-                                                round: round,
-                                            })
-                                            setCapital(capital - lowWarrant.multiplier * Math.abs(profit) + warrantPrice)
-                                            setWarrantPrice(lowWarrant.multiplier * Math.abs(profit))
-                                            setwarrantQuality(lowWarrant.quality)
-                                            console.log(capital)
-                                            // setCapital(capital - lowWarrant.multiplier * Math.abs(profit))
-                                        }
-                                        else if (productQuality == "") {
-                                            toast.error("Please select a product quality to produce first!")
-                                        }
-                                        else if (productAdQuality == "") {
-                                            toast.error("Please select a product quality to advertise first!")
-                                        }
-                                        else if (tempStock === 0) {
-                                            toast.error("You need to produce units before warranting your claim!")
-                                        }
-                                        else if (capital - highWarrant.multiplier * Math.abs(profit) + warrantPrice < 0) {
-                                            toast.error("You do not have enough capital to warrant your claim!")
-                                        }
-                                        else {
-                                            console.log("HOOO")
-                                            toast.info("Already warranted with this claim!")
-                                        }
-                                    }}
-                                        className="bg-red-500 hover:bg-red-400 text-white font-bold py-2 px-4 border-b-4 border-red-700 hover:border-red-500 rounded-md text-center cursor-pointer w-1/2"
-                                        style={{
-                                            outline:
-                                                warrantQuality == "low"
-                                                    ? `4px solid ${backgroundColorWarrant}`
-                                                    : "none",
-                                        }}
-                                    >
-                                        <h1 className="text-xl font-bold">{lowWarrant.description}</h1>
-                                        <p className="text-sm">{profit == 0 ? <>...</> : <>This will sell for ${Number(lowWarrant.multiplier * Math.abs(profit))}</>}</p>
-                                    </div>
-                                    <div
-                                        onClick={() => {
-                                            if (productQuality != "" && productAdQuality != "" && tempStock > 0 && capital - highWarrant.multiplier * Math.abs(profit) + warrantPrice >= 0 && warrantQuality != highWarrant.quality) {
-
-                                                // setCapital(capital + warrantPrice)
-                                                setUpdateWarrants({
-                                                    producerID: player.id,
-                                                    productID: productID,
-                                                    productQuality: productQuality,
-                                                    productAdQuality: productAdQuality,
-                                                    warrantAdded: true,
-                                                    warrantPrice: productAdQuality == "high" ? highWarrant.multiplier * Math.abs(profit) : lowWarrant.multiplier * Math.abs(profit),
-                                                    warrantDesc: productAdQuality == "high" ? highWarrant.description : lowWarrant.description,
-                                                    warrantQuality: productAdQuality,
-                                                    challengeAmount: productAdQuality == "high" ? (parseInt(highWarrant.multiplier * Math.abs(profit) * highWarrant.challengeMultiplier)) : (parseInt(lowWarrant.multiplier * Math.abs(profit) * lowWarrant.challengeMultiplier)),
-                                                    round: round,
-                                                })
-                                                setCapital(capital - highWarrant.multiplier * Math.abs(profit) + warrantPrice)
-                                                setWarrantPrice(highWarrant.multiplier * Math.abs(profit))
-                                                console.log("first IF")
-                                                console.log(capital)
-                                                setwarrantQuality(highWarrant.quality)
-                                            }
-                                            else if (productQuality == "") {
-                                                toast.error("Please select a product quality to produce first!")
-                                            }
-                                            else if (productAdQuality == "") {
-                                                toast.error("Please select a product quality to advertise first!")
-                                            }
-                                            else if (tempStock === 0) {
-                                                toast.error("You need to produce units before warranting your claim!")
-                                            }
-                                            else if (capital - highWarrant.multiplier * Math.abs(profit) + warrantPrice < 0) {
-                                                toast.error("You do not have enough capital to warrant your claim!")
-                                            }
-                                            else {
-                                                console.log("HOOO")
-                                                toast.info("Already warranted with this claim!")
-                                            }
-                                        }}
-                                        className="bg-green-500 hover:bg-green-400 text-white font-bold py-2 px-4 border-b-4 border-green-700 hover:border-green-500 rounded-md text-center cursor-pointer w-1/2"
-                                        style={{
-                                            outline:
-                                                warrantQuality == "high"
-                                                    ? `4px solid ${backgroundColorWarrant}`
-                                                    : "none",
-                                        }}
-                                    >
-                                        <h1 className="text-xl font-bold">{highWarrant.description}</h1>
-                                        <p className="text-sm">{profit == 0 ? <>...</> : <>This will sell for ${Number(highWarrant.multiplier * Math.abs(profit))}</>}</p>
-                                    </div>
-                                </div>
-                            </div> */}
-                            {/* <div className="h-full w-full flex flex-col justify-center items-center gap-4">
-
-                            </div> */}
-
-                            <div className="h-full w-full flex justify-center items-center gap-4">
-                                {/* <button
-                                    style={{
-                                        outline: warrantAdded ? `4px solid #FA6B84` : !warrantAdded ? `4px solid #00CDBB` : "none",
-                                    }}
-                                    onClick={() => {
-                                        if (warrantPrice == 0) {
-                                            setUpdateWarrants({
-                                                producerID: player.id,
-                                                productID: productID,
-                                                productQuality: productQuality,
-                                                productAdQuality: productAdQuality,
-                                                warrantAdded: true,
-                                                warrantPrice: productAdQuality == "high" ? highWarrant.multiplier * Math.abs(profit) : lowWarrant.multiplier * Math.abs(profit),
-                                                warrantDesc: productAdQuality == "high" ? highWarrant.description : lowWarrant.description,
-                                                warrantQuality: productAdQuality,
-                                                challengeAmount: productAdQuality == "high" ? (parseInt(highWarrant.multiplier * Math.abs(profit) * highWarrant.challengeMultiplier)) : (parseInt(lowWarrant.multiplier * Math.abs(profit) * lowWarrant.challengeMultiplier)),
-                                                round: round,
-                                            })
-                                            setWarrantPrice(productAdQuality == "high" ? highWarrant.multiplier * Math.abs(profit) : lowWarrant.multiplier * Math.abs(profit))
-                                            setCapital(capital - (productAdQuality == "high" ? highWarrant.multiplier * Math.abs(profit) : lowWarrant.multiplier * Math.abs(profit)))
-                                            setWarrantAdded(true)
-                                            toast.info("Your Ad Claim is warranted!")
-                                        }
-                                        else {
-                                            toast.info("Already warranted with the claim!")
-                                        }
-                                    }
-                                    }
-                                    className="text-black font-bold py-2 px-4 border-b-4 border-red-700 hover:border-red-500 rounded-md text-center cursor-pointer w-1/3 text-xl font-bold"
-                                >
-                                    {warrantAdded ? <h3>Your Ad Claim is warranted!</h3> : <h3 >Want to warrant your Ad Claim? </h3>}
-                                </button> */}
-
-                                <button
-                                    onClick={() => {
-                                        if (warrantPrice == 0) {
-                                            setUpdateWarrants({
-                                                producerID: player.id,
-                                                productID: productID,
-                                                productQuality: productQuality,
-                                                productAdQuality: productAdQuality,
-                                                warrantAdded: true,
-                                                warrantPrice: productAdQuality == "high" ? highWarrant.multiplier * Math.abs(profit) : lowWarrant.multiplier * Math.abs(profit),
-                                                warrantDesc: productAdQuality == "high" ? highWarrant.description : lowWarrant.description,
-                                                warrantQuality: productAdQuality,
-                                                challengeAmount: productAdQuality == "high" ? (parseInt(highWarrant.multiplier * Math.abs(profit) * highWarrant.challengeMultiplier)) : (parseInt(lowWarrant.multiplier * Math.abs(profit) * lowWarrant.challengeMultiplier)),
-                                                round: round,
-                                            })
-                                            setWarrantPrice(productAdQuality == "high" ? highWarrant.multiplier * Math.abs(profit) : lowWarrant.multiplier * Math.abs(profit))
-                                            setCapital(capital - (productAdQuality == "high" ? highWarrant.multiplier * Math.abs(profit) : lowWarrant.multiplier * Math.abs(profit)))
-                                            setWarrantAdded(true)
-                                            toast.info("Your Ad Claim is warranted!")
-                                        }
-                                        else {
-                                            toast.info("Already warranted with the claim!")
-                                        }
-                                    }
-                                    }
-                                    className={warrantAdded ? "text-black font-bold py-2 px-4 border-b-4 border-green-700 hover:border-green-500 rounded-md text-center cursor-pointer w-1/3 text-xl font-bold" : "text-black font-bold py-2 px-4 border-b-4 border-red-700 hover:border-red-500 rounded-md text-center cursor-pointer w-1/3 text-xl font-bold"}
-                                >
-                                    {warrantAdded ? <h3>Your Ad Claim is warranted!</h3> : <h3 >Want to warrant your Ad Claim? </h3>}
-                                </button>
-
-                                <button
-                                    onClick={() => {
-                                        if (warrantAdded == true) {
-                                            setUpdateWarrants({
-                                                producerID: player.id,
-                                                productID: productID,
-                                                productQuality: productQuality,
-                                                productAdQuality: productAdQuality,
-                                                warrantAdded: false,
-                                                warrantPrice: 0,
-                                                warrantDesc: "",
-                                                warrantQuality: "",
-                                                challengeAmount: 0,
-                                                round: round
-                                            })
-                                            setCapital(capital + warrantPrice)
-                                            setWarrantPrice(0)
-                                            setWarrantAdded(false)
-                                        }
-                                        else {
-                                            toast.info("You have not warranted your Ad Claim yet!")
-                                        }
-                                    }}
-                                    className="bg-red-500 hover:bg-red-400 text-white font-bold py-2 px-4 border-b-4 border-red-700 hover:border-red-500 rounded-md text-center cursor-pointer w-1/3 text-xl font-bold">
-                                    Delete Warrant
-                                </button>
-                            </div>
-
                             <div className="h-full w-full flex flex-col justify-center items-center gap-4">
                                 <button
                                     onClick={() => handleSubmit()}
@@ -648,17 +410,12 @@ export function TrialStage() {
                                                 </td>
                                             </tr>
                                             <tr>
-                                                <td className="text-left font-semibold">Ad Quality warranted?</td>
-                                                <td className="text-center">{Object.getOwnPropertyNames(updateWarrants).length === 0 || updateWarrants.warrantAdded == false ? "No" : "Yes"}
-                                                </td>
-                                            </tr>
-                                            <tr>
                                                 <td className="text-left font-semibold">Profit - If everything sold</td>
                                                 <td className="text-center">${tempStock > 0 ? profit * tempStock : <>...</>}</td>
                                             </tr>
                                             <tr>
                                                 <td className="text-left font-semibold">Profit - If no sales</td>
-                                                <td className="text-center">${tempStock > 0 ? productCost * tempStock : <>...</>}</td>
+                                                <td className="text-center">${tempStock > 0 ? - productCost * tempStock : <>...</>}</td>
                                             </tr>
                                         </tbody>
                                     </table>
