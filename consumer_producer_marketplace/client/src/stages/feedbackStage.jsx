@@ -25,50 +25,50 @@ import { usePlayer, usePlayers, useRound } from "@empirica/core/player/classic/r
 import { toast } from "react-toastify";
 
 // ConsumerFeedbackCard is used to display the feedback to the consumer.
-function ConsumerFeedbackCard({ producer, player, index, basket, round, wallet }) {
-    const productAdQuality = basket.find((item) => item.producerID === producer.id && item.round === round).productAdQuality;
-    const productQuality = basket.find((item) => item.producerID === producer.id && item.round === round).productQuality;
-    const quantity = basket.find((item) => item.producerID === producer.id && item.round === round).quantity;
+// function ConsumerFeedbackCard({ producer, player, index, basket, round, wallet }) {
+//     const productAdQuality = basket.find((item) => item.producerID === producer.id && item.round === round).productAdQuality;
+//     const productQuality = basket.find((item) => item.producerID === producer.id && item.round === round).productQuality;
+//     const quantity = basket.find((item) => item.producerID === producer.id && item.round === round).quantity;
 
 
-    const getQualityMatchEmoji = (productAdQuality, productQuality) => {
-        // This function returns an emoji based on the match between advertised and actual quality
-        if (productAdQuality === productQuality) {
-            return '👍'; // Thumbs up for a match
-        } else if (productAdQuality === "high" && productQuality === "low") {
-            return '😠'; // Angry for high advertised but low actual quality
-        } else if (productAdQuality === "low" && productQuality === "high") {
-            return '🤔'; // Thinking for low advertised but high actual quality
-        } else {
-            return '❓'; // Question mark for any other case
-        }
-    };
+//     const getQualityMatchEmoji = (productAdQuality, productQuality) => {
+//         // This function returns an emoji based on the match between advertised and actual quality
+//         if (productAdQuality === productQuality) {
+//             return '👍'; // Thumbs up for a match
+//         } else if (productAdQuality === "high" && productQuality === "low") {
+//             return '😠'; // Angry for high advertised but low actual quality
+//         } else if (productAdQuality === "low" && productQuality === "high") {
+//             return '🤔'; // Thinking for low advertised but high actual quality
+//         } else {
+//             return '❓'; // Question mark for any other case
+//         }
+//     };
 
-    const emoji = getQualityMatchEmoji(productAdQuality, productQuality);
-    return (
-        <div className="text-lg font-base mt-2">
-            {productAdQuality === productQuality
-                ? showPopup(
-                    `You bought a ${productQuality} quality product as advertised!`,
-                    "green"
-                )
-                : showPopup(
-                    "You got cheated! The product was not of the advertised quality.",
-                    "red"
-                )
-            }
-            <div style={{ fontFamily: "Archivo" }}>
-                <p><b className="text-gray-700">👨‍💼 Producer: </b>  {producer.id}</p>
-                <p><b className="text-gray-700">📦 Units Bought: </b>  {quantity}</p>
-                <p><b className="text-gray-700">🛃 Advertised Quality was:</b> {productAdQuality.charAt(0).toUpperCase() + productAdQuality.slice(1)} </p>
-                <p><b className="text-gray-700">✅ Real Product Quality was:</b> {productQuality.charAt(0).toUpperCase() + productQuality.slice(1)} {emoji}</p>
-                <p><b className="text-gray-700">💰 Remaining Capital in Wallet:</b> {wallet} </p>
-            </div>
-            <br />
-            <p className="mb-6"><span role="img" aria-label="trophy">🏆</span> You get points equal to your utility score = <b>{player.get("score")}</b></p>
-        </div>
-    );
-}
+//     const emoji = getQualityMatchEmoji(productAdQuality, productQuality);
+//     return (
+//         <div className="text-lg font-base mt-2">
+//             {productAdQuality === productQuality
+//                 ? showPopup(
+//                     `You bought a ${productQuality} quality product as advertised!`,
+//                     "green"
+//                 )
+//                 : showPopup(
+//                     "You got cheated! The product was not of the advertised quality.",
+//                     "red"
+//                 )
+//             }
+//             <div style={{ fontFamily: "Archivo" }}>
+//                 <p><b className="text-gray-700">👨‍💼 Producer: </b>  {producer.id}</p>
+//                 <p><b className="text-gray-700">📦 Units Bought: </b>  {quantity}</p>
+//                 <p><b className="text-gray-700">🛃 Advertised Quality was:</b> {productAdQuality.charAt(0).toUpperCase() + productAdQuality.slice(1)} </p>
+//                 <p><b className="text-gray-700">✅ Real Product Quality was:</b> {productQuality.charAt(0).toUpperCase() + productQuality.slice(1)} {emoji}</p>
+//                 <p><b className="text-gray-700">💰 Remaining Capital in Wallet:</b> {wallet} </p>
+//             </div>
+//             <br />
+//             <p className="mb-6"><span role="img" aria-label="trophy">🏆</span> You get points equal to your utility score = <b>{player.get("score")}</b></p>
+//         </div>
+//     );
+// }
 
 const showPopup = (message, color) => {
     return (
@@ -80,99 +80,100 @@ const showPopup = (message, color) => {
 
 export function FeedbackStage() {
     const player = usePlayer();
-    const players = usePlayers();
+    // const players = usePlayers();
     const role = player.get("role");
     const roundHook = useRound();
     const round = roundHook.get("name");
 
-    if (role === "consumer") {
-        const [clicked, setClicked] = useState(false);
-        const wallet = player.get("wallet");
+    // if (role === "consumer") {
+    //     const [clicked, setClicked] = useState(false);
+    //     const wallet = player.get("wallet");
 
-        const handleSubmit = (basket) => {
-            player.set("basket", basket);
-            player.stage.set("submit", true);
-        }
-
-
-        const getAllUniqueItems = (basket) => {
-            const uniqueItems = [];
-            const itemOccurrences = {};
-
-            basket.forEach(item => {
-                const roundNo = item.round;
-
-                if (itemOccurrences[roundNo]) {
-                    itemOccurrences[roundNo]++;
-                } else {
-                    itemOccurrences[roundNo] = 1;
-                }
-
-                if (itemOccurrences[roundNo] === 1) {
-                    uniqueItems.push(item);
-                }
-            });
-
-            return uniqueItems;
-        };
-
-        const basket = getAllUniqueItems(player.get("basket"));
+    //     const handleSubmit = (basket) => {
+    //         player.set("basket", basket);
+    //         player.stage.set("submit", true);
+    //     }
 
 
-        return (
-            <div className="bg-gradient-to-r from-slate-100 to-blue-50 mt-10 p-4 rounded-lg shadow-md mb-8 flex justify-center items-center flex flex-col text-center max-w-[700px]">
-                <h2 className="text-2xl font-bold mt-2 mb-6"><b>🛒 Your Consumer Summary 🛒</b></h2>
-                <div className={clicked ? `hidden` : `mb-8 bg-white shadow-md text-center mx-auto my-auto w-full h-full p-6 rounded-lg max-w-[550px] border-8 border-gray-100`}>
-                    <h2>Get ready to review your purchase summary for the products you've bought this round.
-                        Take a moment to check your order details! 🛍️</h2> <br />
+    //     const getAllUniqueItems = (basket) => {
+    //         const uniqueItems = [];
+    //         const itemOccurrences = {};
 
-                    <div className="relative">
-                        <span className="absolute right-40 z-10 mt-[-8px] mr-[-8px]">
-                            <span className="relative flex h-4 w-4">
-                                <span className="top-9 animate-ping absolute inline-flex h-full w-full rounded-full bg-teal-400 opacity-75"></span>
-                                <span className="relative top-9 inline-flex rounded-full h-4 w-4 bg-green-500"></span>
-                            </span>
-                        </span>
-                        <button
-                            className="mt-8 mb-3 bg-blue-500 text-white py-3 px-6 text-lg rounded-md border-none cursor-pointer shadow-md transition-all duration-200 ease-in-out hover:bg-blue-700 hover:shadow-md disabled:opacity-100 disabled:cursor-not-allowed relative"
-                            onClick={() => {
-                                setClicked(!clicked);
-                            }}
-                            disabled={clicked}
-                        >
-                            Are You Ready!
-                        </button>
-                    </div>
-                </div>
+    //         basket.forEach(item => {
+    //             const roundNo = item.round;
 
-                {clicked && players.filter((p) => p.get("role") === "producer").map((producer, index) => {
-                    return <ConsumerFeedbackCard
-                        key={index}
-                        producer={producer}
-                        player={player}
-                        index={index}
-                        basket={basket}
-                        round={round}
-                        wallet={wallet}
-                    />
-                })}
+    //             if (itemOccurrences[roundNo]) {
+    //                 itemOccurrences[roundNo]++;
+    //             } else {
+    //                 itemOccurrences[roundNo] = 1;
+    //             }
 
-                <br />
-                <button
-                    className="bg-green-500 text-white py-3 px-6 text-lg rounded-md border-none cursor-pointer shadow-md transition-all duration-200 ease-in-out hover:bg-green-700 hover:shadow-md"
-                    onClick={() => handleSubmit(basket)}
-                >
-                    Proceed to Next Stage
-                </button>
-            </div>
-        );
-    }
+    //             if (itemOccurrences[roundNo] === 1) {
+    //                 uniqueItems.push(item);
+    //             }
+    //         });
 
-    else if (!role) {
-        return <div>Loading...</div>;
-    }
+    //         return uniqueItems;
+    //     };
 
-    else if (role === "producer") {
+    //     const basket = getAllUniqueItems(player.get("basket"));
+
+
+    //     return (
+    //         <div className="bg-gradient-to-r from-slate-100 to-blue-50 mt-10 p-4 rounded-lg shadow-md mb-8 flex justify-center items-center flex flex-col text-center max-w-[700px]">
+    //             <h2 className="text-2xl font-bold mt-2 mb-6"><b>🛒 Your Consumer Summary 🛒</b></h2>
+    //             <div className={clicked ? `hidden` : `mb-8 bg-white shadow-md text-center mx-auto my-auto w-full h-full p-6 rounded-lg max-w-[550px] border-8 border-gray-100`}>
+    //                 <h2>Get ready to review your purchase summary for the products you've bought this round.
+    //                     Take a moment to check your order details! 🛍️</h2> <br />
+
+    //                 <div className="relative">
+    //                     <span className="absolute right-40 z-10 mt-[-8px] mr-[-8px]">
+    //                         <span className="relative flex h-4 w-4">
+    //                             <span className="top-9 animate-ping absolute inline-flex h-full w-full rounded-full bg-teal-400 opacity-75"></span>
+    //                             <span className="relative top-9 inline-flex rounded-full h-4 w-4 bg-green-500"></span>
+    //                         </span>
+    //                     </span>
+    //                     <button
+    //                         className="mt-8 mb-3 bg-blue-500 text-white py-3 px-6 text-lg rounded-md border-none cursor-pointer shadow-md transition-all duration-200 ease-in-out hover:bg-blue-700 hover:shadow-md disabled:opacity-100 disabled:cursor-not-allowed relative"
+    //                         onClick={() => {
+    //                             setClicked(!clicked);
+    //                         }}
+    //                         disabled={clicked}
+    //                     >
+    //                         Are You Ready!
+    //                     </button>
+    //                 </div>
+    //             </div>
+
+    //             {clicked && players.filter((p) => p.get("role") === "producer").map((producer, index) => {
+    //                 return <ConsumerFeedbackCard
+    //                     key={index}
+    //                     producer={producer}
+    //                     player={player}
+    //                     index={index}
+    //                     basket={basket}
+    //                     round={round}
+    //                     wallet={wallet}
+    //                 />
+    //             })}
+
+    //             <br />
+    //             <button
+    //                 className="bg-green-500 text-white py-3 px-6 text-lg rounded-md border-none cursor-pointer shadow-md transition-all duration-200 ease-in-out hover:bg-green-700 hover:shadow-md"
+    //                 onClick={() => handleSubmit(basket)}
+    //             >
+    //                 Proceed to Next Stage
+    //             </button>
+    //         </div>
+    //     );
+    // }
+
+    // else if (!role) {
+    //     return <div>Loading...</div>;
+    // }
+
+    // else 
+    if (role === "producer") {
         const handleProceed = () => {
             player.stage.set("submit", true);
         };

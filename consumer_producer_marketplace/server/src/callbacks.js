@@ -2,6 +2,84 @@ import { ClassicListenersCollector } from "@empirica/core/admin/classic";
 
 export const Empirica = new ClassicListenersCollector();
 
+const fs = require('fs');
+const path = require('path');
+
+const folderPath = '/';
+const fileName = 'choices_consumer.json';
+const filePath = path.join(folderPath, fileName);
+
+function appendObjectToJSON(newObject) {
+  // Check if the folder exists
+  fs.access(folderPath, fs.constants.F_OK, (err) => {
+    if (err) {
+      // Folder doesn't exist, create it
+      fs.mkdir(folderPath, { recursive: true }, (err) => {
+        if (err) {
+          console.error('Error creating folder:', err);
+        } else {
+          console.log('Folder created successfully!');
+          createFileAndAppend(newObject);
+        }
+      });
+    } else {
+      // Folder exists, proceed to create file and append
+      createFileAndAppend(newObject);
+    }
+  });
+}
+
+function createFileAndAppend(newObject) {
+  // Check if the file exists
+  fs.access(filePath, fs.constants.F_OK, (err) => {
+    if (err) {
+      // File doesn't exist, create it with initial structure
+      const initialData = { dataList: [] };
+      writeToFile(initialData, newObject);
+    } else {
+      // File exists, proceed to read and append
+      readFileAndAppend(newObject);
+    }
+  });
+}
+
+function readFileAndAppend(newObject) {
+  // Read the existing JSON file
+  fs.readFile(filePath, 'utf8', (err, data) => {
+    if (err) {
+      console.error('Error reading JSON file:', err);
+      return;
+    }
+
+    try {
+      // Parse JSON content
+      const jsonData = JSON.parse(data);
+
+      // Modify the object (assuming it's an array called 'dataList')
+      jsonData.dataList.push(newObject);
+
+      // Write back to the JSON file
+      writeToFile(jsonData, newObject);
+    } catch (parseError) {
+      console.error('Error parsing JSON:', parseError);
+    }
+  });
+}
+
+function writeToFile(data, newObject) {
+  // Convert data to JSON
+  const updatedJson = JSON.stringify(data, null, 2);
+
+  // Write back to the JSON file
+  fs.writeFile(filePath, updatedJson, 'utf8', (err) => {
+    if (err) {
+      console.error('Error writing to JSON file:', err);
+    } else {
+      console.log('Object appended successfully!');
+    }
+  });
+}
+
 // Function to update the score of consumers
 async function updateConsumerScores(game) {
   await game.players.forEach(async (player) => {
@@ -26,22 +104,86 @@ async function updateProducerScores(game) {
   await game.players.forEach(async (player) => {
     if (player.get("role") !== "producer") return;
     const capital = player.get("capital");
-    const stock = player.get("stock");
+    const tempStock = player.get("stock");
     const round = player.round.get("round")
-    const currentStock = stock.find((item) => item.round === round);
-    const soldStock = currentStock.soldStock;
+    const oldStock = player.get("stock");
+    const currentStock = oldStock.find((item) => item.round === round);
+    const quantity = currentStock.remainingStock;
+    const wallet = player.get("wallet");
     const productPrice = currentStock.productPrice;
+    const mockQuantity = parseInt(wallet / productPrice);
+    const soldStock = mockQuantity <= quantity ? mockQuantity : quantity
     const productCost = currentStock.productCost;
-    // const profit = productPrice - productCost;
-    const initialStock = currentStock.initialStock;
-    const totalCost = initialStock * productCost;
-    const totalSales = soldStock * productPrice;
-    const originalScore = player.get("score") || 0;
-    let score = player.get("score") || 0;
-    score += (totalSales - totalCost);
-    player.set("score", score);
-    player.set("scoreDiff", score - originalScore);
-    player.set("capital", capital + totalSales);
+    const productQuality = currentStock.productQuality
+    const productAdQuality = currentStock.productAdQuality
+    if (soldStock == 0) {
+      const initialStock = currentStock.initialStock;
+      const totalCost = initialStock * productCost;
+      const totalSales = soldStock * productPrice;
+      const originalScore = player.get("score") || 0;
+      let score = player.get("score") || 0;
+      score += (totalSales - totalCost);
+      player.set("score", score);
+      player.set("scoreDiff", score - originalScore);
+      player.set("capital", capital + totalSales);
+      const newObject = {
+        round: round,
+        purchaseQuantity: soldStock,
+        producedStock: initialStock,
+        productQuality: productQuality,
+        productAdQuality: productAdQuality,
+        productPrice: productPrice,
+        remainingWallet: wallet,
+        strategyUpdate: "",
+        opponentStrategy: ""
+      };
+      appendObjectToJSON(newObject);
+      
+      return;
+    }
+    else {
+      // Artificial player
+      const trialStock = tempStock.map((item) => {
+        return item.round === round
+          ? {
+            ...item,
+            remainingStock: item.remainingStock - soldStock,
+            soldStock: item.soldStock + soldStock,
+          }
+          : item;
+      });
+
+      player.set("stock", trialStock);
+
+      // const currentStock = stock.find((item) => item.round === round);
+      // const soldStock = currentStock.soldStock;
+      // const productCost = currentStock.productCost;
+      // const profit = productPrice - productCost;
+      const initialStock = currentStock.initialStock;
+      const totalCost = initialStock * productCost;
+      const totalSales = soldStock * productPrice;
+      const originalScore = player.get("score") || 0;
+      let score = player.get("score") || 0;
+      score += (totalSales - totalCost);
+      player.set("score", score);
+      player.set("scoreDiff", score - originalScore);
+      player.set("capital", capital + totalSales);
+      player.set("wallet", wallet-parseInt(productPrice*soldStock))
+
+      const newObject = {
+        round: round,
+        purchaseQuantity: soldStock,
+        producedStock: initialStock,
+        productQuality: productQuality,
+        productAdQuality: productAdQuality,
+        productPrice: productPrice,
+        remainingWallet: wallet,
+        strategyUpdate: "",
+        opponentStrategy: ""
+      };
+      appendObjectToJSON(newObject);
+      return;
+    }
   });
 }
 
@@ -54,7 +196,8 @@ function assignRoles(game) {
 
   const shuffledPlayers = [...players].sort(() => 0.5 - Math.random());
   shuffledPlayers.forEach((player, index) => {
-    const role = index < numberOfProducers ? "producer" : "consumer";
+    // const role = index < numberOfProducers ? "producer" : "consumer";
+    const role = "producer"
     player.set("role", role);
   });
 }
@@ -66,7 +209,7 @@ Empirica.onGameStart(async ({ game }) => {
     const round = game.addRound({ name: `Round${roundNumber}` });
     round.addStage({ name: "selectRoleStage", duration: 24000 });
     round.addStage({ name: "stockStage", duration: 24000 });
-    round.addStage({ name: "choiceStage", duration: 24000 });
+    // round.addStage({ name: "choiceStage", duration: 24000 });
     round.addStage({ name: "feedbackStage", duration: 24000 });
     round.addStage({ name: "scoreboardStage", duration: 24000 });
   }
@@ -79,9 +222,12 @@ Empirica.onGameStart(async ({ game }) => {
 
 Empirica.onStageEnded(({ stage }) => {
   switch (stage.get("name")) {
-    case "choiceStage":
+    // case "choiceStage":
+    //   updateProducerScores(stage.currentGame);
+    //   updateConsumerScores(stage.currentGame);
+    //   break;
+    case "stockStage":
       updateProducerScores(stage.currentGame);
-      updateConsumerScores(stage.currentGame);
       break;
   }
 });

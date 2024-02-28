@@ -47,6 +47,8 @@ export function TrialStage() {
         let [updatedStock, setUpdatedStock] = useState({});
         let [tempStock, setTempStock] = useState(0);
 
+        
+
         function adjSelector() {
             /*
             This function returns a string that is a combination of the base producer name and an adjective
@@ -447,54 +449,54 @@ export function TrialStage() {
 
 
 
-    if (role === "consumer") {
-        function handleSubmit() {
-            /*
-            handleSubmit() is used to handle the submit button click. It sets the stage of each player to submit.
-            */
-            player.round.set("round", round);
-            player.stage.set("submit", true);
-        }
-        function ConsumerWaitingMessage() {
-            /*
-            Used to display the waiting message for the consumer.
-            */
-            return (
-                <div className="text-center p-[20px] bg-gray-100 rounded-md shadow-md max-w-[500px] mx-[20px] my-auto">
-                    <h2 className="text-xl mb-2 font-semibold flex items-center justify-center">
-                        <img src="https://cdn.pixabay.com/animation/2023/03/08/09/53/09-53-16-104_512.gif" alt="timer" className="w-6 h-6 mr-2" />
-                        Waiting Room
-                        <img src="https://cdn.pixabay.com/animation/2023/03/08/09/53/09-53-16-104_512.gif" alt="timer" className="w-6 h-6 ml-2" />
-                    </h2>
-                    <p>While you wait: </p>
-                    <ul>
-                        <li>"What products will be available? 🤔🛍️"</li>
-                        <li>"Can you spot the best deals? 🕵️🔍"</li>
-                    </ul>
-                    <br />
-                    <p>
-                        Here is the payout you stand to win if you buy genuine products and lose
-                        if you get misled by false advertisements.
-                        Remember that <b className='text-red-600'>no purchase means no points</b>!
-                    </p>
-                    <br />
-                    <PayoffMatrix role={"consumer"} />
-                    <br />
-                    <p>Get ready to make smart choices and find the best products! 🧠🎯</p>
-                    <div>🛒🌟</div>
-                </div>
-            );
-        }
-        return (
-            <div className="text-center mt-10 p-[20px] bg-white rounded-md shadow-md max-w-[500px] mx-[20px] my-auto">
-                <ConsumerWaitingMessage />
-                <button
-                    onClick={handleSubmit}
-                    className="mt-6 rounded-md bg-[#4CAF50] hover:bg-[#45a049] text-white px-[12px] py-[16px] rounded-sm cursor-pointer shadow-md hover:shadow-lg transitionn-all ease-in-out"
-                >
-                    Proceed to next stage
-                </button>
-            </div>
-        );
-    }
+    // if (role === "consumer") {
+    //     function handleSubmit() {
+    //         /*
+    //         handleSubmit() is used to handle the submit button click. It sets the stage of each player to submit.
+    //         */
+    //         player.round.set("round", round);
+    //         player.stage.set("submit", true);
+    //     }
+    //     function ConsumerWaitingMessage() {
+    //         /*
+    //         Used to display the waiting message for the consumer.
+    //         */
+    //         return (
+    //             <div className="text-center p-[20px] bg-gray-100 rounded-md shadow-md max-w-[500px] mx-[20px] my-auto">
+    //                 <h2 className="text-xl mb-2 font-semibold flex items-center justify-center">
+    //                     <img src="https://cdn.pixabay.com/animation/2023/03/08/09/53/09-53-16-104_512.gif" alt="timer" className="w-6 h-6 mr-2" />
+    //                     Waiting Room
+    //                     <img src="https://cdn.pixabay.com/animation/2023/03/08/09/53/09-53-16-104_512.gif" alt="timer" className="w-6 h-6 ml-2" />
+    //                 </h2>
+    //                 <p>While you wait: </p>
+    //                 <ul>
+    //                     <li>"What products will be available? 🤔🛍️"</li>
+    //                     <li>"Can you spot the best deals? 🕵️🔍"</li>
+    //                 </ul>
+    //                 <br />
+    //                 <p>
+    //                     Here is the payout you stand to win if you buy genuine products and lose
+    //                     if you get misled by false advertisements.
+    //                     Remember that <b className='text-red-600'>no purchase means no points</b>!
+    //                 </p>
+    //                 <br />
+    //                 <PayoffMatrix role={"consumer"} />
+    //                 <br />
+    //                 <p>Get ready to make smart choices and find the best products! 🧠🎯</p>
+    //                 <div>🛒🌟</div>
+    //             </div>
+    //         );
+    //     }
+    //     return (
+    //         <div className="text-center mt-10 p-[20px] bg-white rounded-md shadow-md max-w-[500px] mx-[20px] my-auto">
+    //             <ConsumerWaitingMessage />
+    //             <button
+    //                 onClick={handleSubmit}
+    //                 className="mt-6 rounded-md bg-[#4CAF50] hover:bg-[#45a049] text-white px-[12px] py-[16px] rounded-sm cursor-pointer shadow-md hover:shadow-lg transitionn-all ease-in-out"
+    //             >
+    //                 Proceed to next stage
+    //             </button>
+    //         </div>
+    //     );
+    // }
 }

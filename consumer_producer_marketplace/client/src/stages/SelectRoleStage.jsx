@@ -37,18 +37,16 @@ export function SelectRolesStage() {
             if (round.get("name") != "Round1") {
                 player.set("capital", player.get("capital") + 12)
             }
-        }
-
-        else {
             if (round.get("name") == "Round1") {
                 player.set("wallet", 24);
             }
             if (round.get("name") != "Round1") {
                 player.set("wallet", player.get("wallet") + 12)
             }
+            player.round.set("round", round.get("name"));
+            player.stage.set("submit", true);
         }
-        player.round.set("round", round.get("name"));
-        player.stage.set("submit", true);
+        
 
     }
 
@@ -103,60 +101,60 @@ export function SelectRolesStage() {
     
 
 
-    function ConsumerInfo() {
-        /*
-        Used to display the information about the Consumer.
-        */
-        return (
-            <div className="max-w-screen-2xl px-4 mx-auto mt-8 sm:mt-12 sm:px-6 md:mt-16">
-                <div className="lg:grid lg:grid-cols-16 lg:gap-16">
-                    <div className="sm:text-center md:max-w-2xl md:mx-auto lg:col-span-6 lg:text-left">
-                        <div className="text-sm font-semibold tracking-wide text-gray-500 uppercase sm:text-base lg:text-sm xl:text-base">
-                            Welcome
-                        </div>
-                        <h2
-                            className="mt-1 text-4xl font-extrabold leading-10 tracking-tight text-gray-900 sm:leading-none sm:text-6xl lg:text-5xl xl:text-6xl">
-                            Consumers! 🛒
-                        </h2>
-                        <p className="mt-3 text-base text-gray-600 sm:mt-5 sm:text-xl lg:text-lg xl:text-xl" style={{ whiteSpace: 'nowrap' }}>
-                            As a savvy consumer, your mission is to make smart buying decisions! 🧐 Every round is a new adventure in the marketplace, where you'll encounter advertisements. <br/>
-                            Your goal is to purchase genuine products based on the ads, to increase your score and top the leaderboard! 🌟
-                        </p>
-                        <p className="mt-3 text-base text-gray-600 sm:mt-5 sm:text-xl lg:text-lg xl:text-xl" style={{ whiteSpace: 'nowrap' }}>
-                            You'll be spending from your wallet 💸, but beware! The true quality of products is only revealed after purchase. <br/>
-                            Are the producers bluffing with their ads? Or is it really a deal of a lifetime? Let's find out! 🕵️‍♀️
-                        </p>
-                        <p className="mt-3 text-base text-gray-600 sm:mt-5 sm:text-xl lg:text-lg xl:text-xl" style={{ whiteSpace: 'nowrap' }}>
-                            You're competing against the other players for a high-score. Keep an eye on your wallet and don't get swayed by every shiny ad! 🛍️💡
-                        </p> 
-                    <br/>
-                    <p className="mt-6 text-2xl text-gray-600 sm:mt-5 sm:text-xl lg:text-lg xl:text-xl" style={{ whiteSpace: 'nowrap' }}>
-                    Ready to make smart purchases? Let's dive in! 🚀🛍️
-                    </p>
-                </div>
-            </div>
-        </div>
-        );
-    };
+    // function ConsumerInfo() {
+    //     /*
+    //     Used to display the information about the Consumer.
+    //     */
+    //     return (
+    //         <div className="max-w-screen-2xl px-4 mx-auto mt-8 sm:mt-12 sm:px-6 md:mt-16">
+    //             <div className="lg:grid lg:grid-cols-16 lg:gap-16">
+    //                 <div className="sm:text-center md:max-w-2xl md:mx-auto lg:col-span-6 lg:text-left">
+    //                     <div className="text-sm font-semibold tracking-wide text-gray-500 uppercase sm:text-base lg:text-sm xl:text-base">
+    //                         Welcome
+    //                     </div>
+    //                     <h2
+    //                         className="mt-1 text-4xl font-extrabold leading-10 tracking-tight text-gray-900 sm:leading-none sm:text-6xl lg:text-5xl xl:text-6xl">
+    //                         Consumers! 🛒
+    //                     </h2>
+    //                     <p className="mt-3 text-base text-gray-600 sm:mt-5 sm:text-xl lg:text-lg xl:text-xl" style={{ whiteSpace: 'nowrap' }}>
+    //                         As a savvy consumer, your mission is to make smart buying decisions! 🧐 Every round is a new adventure in the marketplace, where you'll encounter advertisements. <br/>
+    //                         Your goal is to purchase genuine products based on the ads, to increase your score and top the leaderboard! 🌟
+    //                     </p>
+    //                     <p className="mt-3 text-base text-gray-600 sm:mt-5 sm:text-xl lg:text-lg xl:text-xl" style={{ whiteSpace: 'nowrap' }}>
+    //                         You'll be spending from your wallet 💸, but beware! The true quality of products is only revealed after purchase. <br/>
+    //                         Are the producers bluffing with their ads? Or is it really a deal of a lifetime? Let's find out! 🕵️‍♀️
+    //                     </p>
+    //                     <p className="mt-3 text-base text-gray-600 sm:mt-5 sm:text-xl lg:text-lg xl:text-xl" style={{ whiteSpace: 'nowrap' }}>
+    //                         You're competing against the other players for a high-score. Keep an eye on your wallet and don't get swayed by every shiny ad! 🛍️💡
+    //                     </p> 
+    //                 <br/>
+    //                 <p className="mt-6 text-2xl text-gray-600 sm:mt-5 sm:text-xl lg:text-lg xl:text-xl" style={{ whiteSpace: 'nowrap' }}>
+    //                 Ready to make smart purchases? Let's dive in! 🚀🛍️
+    //                 </p>
+    //             </div>
+    //         </div>
+    //     </div>
+    //     );
+    // };
 
-    if (player.get("role") === "consumer") {
-        return (
-            <div className="md:min-w-96 lg:min-w-128 xl:min-w-192 flex flex-col items-center space-y-10 p-4">
-                <p>You will play as a <b>{player.get("role")}</b>!</p>
-                <ConsumerInfo />
-                <div className="relative inline-flex group">
-                    <div
-                        className="absolute transitiona-all duration-300 opacity-30 -inset-px bg-gradient-to-r from-[#44BCFF] via-[#FF44EC] to-[#FF675E] rounded-xl blur-lg filter group-hover:opacity-80 group-hover:-inset-1 group-hover:duration-100">
-                    </div>
-                    <Button className="z-3" handleClick={handleSubmit}>
-                        I'm ready!
-                    </Button>
-                </div>
-            </div>
-        )
-    }
+    // if (player.get("role") === "consumer") {
+    //     return (
+    //         <div className="md:min-w-96 lg:min-w-128 xl:min-w-192 flex flex-col items-center space-y-10 p-4">
+    //             <p>You will play as a <b>{player.get("role")}</b>!</p>
+    //             <ConsumerInfo />
+    //             <div className="relative inline-flex group">
+    //                 <div
+    //                     className="absolute transitiona-all duration-300 opacity-30 -inset-px bg-gradient-to-r from-[#44BCFF] via-[#FF44EC] to-[#FF675E] rounded-xl blur-lg filter group-hover:opacity-80 group-hover:-inset-1 group-hover:duration-100">
+    //                 </div>
+    //                 <Button className="z-3" handleClick={handleSubmit}>
+    //                     I'm ready!
+    //                 </Button>
+    //             </div>
+    //         </div>
+    //     )
+    // }
 
-    else if (player.get("role") === "producer") {
+    if (player.get("role") === "producer") {
         return (
             <div className="md:min-w-96 lg:min-w-128 xl:min-w-192 flex flex-col items-center space-y-10 p-4">
                 <p>You will play as a <b>{player.get("role")}</b>!</p>

@@ -22,6 +22,11 @@ factors:
         - value: lemons-market
         - value: coasian-market
         - value: pigouvian-market
+    - name: isAuto
+      desc: Whether the game is played with a artificial player
+      values:
+        - value: 0
+        - value: 1
 treatments:
     - name: Solo
       desc: Single-player Game
@@ -36,3 +41,7 @@ treatments:
         marketType: coasian-market
         playerCount: 2
         producerPercentage: 0.5
+    - name: Artificial
+      factors:
+        isAuto: 1
+        playerCount: 1
