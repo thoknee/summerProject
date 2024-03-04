@@ -1,4 +1,5 @@
 import { ClassicListenersCollector } from "@empirica/core/admin/classic";
+import { getconsumerAgentFromId } from "../../client/src/strategie/ConsumerAgent.js"
 
 export const Empirica = new ClassicListenersCollector();
 
@@ -9,76 +10,76 @@ const folderPath = '/';
 const fileName = 'choices_consumer.json';
 const filePath = path.join(folderPath, fileName);
 
-function appendObjectToJSON(newObject) {
-  // Check if the folder exists
-  fs.access(folderPath, fs.constants.F_OK, (err) => {
-    if (err) {
-      // Folder doesn't exist, create it
-      fs.mkdir(folderPath, { recursive: true }, (err) => {
-        if (err) {
-          console.error('Error creating folder:', err);
-        } else {
-          console.log('Folder created successfully!');
-          createFileAndAppend(newObject);
-        }
-      });
-    } else {
-      // Folder exists, proceed to create file and append
-      createFileAndAppend(newObject);
-    }
-  });
-}
+// function appendObjectToJSON(newObject) {
+//   // Check if the folder exists
+//   fs.access(folderPath, fs.constants.F_OK, (err) => {
+//     if (err) {
+//       // Folder doesn't exist, create it
+//       fs.mkdir(folderPath, { recursive: true }, (err) => {
+//         if (err) {
+//           console.error('Error creating folder:', err);
+//         } else {
+//           console.log('Folder created successfully!');
+//           createFileAndAppend(newObject);
+//         }
+//       });
+//     } else {
+//       // Folder exists, proceed to create file and append
+//       createFileAndAppend(newObject);
+//     }
+//   });
+// }
 
-function createFileAndAppend(newObject) {
-  // Check if the file exists
-  fs.access(filePath, fs.constants.F_OK, (err) => {
-    if (err) {
-      // File doesn't exist, create it with initial structure
-      const initialData = { dataList: [] };
-      writeToFile(initialData, newObject);
-    } else {
-      // File exists, proceed to read and append
-      readFileAndAppend(newObject);
-    }
-  });
-}
+// function createFileAndAppend(newObject) {
+//   // Check if the file exists
+//   fs.access(filePath, fs.constants.F_OK, (err) => {
+//     if (err) {
+//       // File doesn't exist, create it with initial structure
+//       const initialData = { dataList: [] };
+//       writeToFile(initialData, newObject);
+//     } else {
+//       // File exists, proceed to read and append
+//       readFileAndAppend(newObject);
+//     }
+//   });
+// }
 
-function readFileAndAppend(newObject) {
-  // Read the existing JSON file
-  fs.readFile(filePath, 'utf8', (err, data) => {
-    if (err) {
-      console.error('Error reading JSON file:', err);
-      return;
-    }
+// function readFileAndAppend(newObject) {
+//   // Read the existing JSON file
+//   fs.readFile(filePath, 'utf8', (err, data) => {
+//     if (err) {
+//       console.error('Error reading JSON file:', err);
+//       return;
+//     }
 
-    try {
-      // Parse JSON content
-      const jsonData = JSON.parse(data);
+//     try {
+//       // Parse JSON content
+//       const jsonData = JSON.parse(data);
 
-      // Modify the object (assuming it's an array called 'dataList')
-      jsonData.dataList.push(newObject);
+//       // Modify the object (assuming it's an array called 'dataList')
+//       jsonData.dataList.push(newObject);
 
-      // Write back to the JSON file
-      writeToFile(jsonData, newObject);
-    } catch (parseError) {
-      console.error('Error parsing JSON:', parseError);
-    }
-  });
-}
+//       // Write back to the JSON file
+//       writeToFile(jsonData, newObject);
+//     } catch (parseError) {
+//       console.error('Error parsing JSON:', parseError);
+//     }
+//   });
+// }
 
-function writeToFile(data, newObject) {
-  // Convert data to JSON
-  const updatedJson = JSON.stringify(data, null, 2);
+// function writeToFile(data, newObject) {
+//   // Convert data to JSON
+//   const updatedJson = JSON.stringify(data, null, 2);
 
-  // Write back to the JSON file
-  fs.writeFile(filePath, updatedJson, 'utf8', (err) => {
-    if (err) {
-      console.error('Error writing to JSON file:', err);
-    } else {
-      console.log('Object appended successfully!');
-    }
-  });
-}
+//   // Write back to the JSON file
+//   fs.writeFile(filePath, updatedJson, 'utf8', (err) => {
+//     if (err) {
+//       console.error('Error writing to JSON file:', err);
+//     } else {
+//       console.log('Object appended successfully!');
+//     }
+//   });
+// }
 
 // Function to update the score of consumers
 async function updateConsumerScores(game) {
@@ -103,21 +104,41 @@ async function updateConsumerScores(game) {
 async function updateProducerScores(game) {
   await game.players.forEach(async (player) => {
     if (player.get("role") !== "producer") return;
+    const round = player.round.get("round")
+    const agents = game.get("agents");
+    const consumerAgent = agents.find(p => {
+      return p.role === "consumer" && p.agent === "artificial"
+    })
+    const others = agents.filter(p => {
+      return p.role !== "consumer" || p.agent !== "artificial"
+    })
+    const strategy = getconsumerAgentFromId(consumerAgent.strategy);
+    const roundNum = parseInt(round.replace("Round", ""), 10);
+    if (consumerAgent.purchaseHistory.length < roundNum) {
+      consumerAgent.purchaseHistory.push({
+        "purchasedQuantity": strategy.purchaseQuantity(),
+      })
+    }
+
+    others.push(consumerAgent);
+    console.log(others);
+    game.set("players", others);
+
     const capital = player.get("capital");
     const tempStock = player.get("stock");
-    const round = player.round.get("round")
     const oldStock = player.get("stock");
     const currentStock = oldStock.find((item) => item.round === round);
     const quantity = currentStock.remainingStock;
     const wallet = player.get("wallet");
     const productPrice = currentStock.productPrice;
-    const mockQuantity = parseInt(wallet / productPrice);
-    const soldStock = mockQuantity <= quantity ? mockQuantity : quantity
     const productCost = currentStock.productCost;
     const productQuality = currentStock.productQuality
     const productAdQuality = currentStock.productAdQuality
+    const mockQuantity = parseInt(wallet / productPrice);
+    const soldStock = mockQuantity <= quantity ? mockQuantity : quantity
+    const initialStock = currentStock.initialStock;
     if (soldStock == 0) {
-      const initialStock = currentStock.initialStock;
+
       const totalCost = initialStock * productCost;
       const totalSales = soldStock * productPrice;
       const originalScore = player.get("score") || 0;
@@ -126,19 +147,7 @@ async function updateProducerScores(game) {
       player.set("score", score);
       player.set("scoreDiff", score - originalScore);
       player.set("capital", capital + totalSales);
-      const newObject = {
-        round: round,
-        purchaseQuantity: soldStock,
-        producedStock: initialStock,
-        productQuality: productQuality,
-        productAdQuality: productAdQuality,
-        productPrice: productPrice,
-        remainingWallet: wallet,
-        strategyUpdate: "",
-        opponentStrategy: ""
-      };
-      appendObjectToJSON(newObject);
-      
+
       return;
     }
     else {
@@ -154,12 +163,6 @@ async function updateProducerScores(game) {
       });
 
       player.set("stock", trialStock);
-
-      // const currentStock = stock.find((item) => item.round === round);
-      // const soldStock = currentStock.soldStock;
-      // const productCost = currentStock.productCost;
-      // const profit = productPrice - productCost;
-      const initialStock = currentStock.initialStock;
       const totalCost = initialStock * productCost;
       const totalSales = soldStock * productPrice;
       const originalScore = player.get("score") || 0;
@@ -168,20 +171,20 @@ async function updateProducerScores(game) {
       player.set("score", score);
       player.set("scoreDiff", score - originalScore);
       player.set("capital", capital + totalSales);
-      player.set("wallet", wallet-parseInt(productPrice*soldStock))
+      player.set("wallet", wallet - parseInt(productPrice * soldStock))
 
-      const newObject = {
-        round: round,
-        purchaseQuantity: soldStock,
-        producedStock: initialStock,
-        productQuality: productQuality,
-        productAdQuality: productAdQuality,
-        productPrice: productPrice,
-        remainingWallet: wallet,
-        strategyUpdate: "",
-        opponentStrategy: ""
-      };
-      appendObjectToJSON(newObject);
+      // const newObject = {
+      //   round: round,
+      //   purchaseQuantity: soldStock,
+      //   producedStock: initialStock,
+      //   productQuality: productQuality,
+      //   productAdQuality: productAdQuality,
+      //   productPrice: productPrice,
+      //   remainingWallet: wallet,
+      //   strategyUpdate: "",
+      //   opponentStrategy: ""
+      // };
+      // appendObjectToJSON(newObject);
       return;
     }
   });
@@ -209,7 +212,7 @@ Empirica.onGameStart(async ({ game }) => {
     const round = game.addRound({ name: `Round${roundNumber}` });
     round.addStage({ name: "selectRoleStage", duration: 24000 });
     round.addStage({ name: "stockStage", duration: 24000 });
-    // round.addStage({ name: "choiceStage", duration: 24000 });
+    round.addStage({ name: "choiceStage", duration: 24000 });
     round.addStage({ name: "feedbackStage", duration: 24000 });
     round.addStage({ name: "scoreboardStage", duration: 24000 });
   }
@@ -219,6 +222,12 @@ Empirica.onGameStart(async ({ game }) => {
   });
   assignRoles(game);
 });
+
+// Empirica.onStageStart(({ stage }) => {
+//   switch(stage.get("name")) {
+
+//   }
+// })
 
 Empirica.onStageEnded(({ stage }) => {
   switch (stage.get("name")) {

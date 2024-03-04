@@ -41,7 +41,13 @@ treatments:
         marketType: coasian-market
         playerCount: 2
         producerPercentage: 0.5
-    - name: Artificial
+    - name: Artificial Consumer - Gullible
       factors:
         isAuto: 1
         playerCount: 1
+        strategy: gullible
+    - name: Artificial Consumer - TitForTat
+      factors:
+        isAuto: 1
+        playerCount: 1
+        strategy: titfortat

@@ -10,18 +10,17 @@ player.stage.set("submit", true) is used to set the stage of each player to subm
 */
 
 import React from "react";
-import { usePlayer, useRound } from "@empirica/core/player/classic/react";
-// import { useGame } from "@empirica/core/player/classic/react";
+import { usePlayer, useRound, useGame } from "@empirica/core/player/classic/react";
 import { Button } from "../components/Button";
 
 export function SelectRolesStage() {
     const player = usePlayer();
     const round = useRound();
-
+    const game = useGame();
     // Used for multiplayer version
     // const game = useGame();
-    // const treatment = game.get("treatment");
-    // const shareOfProducers = treatment.producerPercentage
+    const treatment = game.get("treatment");
+    const strategy = treatment.strategy;
 
     function handleSubmit() {
         /*
@@ -33,6 +32,44 @@ export function SelectRolesStage() {
 
             if (round.get("name") == "Round1") {
                 player.set("capital", 24);
+                if (strategy == "gullible") {
+                    game.set("agent", [
+                        {
+                            id: player.id,
+                            role: "producer",
+                            agent: "human",
+                            scores: [],
+                            productionHistory: []
+                        },
+                        {
+                            id: "Artificial Consumer Agent 1",
+                            strategy: "gullible",
+                            role: "consumer",
+                            agent: "artificial",
+                            scores: [],
+                            purchaseHistory: []
+                        },
+                    ]);
+                }
+                else if(strategy == "titfortat"){
+                    game.set("agents", [
+                        {
+                            id: player.id,
+                            role: "producer",
+                            agent: "human",
+                            scores: [],
+                            productionHistory: []
+                        },
+                        {
+                            id: "Artificial Consumer Agent 1",
+                            strategy: "titfortat",
+                            role: "consumer",
+                            agent: "artificial",
+                            scores: [],
+                            purchaseHistory: []
+                        },
+                    ]);
+                }
             }
             if (round.get("name") != "Round1") {
                 player.set("capital", player.get("capital") + 12)
@@ -46,7 +83,7 @@ export function SelectRolesStage() {
             player.round.set("round", round.get("name"));
             player.stage.set("submit", true);
         }
-        
+
 
     }
 
@@ -54,7 +91,7 @@ export function SelectRolesStage() {
         /*
         Used to generate a random brand name for the product.
         */
-        
+
         const names = ["Ralph", "Mario", "Steve", "Dazai", "Jason", "Aran",
             "Lara", "Joseph", "Nathan", "Niko", "Ezio", "Kenneth", "Marlon", "Josue",
             "Admilton", "Isa", "Jerry", "Parker", "Wayne", "West", "Kent", "Allen", "Stark"];
@@ -79,26 +116,26 @@ export function SelectRolesStage() {
                             Producers! 🌟
                         </h2>
                         <p className="mt-3 text-base text-gray-600 sm:mt-5 sm:text-xl lg:text-lg xl:text-xl" style={{ whiteSpace: 'nowrap' }}>
-                            Your goal is to achieve a high-score based on high profits, by selling many products to consumers 💰. The highest scoring players will win this game! <br/>
+                            Your goal is to achieve a high-score based on high profits, by selling many products to consumers 💰. The highest scoring players will win this game! <br />
                             You get to decide what kind of products you'll produce and the best way to advertise them. Remember, premium products fetch a higher price! 💎
                         </p>
                         <p className="mt-3 text-base text-gray-600 sm:mt-5 sm:text-xl lg:text-lg xl:text-xl" style={{ whiteSpace: 'nowrap' }}>
-                            Every round, you'll use your capital (that's your hard-earned money 💵) to create products and advertisements of a quality you choose. <br/>
+                            Every round, you'll use your capital (that's your hard-earned money 💵) to create products and advertisements of a quality you choose. <br />
                             But be strategic! The consumers only learn about the true quality of your product after they buy it based on the ad!
                         </p>
                         <p className="mt-3 text-base text-gray-600 sm:mt-5 sm:text-xl lg:text-lg xl:text-xl" style={{ whiteSpace: 'nowrap' }}>
                             And don't forget, other producers are out there so keep an eye on their scores. 🏭👀
-                        </p> 
-                    <br/>
-                    <p className="mt-6 text-2xl text-gray-600 sm:mt-5 sm:text-xl lg:text-lg xl:text-xl" style={{ whiteSpace: 'nowrap' }}>
-                        Are you ready to become the top producer? Let's go! 🚀🏆
-                    </p>
+                        </p>
+                        <br />
+                        <p className="mt-6 text-2xl text-gray-600 sm:mt-5 sm:text-xl lg:text-lg xl:text-xl" style={{ whiteSpace: 'nowrap' }}>
+                            Are you ready to become the top producer? Let's go! 🚀🏆
+                        </p>
+                    </div>
                 </div>
             </div>
-        </div>
         );
     };
-    
+
 
 
     // function ConsumerInfo() {
