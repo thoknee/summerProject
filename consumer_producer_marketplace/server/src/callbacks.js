@@ -104,26 +104,6 @@ async function updateConsumerScores(game) {
 async function updateProducerScores(game) {
   await game.players.forEach(async (player) => {
     if (player.get("role") !== "producer") return;
-    const round = player.round.get("round")
-    const agents = game.get("agents");
-    const consumerAgent = agents.find(p => {
-      return p.role === "consumer" && p.agent === "artificial"
-    })
-    const others = agents.filter(p => {
-      return p.role !== "consumer" || p.agent !== "artificial"
-    })
-    const strategy = getconsumerAgentFromId(consumerAgent.strategy);
-    const roundNum = parseInt(round.replace("Round", ""), 10);
-    if (consumerAgent.purchaseHistory.length < roundNum) {
-      consumerAgent.purchaseHistory.push({
-        "purchasedQuantity": strategy.purchaseQuantity(),
-      })
-    }
-
-    others.push(consumerAgent);
-    console.log(others);
-    game.set("players", others);
-
     const capital = player.get("capital");
     const tempStock = player.get("stock");
     const oldStock = player.get("stock");
@@ -137,6 +117,28 @@ async function updateProducerScores(game) {
     const mockQuantity = parseInt(wallet / productPrice);
     const soldStock = mockQuantity <= quantity ? mockQuantity : quantity
     const initialStock = currentStock.initialStock;
+    const round = player.round.get("round");
+    const agents = game.get("agents");
+    
+    const consumerAgent = agents.find(p => {
+      return p.role === "consumer" && p.agent === "artificial"
+    })
+    const others = agents.filter(p => {
+      return p.role !== "consumer" || p.agent !== "artificial"
+    })
+
+    // const strategy = getconsumerAgentFromId(consumerAgent.strategy);
+    const roundNum = parseInt(round.replace("Round", ""), 10);
+    if (consumerAgent.strategy == "gullible") {
+      if (consumerAgent.purchaseHistory.length < roundNum) {
+        consumerAgent.purchaseHistory.push({
+          "purchasedQuantity": 1,
+        })
+      }
+      others.push(consumerAgent);
+      console.log(others);
+      game.set("players", others);
+    }
     if (soldStock == 0) {
 
       const totalCost = initialStock * productCost;
