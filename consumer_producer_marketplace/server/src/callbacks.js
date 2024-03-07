@@ -1,5 +1,5 @@
 import { ClassicListenersCollector } from "@empirica/core/admin/classic";
-import { getconsumerAgentFromId } from "../../client/src/strategie/ConsumerAgent.js"
+// import { getconsumerAgentFromId } from "../../client/src/strategie/ConsumerAgent.js"
 
 export const Empirica = new ClassicListenersCollector();
 
@@ -106,20 +106,18 @@ async function updateProducerScores(game) {
     if (player.get("role") !== "producer") return;
     const capital = player.get("capital");
     const tempStock = player.get("stock");
-    const oldStock = player.get("stock");
-    const currentStock = oldStock.find((item) => item.round === round);
-    const quantity = currentStock.remainingStock;
+    const currentStock = tempStock.find((item) => item.round === round);
+    const remainingStock = currentStock.remainingStock;
     const wallet = player.get("wallet");
     const productPrice = currentStock.productPrice;
     const productCost = currentStock.productCost;
     const productQuality = currentStock.productQuality
     const productAdQuality = currentStock.productAdQuality
-    const mockQuantity = parseInt(wallet / productPrice);
-    const soldStock = mockQuantity <= quantity ? mockQuantity : quantity
     const initialStock = currentStock.initialStock;
+    const value = currentStock.value;
     const round = player.round.get("round");
     const agents = game.get("agents");
-    
+
     const consumerAgent = agents.find(p => {
       return p.role === "consumer" && p.agent === "artificial"
     })
@@ -130,65 +128,212 @@ async function updateProducerScores(game) {
     // const strategy = getconsumerAgentFromId(consumerAgent.strategy);
     const roundNum = parseInt(round.replace("Round", ""), 10);
     if (consumerAgent.strategy == "gullible") {
-      if (consumerAgent.purchaseHistory.length < roundNum) {
+      let wallet = consumerAgent.wallet;
+      const mockQuantity = parseInt(wallet / productPrice);
+      const soldStock = mockQuantity <= remainingStock ? mockQuantity : remainingStock
+      if (soldStock == 0) {
+        const totalCost = initialStock * productCost;
+        const totalSales = soldStock * productPrice;
+        const originalScore = player.get("score") || 0;
+        let score = player.get("score") || 0;
+        score += (totalSales - totalCost);
         consumerAgent.purchaseHistory.push({
-          "purchasedQuantity": 1,
-        })
+          productQuality: productQuality,
+          productAdQuality: productAdQuality,
+          quantity: 0,
+          round: round,
+          roundNum: roundNum,
+          cheated: productAdQuality === productQuality ? false : productAdQuality === "low" && productQuality === "high" ? false : true
+        });
+        let consumerScore = consumerAgent.score;
+        consumerAgent.scores.push({
+          score: consumerScore,
+          round: round,
+          roundNum: roundNum
+        });
+        others.forEach(producerAgent => {
+          producerAgent.scores.push({
+            score: score,
+            round: round,
+            roundNum: roundNum
+          });
+          producerAgent.productionHistory.push({
+            productQuality: productQuality,
+            productAdQuality: productAdQuality,
+            initialStock: initialStock,
+            remainingStock: remainingStock,
+            soldStock: soldStock,
+            round: round,
+            roundNum: roundNum
+          })
+        });
+        player.set("score", score);
+        player.set("scoreDiff", score - originalScore);
+        player.set("capital", capital + totalSales);
+      }
+      else {
+        const trialStock = tempStock.map((item) => {
+          return item.round === round
+            ? {
+              ...item,
+              remainingStock: item.remainingStock - soldStock,
+              soldStock: item.soldStock + soldStock,
+            }
+            : item;
+        });
+
+        player.set("stock", trialStock);
+        const totalCost = initialStock * productCost;
+        const totalSales = soldStock * productPrice;
+        const originalScore = player.get("score") || 0;
+        let score = player.get("score") || 0;
+        score += (totalSales - totalCost);
+
+        consumerAgent.purchaseHistory.push({
+          productQuality: productQuality,
+          productAdQuality: productAdQuality,
+          quantity: soldStock,
+          round: round,
+          roundNum: roundNum,
+        });
+        let consumerScore = consumerAgent.score;
+        consumerScore = (value - productPrice) * soldStock;
+        consumerAgent.score = consumerScore;
+        consumerAgent.scores.push({
+          score: consumerScore,
+          round: round,
+          roundNum: roundNum
+        });
+        let cheated = productAdQuality === productQuality ? false : productAdQuality === "low" && productQuality === "high" ? false : true
+        consumerAgent.cheatedHistory.push(cheated)
+        others.forEach(producerAgent => {
+          producerAgent.scores.push({
+            score: score,
+            round: round,
+            roundNum: roundNum
+          });
+          producerAgent.productionHistory.push({
+            productQuality: productQuality,
+            productAdQuality: productAdQuality,
+            initialStock: initialStock,
+            remainingStock: remainingStock,
+            soldStock: soldStock,
+            round: round,
+            roundNum: roundNum
+          })
+        });
+        wallet = wallet - parseInt(productPrice * soldStock);
+        consumerAgent.wallet = wallet;
+        player.set("score", score);
+        player.set("scoreDiff", score - originalScore);
+        player.set("capital", capital + totalSales);
       }
       others.push(consumerAgent);
       console.log(others);
-      game.set("players", others);
+      game.set("agents", others);
     }
-    if (soldStock == 0) {
+    // else if (consumerAgent.strategy == "titfortat") {
+    //   let wallet = consumerAgent.wallet;
+    //   const mockQuantity = parseInt(wallet / productPrice);
+    //   const soldStock = mockQuantity <= remainingStock ? mockQuantity : remainingStock
+    //   if(roundNum>0 && )
+    //   if (soldStock == 0) {
+    //     const totalCost = initialStock * productCost;
+    //     const totalSales = soldStock * productPrice;
+    //     const originalScore = player.get("score") || 0;
+    //     let score = player.get("score") || 0;
+    //     score += (totalSales - totalCost);
+    //     consumerAgent.purchaseHistory.push({
+    //       productQuality: productQuality,
+    //       productAdQuality: productAdQuality,
+    //       quantity: 0,
+    //       round: round,
+    //       roundNum: roundNum,
+    //       cheated: productAdQuality === productQuality ? false : productAdQuality === "low" && productQuality === "high" ? false : true
+    //     });
+    //     let consumerScore = consumerAgent.score;
+    //     consumerAgent.scores.push({
+    //       score: consumerScore,
+    //       round: round,
+    //       roundNum: roundNum
+    //     });
+    //     others.forEach(producerAgent => {
+    //       producerAgent.scores.push({
+    //         score: score,
+    //         round: round,
+    //         roundNum: roundNum
+    //       });
+    //       producerAgent.productionHistory.push({
+    //         productQuality: productQuality,
+    //         productAdQuality: productAdQuality,
+    //         initialStock: initialStock,
+    //         remainingStock: remainingStock,
+    //         soldStock: soldStock,
+    //         round: round,
+    //         roundNum: roundNum
+    //       })
+    //     });
+    //     player.set("score", score);
+    //     player.set("scoreDiff", score - originalScore);
+    //     player.set("capital", capital + totalSales);
+    //   }
+    //   else {
+    //     const trialStock = tempStock.map((item) => {
+    //       return item.round === round
+    //         ? {
+    //           ...item,
+    //           remainingStock: item.remainingStock - soldStock,
+    //           soldStock: item.soldStock + soldStock,
+    //         }
+    //         : item;
+    //     });
 
-      const totalCost = initialStock * productCost;
-      const totalSales = soldStock * productPrice;
-      const originalScore = player.get("score") || 0;
-      let score = player.get("score") || 0;
-      score += (totalSales - totalCost);
-      player.set("score", score);
-      player.set("scoreDiff", score - originalScore);
-      player.set("capital", capital + totalSales);
+    //     player.set("stock", trialStock);
+    //     const totalCost = initialStock * productCost;
+    //     const totalSales = soldStock * productPrice;
+    //     const originalScore = player.get("score") || 0;
+    //     let score = player.get("score") || 0;
+    //     score += (totalSales - totalCost);
 
-      return;
-    }
-    else {
-      // Artificial player
-      const trialStock = tempStock.map((item) => {
-        return item.round === round
-          ? {
-            ...item,
-            remainingStock: item.remainingStock - soldStock,
-            soldStock: item.soldStock + soldStock,
-          }
-          : item;
-      });
-
-      player.set("stock", trialStock);
-      const totalCost = initialStock * productCost;
-      const totalSales = soldStock * productPrice;
-      const originalScore = player.get("score") || 0;
-      let score = player.get("score") || 0;
-      score += (totalSales - totalCost);
-      player.set("score", score);
-      player.set("scoreDiff", score - originalScore);
-      player.set("capital", capital + totalSales);
-      player.set("wallet", wallet - parseInt(productPrice * soldStock))
-
-      // const newObject = {
-      //   round: round,
-      //   purchaseQuantity: soldStock,
-      //   producedStock: initialStock,
-      //   productQuality: productQuality,
-      //   productAdQuality: productAdQuality,
-      //   productPrice: productPrice,
-      //   remainingWallet: wallet,
-      //   strategyUpdate: "",
-      //   opponentStrategy: ""
-      // };
-      // appendObjectToJSON(newObject);
-      return;
-    }
+    //     consumerAgent.purchaseHistory.push({
+    //       productQuality: productQuality,
+    //       productAdQuality: productAdQuality,
+    //       quantity: soldStock,
+    //       round: round,
+    //       roundNum: roundNum,
+    //       cheated: productAdQuality === productQuality ? false : productAdQuality === "low" && productQuality === "high" ? false : true
+    //     });
+    //     let consumerScore = consumerAgent.score;
+    //     consumerScore = (value - productPrice) * soldStock;
+    //     consumerAgent.score = consumerScore;
+    //     consumerAgent.scores.push({
+    //       score: consumerScore,
+    //       round: round,
+    //       roundNum: roundNum
+    //     });
+    //     others.forEach(producerAgent => {
+    //       producerAgent.scores.push({
+    //         score: score,
+    //         round: round,
+    //         roundNum: roundNum
+    //       });
+    //       producerAgent.productionHistory.push({
+    //         productQuality: productQuality,
+    //         productAdQuality: productAdQuality,
+    //         initialStock: initialStock,
+    //         remainingStock: remainingStock,
+    //         soldStock: soldStock,
+    //         round: round,
+    //         roundNum: roundNum
+    //       })
+    //     });
+    //     wallet = wallet - parseInt(productPrice * soldStock);
+    //     consumerAgent.wallet = wallet;
+    //     player.set("score", score);
+    //     player.set("scoreDiff", score - originalScore);
+    //     player.set("capital", capital + totalSales);
+    //   }
+    // }
   });
 }
 

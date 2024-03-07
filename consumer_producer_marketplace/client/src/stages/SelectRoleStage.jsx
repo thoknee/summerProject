@@ -33,7 +33,7 @@ export function SelectRolesStage() {
             if (round.get("name") == "Round1") {
                 player.set("capital", 24);
                 if (strategy == "gullible") {
-                    game.set("agent", [
+                    game.set("agents", [
                         {
                             id: player.id,
                             role: "producer",
@@ -46,18 +46,20 @@ export function SelectRolesStage() {
                             strategy: "gullible",
                             role: "consumer",
                             agent: "artificial",
+                            wallet: 24,
                             scores: [],
                             purchaseHistory: []
                         },
                     ]);
                 }
-                else if(strategy == "titfortat"){
+                else if (strategy == "titfortat") {
                     game.set("agents", [
                         {
                             id: player.id,
                             role: "producer",
                             agent: "human",
-                            scores: [],
+                            score: 0,
+                            scoreHistory: [],
                             productionHistory: []
                         },
                         {
@@ -65,7 +67,10 @@ export function SelectRolesStage() {
                             strategy: "titfortat",
                             role: "consumer",
                             agent: "artificial",
-                            scores: [],
+                            wallet: 24,
+                            score: 0,
+                            cheatedHistory: [],
+                            scoreHistory: [],
                             purchaseHistory: []
                         },
                     ]);
@@ -74,11 +79,17 @@ export function SelectRolesStage() {
             if (round.get("name") != "Round1") {
                 player.set("capital", player.get("capital") + 12)
             }
-            if (round.get("name") == "Round1") {
-                player.set("wallet", 24);
-            }
             if (round.get("name") != "Round1") {
-                player.set("wallet", player.get("wallet") + 12)
+                const agents = game.get("agents");
+                const consumerAgent = agents.find(p => {
+                    return p.role === "consumer" && p.agent === "artificial"
+                })
+                consumerAgent.wallet += 12;
+                const others = agents.filter(p => {
+                    return p.role !== "consumer" || p.agent !== "artificial"
+                })
+                others.push(consumerAgent);
+                game.set("agents", others);
             }
             player.round.set("round", round.get("name"));
             player.stage.set("submit", true);
