@@ -47,7 +47,10 @@ export function SelectRolesStage() {
                             role: "consumer",
                             agent: "artificial",
                             wallet: 24,
+                            score: 0,
                             scores: [],
+                            cheatedHistory: [],
+                            scoreHistory: [],
                             purchaseHistory: []
                         },
                     ]);
@@ -59,7 +62,7 @@ export function SelectRolesStage() {
                             role: "producer",
                             agent: "human",
                             score: 0,
-                            scoreHistory: [],
+                            scores: [],
                             productionHistory: []
                         },
                         {
@@ -69,6 +72,7 @@ export function SelectRolesStage() {
                             agent: "artificial",
                             wallet: 24,
                             score: 0,
+                            scores: [],
                             cheatedHistory: [],
                             scoreHistory: [],
                             purchaseHistory: []
