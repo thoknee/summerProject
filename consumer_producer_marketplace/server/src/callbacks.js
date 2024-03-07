@@ -273,6 +273,8 @@ async function updateProducerScores(game) {
               roundNum: roundNum
             })
           });
+          let cheated = productAdQuality === productQuality ? false : productAdQuality === "low" && productQuality === "high" ? false : true
+          consumerAgent.cheatedHistory.push(cheated)
           player.set("score", score);
           player.set("scoreDiff", score - originalScore);
           player.set("capital", capital + totalSales);
@@ -372,6 +374,8 @@ async function updateProducerScores(game) {
             roundNum: roundNum
           })
         });
+        let cheated = productAdQuality === productQuality ? false : productAdQuality === "low" && productQuality === "high" ? false : true
+        consumerAgent.cheatedHistory.push(cheated)
         player.set("score", score);
         player.set("scoreDiff", score - originalScore);
         player.set("capital", capital + totalSales);
