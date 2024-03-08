@@ -67,7 +67,7 @@ export function ExitSurvey({ next }) {
               </p>
               <div className="mt-4">
                 <a
-                  href="https://bostonu.qualtrics.com/jfe/form/SV_3aqq5tzlJfllTca"
+                  href="https://bostonu.qualtrics.com/jfe/form/SV_bxBrHmhSBcZqCcm"
                   target="_blank"
                 >
                   <p className="survey-link">Click here to continue</p>
