@@ -30,7 +30,7 @@ export function ExitSurvey({ next }) {
     setSubmitted(true);
     setTimeout(() => {
       window.open(
-        "https://bostonu.qualtrics.com/jfe/form/SV_3aqq5tzlJfllTca",
+        "https://bostonu.qualtrics.com/jfe/form/SV_bxBrHmhSBcZqCcm",
         "_blank"
       );
       next();
