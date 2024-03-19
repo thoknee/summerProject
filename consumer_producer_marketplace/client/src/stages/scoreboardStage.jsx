@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useMemo } from "react";
 import { usePlayer, usePlayers } from "@empirica/core/player/classic/react";
 
 export function ScoreboardStage() {
@@ -6,11 +6,9 @@ export function ScoreboardStage() {
   const players = usePlayers();
 
   // Sort players by score in descending order
-  const sortedPlayers = players.slice().sort((a, b) => {
-    const scoreA = a.get("score") || 0;
-    const scoreB = b.get("score") || 0;
-    return scoreB - scoreA;
-  });
+  const sortedPlayers = useMemo(() => {
+    return [...players].sort((a, b) => (b.get("score") || 0) - (a.get("score") || 0));
+  }, [players]);
 
   const handleProceed = () => {
     console.log(player.get("role"))
@@ -19,18 +17,18 @@ export function ScoreboardStage() {
 
   return (
     <div>
-      <h2 style={styles.heading}>Leaderboard</h2>
-      <table style={styles.scoreboardTable}>
+      <h2 className="text-center text-black text-2xl mb-4 uppercase tracking-wide">Leaderboard</h2>
+      <table className="w-full border-collapse border-separate border-spacing-4 my-[20px] text-lg">
         <thead>
-          <tr style={styles.tableHeader}>
-            <th>ID</th>
-            <th>Role</th>
-            <th>Score</th>
+          <tr className="bg-blue-800 text-white">
+            <th className="p-4 text-left">ID</th>
+            <th className="p-4 text-left">Role</th>
+            <th className="p-4 text-left">Score</th>
           </tr>
         </thead>
         <tbody>
           {sortedPlayers.map((p) => (
-            <tr key={p.id} style={p.id === player.id ? styles.highlightedRow : styles.tableRow}>
+            <tr key={p.id} className={`border-b border-gray-300 ${p.id === player.id ? 'bg-blue-200' : ''} p-3`}>
               <td>{p.id}</td>
               <td>{p.get("role")}</td>
               <td>{p.get("score")}</td>
@@ -38,64 +36,7 @@ export function ScoreboardStage() {
           ))}
         </tbody>
       </table>
-      <button style={styles.proceedButton} onClick={handleProceed}>Proceed to Next Round</button>
+      <button className="bg-green-500 text-white py-3 px-6 text-lg rounded-md border-none cursor-pointer shadow-md transition-all duration-200 ease-in-out hover:bg-green-700 hover:shadow-md" onClick={handleProceed}>Proceed to Next Round</button>
     </div>
   );
 }
-
-
-const styles = {
-    proceedButton: {
-        backgroundColor: '#4CAF50', // Green background as in submitButton
-        color: 'white', // White text
-        padding: '12px 24px', // Generous padding for better touch area
-        fontSize: '16px', // Slightly larger font size
-        borderRadius: '5px', // Rounded corners
-        border: 'none', // Remove default border
-        cursor: 'pointer', // Cursor changes to pointer to indicate it's clickable
-        boxShadow: '0 4px #2e7d32', // Shadow effect for depth, darker than background
-        transition: 'all 0.2s ease-in-out', // Smooth transition for hover effects
-      
-        ':hover': {
-          backgroundColor: '#45a049', // Slightly lighter green when hovered
-          boxShadow: '0 2px #2e7d32', // Adjust shadow for hover effect
-        }
-},
-  heading: {
-    textAlign: 'center',
-    color: '#000000',
-    fontSize: '24px',
-    marginBottom: '20px',
-    textTransform: 'uppercase',
-    letterSpacing: '1px',
-  },
-  scoreboardTable: {
-    width: '100%',
-    borderCollapse: 'collapse',
-    borderSpacing: '15px', 
-    marginTop: '20px',
-    marginBottom: '20px',
-    fontSize: '1.2em', // Increase font size by 20%
-  },
-  tableHeader: {
-    backgroundColor: '#003366', // Dark blue background
-    color: 'white',
-  },
-  tableRow: {
-    borderBottom: '1px solid #ddd',
-  },
-  th: {
-    padding: '15px', // Increased padding
-    textAlign: 'left',
-  },
-  td: {
-    borderBottom: '1px solid #ddd',
-    padding: '12px', // Increased padding
-  },
-  highlightedRow: {
-    borderBottom: '1px solid #ddd',
-    backgroundColor: '#e6f7ff', // Light blue background for the current player's row
-    padding: '12px', // Increased padding
-  }
-
-};

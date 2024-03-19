@@ -12,43 +12,54 @@ import { ClaimsStage } from "./stages/claimsStage";
 import { DeliberateStage } from "./stages/deliberateStage";
 import { ChoiceStage } from "./stages/choiceStage";
 import { FeedbackStage } from "./stages/feedbackStage";
-// import { ScoreboardStage } from "./stages/scoreboardStage";
+import { TrialStage } from "./stages/trialStage";
 import Leaderboard from "./components/Leaderboard";
 
 export function Stage() {
   const player = usePlayer();
   const players = usePlayers();
-  const round = useRound();
   const stage = useStage();
 
-  if (player.stage.get("submit")) {
+  // Fixes Window Blank Error Screen
+  // Ref. to Empirica v2 (https://docs.empirica.ly)
+
+  // if (stage.get("name") !== "selectRoleStage" && player.stage.get("submit") == undefined) {
+  //   player.stage.set("submit", true);
+  //   window.location.reload(true);
+  //   return <>Hello!</>
+  // }
+  // else
+
+  if (player.stage.get("submit") == true) {
     if (players.length === 1) {
       return <Loading />;
     }
 
     return (
-      <div className="text-center text-gray-400 pointer-events-none">
-        Please wait for other player(s).
-      </div>
+      <div className="text-center text-gray-400 pointer-events-none flex items-center justify-center mt-10">
+        <img src="https://raw.githubusercontent.com/Neilblaze/GSOC-23/main/Interactive%20Demo/public/sumercamppulse.gif" alt="" style={{ width: 23, height: 23 }} className="mr-2" />
+        Please wait for other player(s)
+        <span className="inline-block">
+          <span className="animate-ping inline-block w-1 h-1 rounded-full bg-gray-400 ml-1"></span>
+          <span className="animate-ping inline-block w-1 h-1 rounded-full bg-gray-400 ml-1"></span>
+          <span className="animate-ping inline-block w-1 h-1 rounded-full bg-gray-400 ml-1"></span>
+        </span>
+    </div>
     );
   }
 
   switch (stage.get("name")) {
     case "selectRoleStage":
-      return <SelectRolesStage/>;
-    case "qualityStage":
-      return <QualityStage />;
-    case "claimsStage":
-      return <ClaimsStage round={round}/>;
-    case "deliberateStage":
-      return <DeliberateStage />;
+      return <SelectRolesStage />;
+    case "stockStage":
+      return <TrialStage />;
     case "choiceStage":
-      return <ChoiceStage/>;
+      return <ChoiceStage />;
     case "feedbackStage":
-      return <FeedbackStage/>;
+      return <FeedbackStage />;
     case "scoreboardStage":
-      return <Leaderboard/>;
+      return <Leaderboard />;
     default:
-      return <Loading/>;
+      return <Loading />;
   }
 }

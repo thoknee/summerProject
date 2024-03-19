@@ -30,7 +30,7 @@ export function ExitSurvey({ next }) {
     setSubmitted(true);
     setTimeout(() => {
       window.open(
-        "https://bostonu.qualtrics.com/jfe/form/SV_6xjGAQv9CyGi6yO",
+        "https://bostonu.qualtrics.com/jfe/form/SV_bxBrHmhSBcZqCcm",
         "_blank"
       );
       next();
@@ -67,7 +67,7 @@ export function ExitSurvey({ next }) {
               </p>
               <div className="mt-4">
                 <a
-                  href="https://bostonu.qualtrics.com/jfe/form/SV_6xjGAQv9CyGi6yO"
+                  href="https://bostonu.qualtrics.com/jfe/form/SV_bxBrHmhSBcZqCcm"
                   target="_blank"
                 >
                   <p className="survey-link">Click here to continue</p>
@@ -163,8 +163,7 @@ export function ExitSurvey({ next }) {
                     </label>
 
                     <label className={labelClassName}>
-                      Could you explain why or provide other feedback, including
-                      problems you encountered.
+                      Could you explain what made you decide to do this?
                     </label>
 
                     <br />
