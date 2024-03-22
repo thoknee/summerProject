@@ -51,3 +51,10 @@ treatments:
         isAuto: 1
         playerCount: 1
         strategy: titfortat
+    
+    #Added the "informed consumer" - what we will implement
+    - name: Artificial Consumer - Informed
+      factors:
+        isAuto: 1
+        playerCount: 1
+        strategy: informed
