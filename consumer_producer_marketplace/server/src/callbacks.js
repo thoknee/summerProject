@@ -495,9 +495,7 @@ async function updateProducerScores(game) {
       if (roundNum == 1) { 
         let wallet = consumerAgent.wallet;
         const mockQuantity = parseInt(wallet / productPrice);
-        const soldStock = mockQuantity <= remainingStock ? mockQuantity : remainingStock
-      
-
+        const soldStock = mockQuantity <= remainingStock ? mockQuantity : remainingStock 
       if (soldStock == 0) {
         const totalCost = initialStock * productCost;
         const totalSales = soldStock * productPrice;
