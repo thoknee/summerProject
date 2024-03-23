@@ -173,6 +173,32 @@ export function FeedbackStage() {
     // }
 
     // else 
+
+
+     //This function gives renders a certain amount of stars dependent on how the consumer felt 
+        //about the product that they purchased
+            
+        const getStars = (productAdQuality, productQuality,soldStock) => {
+ 
+            if(soldStock > 0){
+                if (productAdQuality === productQuality === "high") {
+                            return 'The consumers rated your product: ⭐️⭐️⭐️⭐️⭐️'; 
+                } else if (productAdQuality === "high" && productQuality === "low") {
+                    return 'The consumers rated your product: ⭐️'; 
+                } else if (productAdQuality === "low" && productQuality === "low") {
+                    return 'The consumers rated your product: ⭐️⭐️'; 
+                } else {
+                    return 'The consumers rated your product: ⭐️⭐️⭐️⭐️'; 
+                    }
+
+            }
+            else{
+                return 'No available feedback';
+            }
+        }
+                    
+    
+    
     if (role === "producer") {
         const handleProceed = () => {
             player.stage.set("submit", true);
@@ -189,6 +215,7 @@ export function FeedbackStage() {
             const soldStock = stock.find((item) => item.round === round).soldStock;
             const initialStock = stock.find((item) => item.round === round).initialStock;
             const profit = soldStock * productPrice - (initialStock * productCost);
+
 
             return (
                 <div className="text-center p-4 bg-white rounded-lg shadow-md max-w-[600px] mx-auto border-8 border-gray-100">
@@ -209,6 +236,10 @@ export function FeedbackStage() {
                     <div className="mt-6">
                         <p><span role="img" aria-label="factory">🏭</span> You produced {initialStock} <b>{productQuality.charAt(0).toUpperCase() + productQuality.slice(1)}</b> quality products and advertised it as <b>{productAdQuality.charAt(0).toUpperCase() + productAdQuality.slice(1)}</b> quality!</p>
                         <p><span role="img" aria-label="shopping-cart">🛒</span> Consumers bought <b>{soldStock}</b> unit(s) of your product at <b>${productPrice}</b> each!</p>
+                        {/*Here is where we output the star rating that the consumer gave. The getStars function does this.*/}
+                        <br />
+                        <p><span role = "img" aria-label="stars"> {getStars(productAdQuality, productQuality,soldStock)}</span></p>
+                        <br />
                         <p><span role="img" aria-label="money-bag">💰</span> This resulted in a total profit of: <b>${profit.toFixed(2)}</b></p>
                         <br />
                         <p><span role="img" aria-label="trophy">🏆</span> Your score this round is your profits (<b>${profit}</b>).</p>
