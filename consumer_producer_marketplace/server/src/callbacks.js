@@ -117,6 +117,8 @@ async function updateProducerScores(game) {
     const initialStock = currentStock.initialStock;
     const value = currentStock.value;
     const agents = game.get("agents");
+    const rating = game.get("rating");
+
 
     const consumerAgent = agents.find(p => {
       return p.role === "consumer" && p.agent === "artificial"
@@ -127,11 +129,16 @@ async function updateProducerScores(game) {
 
     // const strategy = getconsumerAgentFromId(consumerAgent.strategy);
     const roundNum = parseInt(round.replace("Round", ""), 10);
+    
+    
     if (consumerAgent.strategy == "gullible") {
       let wallet = consumerAgent.wallet;
       const mockQuantity = parseInt(wallet / productPrice);
       const soldStock = mockQuantity <= remainingStock ? mockQuantity : remainingStock
       if (soldStock == 0) {
+        
+        const rating = 0;
+        
         const totalCost = initialStock * productCost;
         const totalSales = soldStock * productPrice;
         const originalScore = player.get("score") || 0;
@@ -143,6 +150,7 @@ async function updateProducerScores(game) {
           quantity: 0,
           round: round,
           roundNum: roundNum,
+          rating: rating,
         });
         let consumerScore = consumerAgent.score;
         consumerAgent.scores.push({
@@ -163,7 +171,8 @@ async function updateProducerScores(game) {
             remainingStock: remainingStock,
             soldStock: soldStock,
             round: round,
-            roundNum: roundNum
+            roundNum: roundNum,
+            rating: rating,
           })
         });
         let cheated = productAdQuality === productQuality ? false : productAdQuality === "low" && productQuality === "high" ? false : true
@@ -171,8 +180,12 @@ async function updateProducerScores(game) {
         player.set("score", score);
         player.set("scoreDiff", score - originalScore);
         player.set("capital", capital + totalSales);
+        game.set("rating",0);
       }
       else {
+        
+        let roundRating = 0;
+        
         const trialStock = tempStock.map((item) => {
           return item.round === round
             ? {
@@ -182,6 +195,7 @@ async function updateProducerScores(game) {
             }
             : item;
         });
+
 
         player.set("stock", trialStock);
         const totalCost = initialStock * productCost;
@@ -196,14 +210,18 @@ async function updateProducerScores(game) {
           quantity: soldStock,
           round: round,
           roundNum: roundNum,
+          rating: rating,
         });
+
+      
         let consumerScore = consumerAgent.score;
         consumerScore = (value - productPrice) * soldStock;
         consumerAgent.score = consumerScore;
         consumerAgent.scores.push({
           score: consumerScore,
           round: round,
-          roundNum: roundNum
+          roundNum: roundNum,
+          rating: rating
         });
         let cheated = productAdQuality === productQuality ? false : productAdQuality === "low" && productQuality === "high" ? false : true
         consumerAgent.cheatedHistory.push(cheated)
@@ -211,7 +229,8 @@ async function updateProducerScores(game) {
           producerAgent.scores.push({
             score: score,
             round: round,
-            roundNum: roundNum
+            roundNum: roundNum,
+            rating: rating,
           });
           producerAgent.productionHistory.push({
             productQuality: productQuality,
@@ -220,22 +239,47 @@ async function updateProducerScores(game) {
             remainingStock: remainingStock,
             soldStock: soldStock,
             round: round,
-            roundNum: roundNum
+            roundNum: roundNum,
+            rating: rating,
           })
         });
+
+        if(soldStock > 0){
+          if (productAdQuality === "high" && productQuality === "high") {
+              roundRating = 5; 
+          } else if (productAdQuality === "high" && productQuality === "low") {
+              roundRating = 1; 
+          } else if (productAdQuality === "low" && productQuality === "low") {
+             roundRating = 2;
+          } else {
+              roundRating = 4;
+          }
+        }
+          else{
+            roundRating = 0;
+          }
+
+          consumerAgent.rating = roundRating;
+        
+
         wallet = wallet - parseInt(productPrice * soldStock);
         consumerAgent.wallet = wallet;
         player.set("score", score);
         player.set("scoreDiff", score - originalScore);
         player.set("capital", capital + totalSales);
+        consumerAgent.rating = roundRating;
+
       }
       others.push(consumerAgent);
       console.log(others);
       game.set("agents", others);
     }
+
+
     else if (consumerAgent.strategy == "titfortat") {
       if (roundNum == 1) {
         let wallet = consumerAgent.wallet;
+        consumerAgent.rating = 0;
         const mockQuantity = parseInt(wallet / productPrice);
         const soldStock = mockQuantity <= remainingStock ? mockQuantity : remainingStock
         if (soldStock == 0) {
@@ -280,6 +324,7 @@ async function updateProducerScores(game) {
           player.set("capital", capital + totalSales);
         }
         else {
+          
           const trialStock = tempStock.map((item) => {
             return item.round === round
               ? {
@@ -328,6 +373,24 @@ async function updateProducerScores(game) {
               roundNum: roundNum
             })
           });
+
+          let roundRating = 0;
+          if(soldStock > 0){
+            if (productAdQuality === "high" && productQuality === "high") {
+                roundRating = 5; 
+            } else if (productAdQuality === "high" && productQuality === "low") {
+                roundRating = 1; 
+            } else if (productAdQuality === "low" && productQuality === "low") {
+               roundRating = 2;
+            } else {
+                roundRating = 4;
+            }
+          }
+            else{
+              roundRating = 0;
+            }
+            consumerAgent.rating = roundRating;
+
           let cheated = productAdQuality === productQuality ? false : productAdQuality === "low" && productQuality === "high" ? false : true
           consumerAgent.cheatedHistory.push(cheated)
           wallet = wallet - parseInt(productPrice * soldStock);
@@ -342,6 +405,7 @@ async function updateProducerScores(game) {
         const mockQuantity = parseInt(wallet / productPrice);
         const soldStock = mockQuantity <= remainingStock ? mockQuantity : remainingStock
         if (soldStock == 0) {
+          consumerAgent.rating = 0;
           const totalCost = initialStock * productCost;
           const totalSales = soldStock * productPrice;
           const originalScore = player.get("score") || 0;
@@ -431,6 +495,23 @@ async function updateProducerScores(game) {
               roundNum: roundNum
             })
           });
+
+          let roundRating = 0;
+          if(soldStock > 0){
+            if (productAdQuality === "high" && productQuality === "high") {
+                roundRating = 5; 
+            } else if (productAdQuality === "high" && productQuality === "low") {
+                roundRating = 1; 
+            } else if (productAdQuality === "low" && productQuality === "low") {
+               roundRating = 2;
+            } else {
+                roundRating = 4;
+            }
+          }
+            else{
+              roundRating = 0;
+            }
+            consumerAgent.rating = roundRating;
           let cheated = productAdQuality === productQuality ? false : productAdQuality === "low" && productQuality === "high" ? false : true
           consumerAgent.cheatedHistory.push(cheated)
           wallet = wallet - parseInt(productPrice * soldStock);
@@ -443,6 +524,7 @@ async function updateProducerScores(game) {
       else if (roundNum > 1 && consumerAgent.cheatedHistory[roundNum-2] == true) {
         let wallet = consumerAgent.wallet;
         const soldStock = 0;
+        consumerAgent.rating = 0;
         const totalCost = initialStock * productCost;
         const totalSales = soldStock * productPrice;
         const originalScore = player.get("score") || 0;
@@ -498,6 +580,7 @@ async function updateProducerScores(game) {
         const soldStock = mockQuantity <= remainingStock ? mockQuantity : remainingStock 
       if (soldStock == 0) {
         const totalCost = initialStock * productCost;
+        consumerAgent.rating = 0;
         const totalSales = soldStock * productPrice;
         const originalScore = player.get("score") || 0;
         let score = player.get("score") || 0;
@@ -586,6 +669,23 @@ async function updateProducerScores(game) {
             roundNum: roundNum
           })
         });
+
+        let roundRating = 0;
+          if(soldStock > 0){
+            if (productAdQuality === "high" && productQuality === "high") {
+                roundRating = 5; 
+            } else if (productAdQuality === "high" && productQuality === "low") {
+                roundRating = 1; 
+            } else if (productAdQuality === "low" && productQuality === "low") {
+               roundRating = 2;
+            } else {
+                roundRating = 4;
+            }
+          }
+            else{
+              roundRating = 0;
+            }
+            consumerAgent.rating = roundRating;
         let cheated = productAdQuality === productQuality ? false : productAdQuality === "low" && productQuality === "high" ? false : true
         consumerAgent.cheatedHistory.push(cheated)
         wallet = wallet - parseInt(productPrice * soldStock);
@@ -605,6 +705,7 @@ async function updateProducerScores(game) {
         const mockQuantity = parseInt(wallet / productPrice);
         const soldStock = mockQuantity <= remainingStock ? mockQuantity : remainingStock
         if (soldStock == 0) {
+            consumerAgent.rating = 0;
           const totalCost = initialStock * productCost;
           const totalSales = soldStock * productPrice;
           const originalScore = player.get("score") || 0;
@@ -694,6 +795,22 @@ async function updateProducerScores(game) {
               roundNum: roundNum
             })
           });
+          let roundRating = 0;
+          if(soldStock > 0){
+            if (productAdQuality === "high" && productQuality === "high") {
+                roundRating = 5; 
+            } else if (productAdQuality === "high" && productQuality === "low") {
+                roundRating = 1; 
+            } else if (productAdQuality === "low" && productQuality === "low") {
+               roundRating = 2;
+            } else {
+                roundRating = 4;
+            }
+          }
+            else{
+              roundRating = 0;
+            }
+            consumerAgent.rating = roundRating;
           let cheated = productAdQuality === productQuality ? false : productAdQuality === "low" && productQuality === "high" ? false : true
           consumerAgent.cheatedHistory.push(cheated)
           wallet = wallet - parseInt(productPrice * soldStock);
@@ -705,6 +822,7 @@ async function updateProducerScores(game) {
       }
       else if (roundNum == 2 && consumerAgent.cheatedHistory[roundNum-2] == true) {
         let wallet = consumerAgent.wallet;
+            consumerAgent.rating = 0;
         const soldStock = 0;
         const totalCost = initialStock * productCost;
         const totalSales = soldStock * productPrice;
@@ -755,6 +873,7 @@ async function updateProducerScores(game) {
         const mockQuantity = parseInt(wallet / productPrice);
         const soldStock = mockQuantity <= remainingStock ? mockQuantity : remainingStock
         if (soldStock == 0) {
+            consumerAgent.rating = 0;
           const totalCost = initialStock * productCost;
           const totalSales = soldStock * productPrice;
           const originalScore = player.get("score") || 0;
@@ -844,6 +963,22 @@ async function updateProducerScores(game) {
               roundNum: roundNum
             })
           });
+          let roundRating = 0;
+          if(soldStock > 0){
+            if (productAdQuality === "high" && productQuality === "high") {
+                roundRating = 5; 
+            } else if (productAdQuality === "high" && productQuality === "low") {
+                roundRating = 1; 
+            } else if (productAdQuality === "low" && productQuality === "low") {
+               roundRating = 2;
+            } else {
+                roundRating = 4;
+            }
+          }
+            else{
+              roundRating = 0;
+            }
+            consumerAgent.rating = roundRating;
           let cheated = productAdQuality === productQuality ? false : productAdQuality === "low" && productQuality === "high" ? false : true
           consumerAgent.cheatedHistory.push(cheated)
           wallet = wallet - parseInt(productPrice * soldStock);
@@ -858,6 +993,7 @@ async function updateProducerScores(game) {
       //Will not buy anything at all.
       else if (roundNum > 2 && (consumerAgent.cheatedHistory[roundNum-2] == true || consumerAgent.cheatedHistory[roundNum-3] == true)) {
         let wallet = consumerAgent.wallet;
+        consumerAgent.rating = 0;
         const soldStock = 0;
         const totalCost = initialStock * productCost;
         const totalSales = soldStock * productPrice;

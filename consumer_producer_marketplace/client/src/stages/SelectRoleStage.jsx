@@ -51,7 +51,8 @@ export function SelectRolesStage() {
                             scores: [],
                             cheatedHistory: [],
                             scoreHistory: [],
-                            purchaseHistory: []
+                            purchaseHistory: [],
+                            rating: 0
                         },
                     ]);
                 }
@@ -75,7 +76,8 @@ export function SelectRolesStage() {
                             scores: [],
                             cheatedHistory: [],
                             scoreHistory: [],
-                            purchaseHistory: []
+                            purchaseHistory: [],
+                            rating: 0
                         },
                     ]);
                 }
@@ -99,7 +101,8 @@ export function SelectRolesStage() {
                             scores: [],
                             cheatedHistory: [],
                             scoreHistory: [],
-                            purchaseHistory: []
+                            purchaseHistory: [],
+                            rating: 0
                         },
                     ]);
                 }

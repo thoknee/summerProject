@@ -19,9 +19,8 @@
     player.stage.set("submit", true) is used to submit the stage and move to the next stage.
 */
 
-
 import React, { useState } from "react";
-import { usePlayer, usePlayers, useRound } from "@empirica/core/player/classic/react";
+import { usePlayer, usePlayers, useRound, useGame } from "@empirica/core/player/classic/react";
 import { toast } from "react-toastify";
 
 // ConsumerFeedbackCard is used to display the feedback to the consumer.
@@ -80,6 +79,7 @@ const showPopup = (message, color) => {
 
 export function FeedbackStage() {
     const player = usePlayer();
+    const game = useGame();
     // const players = usePlayers();
     const role = player.get("role");
     const roundHook = useRound();
@@ -177,27 +177,26 @@ export function FeedbackStage() {
 
      //This function gives renders a certain amount of stars dependent on how the consumer felt 
         //about the product that they purchased
-            
-        const getStars = (productAdQuality, productQuality,soldStock) => {
- 
-            if(soldStock > 0){
-                if (productAdQuality === productQuality === "high") {
-                            return 'The consumers rated your product: ⭐️⭐️⭐️⭐️⭐️'; 
-                } else if (productAdQuality === "high" && productQuality === "low") {
-                    return 'The consumers rated your product: ⭐️'; 
-                } else if (productAdQuality === "low" && productQuality === "low") {
-                    return 'The consumers rated your product: ⭐️⭐️'; 
-                } else {
-                    return 'The consumers rated your product: ⭐️⭐️⭐️⭐️'; 
-                    }
 
+        
+        
+        
+    const getStars = (rating) => {
+            
+        let str = "The review of your product: ";
+
+        if (rating == 0){
+            return "No feedback Available"
             }
-            else{
-                return 'No available feedback';
+        else{
+            for(let i = 0; i < rating; i++){
+                str += "⭐️";
+                }  
             }
+        return str;
         }
                     
-    
+        
     
     if (role === "producer") {
         const handleProceed = () => {
@@ -215,7 +214,16 @@ export function FeedbackStage() {
             const soldStock = stock.find((item) => item.round === round).soldStock;
             const initialStock = stock.find((item) => item.round === round).initialStock;
             const profit = soldStock * productPrice - (initialStock * productCost);
+            
+            const agents = game.get("agents");
 
+            const consumerAgent = agents.find(p => {
+                return p.role === "consumer" && p.agent === "artificial"
+              })
+              const others = agents.filter(p => {
+                return p.role !== "consumer" || p.agent !== "artificial"
+              })
+              const rating= consumerAgent.rating;
 
             return (
                 <div className="text-center p-4 bg-white rounded-lg shadow-md max-w-[600px] mx-auto border-8 border-gray-100">
@@ -238,7 +246,7 @@ export function FeedbackStage() {
                         <p><span role="img" aria-label="shopping-cart">🛒</span> Consumers bought <b>{soldStock}</b> unit(s) of your product at <b>${productPrice}</b> each!</p>
                         {/*Here is where we output the star rating that the consumer gave. The getStars function does this.*/}
                         <br />
-                        <p><span role = "img" aria-label="stars"> {getStars(productAdQuality, productQuality,soldStock)}</span></p>
+                        <p><span role = "img" aria-label="stars"> {getStars(rating)}</span></p>
                         <br />
                         <p><span role="img" aria-label="money-bag">💰</span> This resulted in a total profit of: <b>${profit.toFixed(2)}</b></p>
                         <br />
