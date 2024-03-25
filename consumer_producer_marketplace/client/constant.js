@@ -146,6 +146,42 @@ const products = [
       multiplier: 3,
       challengeMultiplier: 0.2,
     },
+  },
+  {
+    id: 2,
+    category: "Toothbrush",
+    low: {
+      productName: "Ayurvedic",
+      productQuality: "low",
+      productPrice: 4,
+      productCost: 2,
+      value: 6,
+      productImage:
+        "/graphics/StandardToothbrushAI.jpg"
+    },
+    high: {
+      productName: "Ayurvedic",
+      productQuality: "high",
+      productPrice: 10,
+      productCost: 6,
+      value: 14,
+      productImage: "/graphics/PremiumToothbrushAI.jpg"
+    },
+    lowWarrant: {
+      // icon: "https://res.cloudinary.com/dgccztjql/image/upload/v1704638438/SimPPL/Gum_Protection_onbo0t.png",
+      description: "Certify this low quality product claim is true",
+      quality: "low",
+      multiplier: 2,
+      challengeMultiplier: 0.2,
+    },
+    highWarrant: {
+      // icon: "https://res.cloudinary.com/dgccztjql/image/upload/v1704638434/SimPPL/Fresh_Breath_he5jws.png",
+      description: "Certify this high quality product claim is true",
+      quality: "high",
+      multiplier: 3,
+      challengeMultiplier: 0.2,
+    },
+    
   }
 ];
 
