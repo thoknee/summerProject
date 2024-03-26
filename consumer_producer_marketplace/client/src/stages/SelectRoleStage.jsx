@@ -27,6 +27,8 @@ export function SelectRolesStage() {
         function to handle the submit button click. It sets the initial capital and wallet for the producer and consumer respectively. It also sets the brand name for the producer.
         */
 
+        
+
         if (player.get("role") === "producer") {
             player.round.set("brandName", randomBrandName());
 
@@ -155,15 +157,22 @@ export function SelectRolesStage() {
                         </div>
                         <h2
                             className="mt-1 text-4xl font-extrabold leading-10 tracking-tight text-gray-900 sm:leading-none sm:text-6xl lg:text-5xl xl:text-6xl">
-                            Producers! 🌟
+                            Producer! 🌟
                         </h2>
                         <p className="mt-3 text-base text-gray-600 sm:mt-5 sm:text-xl lg:text-lg xl:text-xl" style={{ whiteSpace: 'nowrap' }}>
-                            Your goal is to achieve a high-score based on high profits, by selling many products to consumers 💰. The highest scoring players will win this game! <br />
-                            You get to decide what kind of products you'll produce and the best way to advertise them. Remember, premium products fetch a higher price! 💎
+                            Welcome to the fast paced environment of consumerism where you will try your luck(or skill) at being the best producer possible.<br /> 
+                            Your goal is to earn the highest possible score which is based on the profits you make every round. <br /><br />
+                            You decide what kind of product and how to advertise the product but it's up to the consumer to decide it it's worth purchasing
                         </p>
                         <p className="mt-3 text-base text-gray-600 sm:mt-5 sm:text-xl lg:text-lg xl:text-xl" style={{ whiteSpace: 'nowrap' }}>
                             Every round, you'll use your capital (that's your hard-earned money 💵) to create products and advertisements of a quality you choose. <br />
                             But be strategic! The consumers only learn about the true quality of your product after they buy it based on the ad!
+                            <br />
+                            <br />
+                            Here are some things to note: <br />
+                            -Higher quality products sell for more <br />
+                            -Consumers don't like dishonest producers<br />
+                            -
                         </p>
                         <p className="mt-3 text-base text-gray-600 sm:mt-5 sm:text-xl lg:text-lg xl:text-xl" style={{ whiteSpace: 'nowrap' }}>
                             And don't forget, other producers are out there so keep an eye on their scores. 🏭👀
