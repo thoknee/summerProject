@@ -172,7 +172,7 @@ export function SelectRolesStage() {
                             Here are some things to note: <br />
                             -Higher quality products sell for more <br />
                             -Consumers don't like dishonest producers<br />
-                            -
+                            -If you lose money you'll lose score!
                         </p>
                         <p className="mt-3 text-base text-gray-600 sm:mt-5 sm:text-xl lg:text-lg xl:text-xl" style={{ whiteSpace: 'nowrap' }}>
                             And don't forget, other producers are out there so keep an eye on their scores. 🏭👀
